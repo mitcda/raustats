@@ -1,0 +1,11 @@
+Package: rausstats
+Type: Package
+Title: Australian economic time series statistics 
+Version: 0.1
+Date: 2018-09-03
+Author: David Mitchell
+Maintainer: David Mitchell <david.mitchell@infrastructure.gov.au>
+Description: Package to easily download Australian economic time series and socioeconomic statistics from the Australian Bureau of Statistics and Reserve Bank of Australia's websites.
+License: GPL-2 | GPL-3
+Depends: R (>= 3.0.0)
+Suggests: repo

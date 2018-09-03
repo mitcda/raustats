@@ -1,0 +1,11 @@
+# Rbuildignore
+# Ignore git repository
+^.git/$
+^.gitignore$
+^.Rhistory$
+^EXTRA-CODE$
+^README$
+^CHANGES$
+^Setup.R$
+^SQL.R$
+^misc.R$
