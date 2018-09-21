@@ -22,6 +22,7 @@ abs_ausstats_url <- function()
 #' @param ... other arguments to
 #' @return data frame in long format
 #' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'    x <- get_abs_data("3101.0");
 #'    y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
@@ -109,8 +110,13 @@ get_abs_data <- function(series, tables="All", releases="Latest", type="tss")
   sel_urls <- paste0(options()$raustats["abs_domain"],
                      ## Replace all spaces with '%20'
                      gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
-
   
+  z <- sapply(sel_urls, download_abs_data);
+  library(readxl)
+  zz <- sapply(z, unzip_abs_files);
+  data <- sapply(zz, read_abs);
+
+  new_data <- read_abs_(zz[1]);
   
 }
 
@@ -124,6 +130,7 @@ get_abs_data <- function(series, tables="All", releases="Latest", type="tss")
 #' @return Downloads data from the ABS website and returns a character
 #'     vector listing the location where files are saved.
 #' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'    x <- get_abs_data("3101.0");
 #'    y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
@@ -131,21 +138,21 @@ get_abs_data <- function(series, tables="All", releases="Latest", type="tss")
 #'    x <- get_abs_data("5206.0", tables="Table 1", release="Dec 2017");
 download_abs_data <- function(data_urls) {
     ## Create local file names for storin 
-    local_files <- sprintf("%s_%s.%s",
-                           sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
-                           sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", data_urls),
-                           sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
-
+    local_filenames <- sprintf("%s_%s.%s",
+                               sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
+                               sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", data_urls),
+                               sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
+    
     ## -- Download files --
     mapply(function(x, y) utils::download.file(x, y, mode="wb"),
            data_urls,
-           file.path(tempdir(), local_files));
-
-    return(file.path(tempdir(), local_files));
+           file.path(tempdir(), local_filenames));
+    
+    return(file.path(tempdir(), local_filenames));
 }
 
 
-#' @name download_abs_data
+#' @name unzip_abs_data
 #' @title Function to download files from the ABS website and store locally
 #' @description TBC
 #' @importFrom utils download.file unzip
@@ -153,24 +160,27 @@ download_abs_data <- function(data_urls) {
 #' @return Downloads data from the ABS website and returns a character
 #'     vector listing the location where files are saved.
 #' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'    x <- get_abs_data("3101.0");
 #'    y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
 #' 
 #'    x <- get_abs_data("5206.0", tables="Table 1", release="Dec 2017");
 unzip_abs_files <- function(files) {
-    if (DEBUG) files <- file.path(tempdir(), local_files)
-    ## Only extract
+    DEBUG <- FALSE;
+    if (DEBUG) x <- z[1]; # files <- file.path(tempdir(), local_files);
+    ## Only extract from zip files
     files <- files[grepl("\\.zip$", files, ignore.case=TRUE)];
-    sapply(files,
-           function(x)
-               if (grepl("\\.zip$", x, ignore.case=TRUE)) {
-                   destdir <- sub("\\.zip", "", basename(x));
-                   xl_files <- file.path(tempdir(), destdir, unzip(files[1], list=TRUE)$Name);
-                   unzip(x, exdir=file.path(tempdir(), destdir));
-               } else {
-                   xl_files <- x;
-               });
+    ## x <- x[grepl("\\.zip$", x, ignore.case=TRUE)];
+    xl_files <- sapply(files,
+                       function(x)
+                           if (grepl("\\.zip$", x, ignore.case=TRUE)) {
+                               destdir <- sub("\\.zip", "", basename(x));
+                               unzip(x, exdir=file.path(tempdir(), destdir));
+                               file.path(tempdir(), destdir, unzip(x, list=TRUE)$Name);
+                           } else {
+                               x;
+                           });
     return(xl_files);
 }
         
@@ -184,6 +194,7 @@ unzip_abs_files <- function(files) {
 #' @param url Valid ABS data collection URL.
 #' @return Returns a data frame listing the data collection tables and links.
 #' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'    url <- get_abs_data("5206.0", tables=c("Table 1"));
 #'    tables <- get_abs_cat_tables(url);
@@ -244,253 +255,123 @@ get_abs_cat_tables <- function(url)
 }
 
 
-
-#' @name read_abs
-#' @title Read ABS time series data file(s)
-#' @description This function extracts time series data from ABS data files. 
-#' @importFrom readxl read_excel excel_sheets
-#' @importFrom magrittr %>% set_names
-#' @importFrom dplyr mutate mutate_at select rename left_join right_join
-#' @importFrom tidyr gather
-#' @importFrom rvest html_session follow_link html_attr
-#' @export
-#' @param files Names of one or more ABS data file
-#' @param type One of 'ts' - time series or 'dem' - demographic data
-#' @return data frame in long format
-#' @examples
-#' File <- file.path(DataDir, "5206001_Key_Aggregates.xls");
-#' Data <- read_abs(File);
-#' Data %>% as.data.frame %>% head;
-readABS <- function(files, type="tss")
-{
-  x <- lapply(files,
-              function(file)
-                .readABS(file, type=type)
-              ) %>%
-    do.call(rbind, .)
-}
-
-
-.readABS <-
-  function(file, type="ts")
-{
-  if (DEBUG) {
-    file <- file.path(DataDir, "5206001_Key_Aggregates.xls");
-  }
-  .SheetNames <- file %>% excel_sheets;
-  if (!all(c("Index", "Data1")  %in% .SheetNames))
-    stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
-  ## Read metadata
-  .meta <- read_excel(file, "Index");
-  ## Return pre-header information from ABS files 
-  HeaderRow <- sapply(1:nrow(.meta),
-                      function(i)
-                        grepl("series\\s*id", paste(.meta[i,], collapse=" "), ignore.case=TRUE)) %>% which
-  Metadata <- .meta                             %>%
-    set_names(.meta[HeaderRow,]  %>%
-              gsub("\\.","",.)   %>%
-              gsub("\\s","_",.))                %>%  ## Rename variables
-    .[-(1:HeaderRow),]                          %>%  ## Drop header rows
-    .[,!is.na(names(.))]                        %>%  ## Drop empty columns
-    .[grepl("\\w\\d{7}\\w", .$Series_ID),]      %>%
-    mutate(Series_Start     = Series_Start %>% as.integer %>% as.Date.excel,
-           Series_End       = Series_End   %>% as.integer %>% as.Date.excel,
-           No_Obs           = No_Obs       %>% as.integer,
-           Collection_Month = Collection_Month %>% as.integer);
-  
-  grepCatNo_Name <- "^.*(\\d{4}\\.\\d+(\\.\\d+)*)\\s+(.+)$";
-  ## Note use of 'word' character    /here                /here for 13a, 6b, etc.
-  grepTableName <- "^Table(s*)\\s+(\\w+(\\s+\\w+\\s+\\w+)*)\\.\\s+(.+)$";
-  ## Get publication details
-  CatNo_Name <- sapply(1:HeaderRow,
-                       function(i)
-                         grep(grepCatNo_Name, paste(.meta[i,] %>% c %>% .[!is.na(.)], collapse=" "),
-                              ignore.case=TRUE, value=TRUE) %>% unlist %>%
-                         sub(grepCatNo_Name, "\\1|\\3", ., ignore.case=TRUE) %>%
-                         strsplit(., split="\\|")) %>% unlist %>% trimws;
-  TableNo_Name <- sapply(1:HeaderRow,
-                         function(i)
-                           grep(grepTableName, paste(.meta[i,] %>% c %>% .[!is.na(.)], collapse=" "),
-                                ignore.case=TRUE, value=TRUE) %>% unlist %>%
-                           sub(grepTableName, "\\2|\\4", ., ignore.case=TRUE) %>%
-                           strsplit(., split="\\|")) %>% unlist %>% trimws;
-  
-  ## Add publication details to Metadata table
-  Metadata  %<>%
-    mutate(Catalogue_No      = CatNo_Name[1],
-           Publication_Title = CatNo_Name[2],
-           Table_No          = TableNo_Name[1],
-           Table_Title       = TableNo_Name[2]);
-  ## Read data tables
-  Data <- lapply(grep("data", .SheetNames, ignore.case=T, value=T),
-                 function(SheetName) {
-                   z <- readxl::read_excel(file, SheetName);
-                   ## Return pre-header information from ABS files 
-                   HeaderRow <- sapply(1:nrow(z),
-                                       function(i)
-                                         grepl("series\\s*id", paste(z[i,], collapse=" "),
-                                               ignore.case=TRUE)) %>% which
-                   z                                   %<>%
-                     magrittr::set_names(z[HeaderRow,]      %>%
-                               gsub("\\.","",.)   %>%
-                               gsub("\\s","_",.))       %>%  ## Rename variables
-                     dplyr::rename(Date = Series_ID)           %>%  ## Name Date field
-                     .[-(1:HeaderRow),]                 %>%  ## Drop header rows
-                     .[,!is.na(names(.))]               %>%  ## Drop empty columns
-                     tidyr::gather(Series_ID, Value, -Date, convert=TRUE) %>%
-                     dplyr::mutate(Date = Date %>% as.integer %>% as.Date.excel,
-                                   Value = Value %>% as.numeric);
-                   return(z);
-                 })                                              %>%
-    do.call(rbind, .);
-  Data %<>% dplyr::left_join(Metadata, by=c("Series_ID"="Series_ID"))
-}
-
-
 ### Function: read_abs
 #' @name read_abs
-#' @alias read_abs_ read_abs_tss read_abs
+#' @aliases read_abs read_abs_ read_abs_tss
 #' @title Read ABS time series data file(s)
-#' @description This function extracts time series data from ABS data files. 
+#' @description This function extracts time series data from ABS data files.
 #' @importFrom readxl read_excel excel_sheets
-#' @importFrom magrittr %>% set_names inset
-#' @importFrom dplyr mutate mutate_at select rename left_join right_join
+#' @importFrom dplyr left_join
 #' @importFrom tidyr gather
-#' @export
 #' @param files Names of one or more ABS data file [DEPRECATED]
-#' @param catno Character vector specifying one or more ABS Catalogue numbers to download.
-#' @param tables Regular expression denoting tables to download. If NULL (Default), downloads all time series spreadsheet tables for each specified catalogue. Use a list to specify different table sets for each specified ABS catalogue number.
-#' @param type One of either 'tss' - time series spreadsheet (DEFALT or 'dem' - demographic data
-#' @param ... other arguments to 
+#' @param catno Character vector specifying one or more ABS Catalogue
+#'     numbers to download.
+#' @param tables Regular expression denoting tables to download. If
+#'     NULL (Default), downloads all time series spreadsheet tables
+#'     for each specified catalogue. Use a list to specify different
+#'     table sets for each specified ABS catalogue number.
+#' @param type One of either 'tss' - time series spreadsheet (DEFAULT
+#'     or 'dem' - demographic data
+#' @param ... other arguments to ... 
 #' @return data frame in long format
-#' @author David Mitchell <david.p.mitchell@@homemail.com.au>
+#' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'   x <- file.path(DataDir, "5206001_Key_Aggregates.xls");
 #' ABS.5206001 <- read_abs(File);
 #' ABS.5206001 %>% as.data.frame %>% head;
 read_abs <- function(files, catno, tables=NULL, type="tss") {
-  x <- lapply(files,
-              function(file)
-                read_abs_(file, type=type)
-  ) %>%
-    do.call(rbind, .)
+    x <- lapply(files,
+                function(file)
+                    read_abs_(file, type=type));
+    z <- do.call(rbind, x);
+    return(z);
 }
 
 
-#' @importFrom magrittr %>%
-#' @importFrom readxl read_excel
 read_abs_ <- function(file, type="tss") {
-  require(magrittr);
-  require(readxl)
-  if (DEBUG) {
-    file <- file.path(tempdir(), "6248055001TS0002_Jun 2007.xls");
-  }
-  .SheetNames <- file %>% excel_sheets %>% tolower;
-  if (!all(c("index", "data1")  %in% .SheetNames))
-    stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
-  ## Read metadata
-  .meta <- read_excel(file, sheet=file %>% excel_sheets %>%
-                              grep("index", ., ignore.case=TRUE, value=TRUE));
-  ## Return pre-header information from ABS files 
-  HeaderRow <- sapply(1:nrow(.meta),
-                      function(i)
-                        grepl("series\\s*id", paste(.meta[i,], collapse=" "), ignore.case=TRUE)) %>% which;
-  Metadata <- .meta %>%
-    set_names(.meta[HeaderRow,]  %>%
-                gsub("\\.","",.)  %>%
-                gsub("\\s","_",.)) %>%               ## Rename variables
-    .[-(1:HeaderRow),] %>%                           ## Drop header rows
-    .[,!is.na(names(.))] %>%                         ## Drop empty columns
-    .[grepl("\\w\\d{4,7}\\w", .$Series_ID),] %>%     ## Drop if Series ID invalid 
-    mutate(Series_Start     = Series_Start %>% as.integer %>% as.Date.excel,
-           Series_End       = Series_End   %>% as.integer %>% as.Date.excel,
-           No_Obs           = No_Obs       %>% as.integer,
-           Collection_Month = Collection_Month %>% as.integer);
-  
-  grepCatNo_Name <- "^.*(\\d{4}\\.\\d+(\\.\\d+)*)\\s+(.+)$";
-  ## Note use of 'word' character    /here                /here for 13a, 6b, etc.
-  grepTableName <- "^Table(s*)\\s+(\\w+(\\s+\\w+\\s+\\w+)*)\\.\\s+(.+)$";
-  ## Get publication details
-  CatNo_Name <- sapply(1:HeaderRow,
-                       function(i)
-                         grep(grepCatNo_Name, paste(.meta[i,] %>% na.remove, collapse=" "),
-                              ignore.case=TRUE, value=TRUE)) %>% unlist %>%
-    sub(grepCatNo_Name, "\\1|\\3", .) %>%
-    strsplit(., split="\\|") %>% unlist %>% trimws;
-  TableNo_Name <- sapply(1:HeaderRow,
+    DEBUG <- FALSE
+    if (DEBUG) {
+        library(readxl)
+        file <- zz[1]
+    }
+    sheet_names <- tolower(excel_sheets(file));
+    if (!all(c("index", "data1")  %in% sheet_names))
+        stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
+    ## -- Read metadata --
+    .meta <- read_excel(file,
+                        sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE));
+    ## Return pre-header information from ABS files 
+    header_row <- which(sapply(1:nrow(.meta),
+                               function(i)
+                                   grepl("series\\s*id", paste(.meta[i,], collapse=" "), ignore.case=TRUE)));
+    metadata <- .meta;
+    names(metadata) <- gsub("\\s","_",
+                            gsub("\\.", "",
+                                 .meta[header_row,]));                  ## Rename variables
+    metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & empty columns
+    metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
+    metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$Series_ID),]; ## Drop if Series ID invalid 
+    metadata <- transform(metadata,
+                          series_start     = excel2Date(as.integer(series_start)),
+                          series_end       = excel2Date(as.integer(series_end)),
+                          no_obs           = as.integer(no_obs),
+                          collection_month = as.integer(collection_month));
+    ##
+    ## Get publication details
+    ## -- Catalogue number & name --
+    regex_catno_name <- "^.*(\\d{4}\\.\\d+(\\.\\d+)*)\\s+(.+)$";
+    catno_name <- sapply(1:header_row,
                          function(i)
-                           grep(grepTableName, paste(.meta[i,] %>% na.remove, collapse=" "),
-                                ignore.case=TRUE, value=TRUE)) %>% unlist %>%
-                  sub(grepTableName, "\\2|\\4", .) %>%
-                  strsplit(., split="\\|") %>% unlist %>% trimws;
-  
-  ## Add publication details to Metadata table
-  Metadata  %<>%
-    mutate(Catalogue_No      = CatNo_Name[1],
-           Publication_Title = CatNo_Name[2],
-           Table_No          = TableNo_Name[1],
-           Table_Title       = TableNo_Name[2]);
-  ## Read data tables
-  Data <- lapply(grep("data", .SheetNames, ignore.case=TRUE, value=TRUE),
-                 function(SheetName) {
-                   z <- read_excel(file, sheet=file %>% excel_sheets %>%
-                                           grep(SheetName, ., ignore.case=TRUE, value=TRUE));
-                   ## Return pre-header information from ABS files 
-                   HeaderRow <- sapply(1:nrow(z),
-                                       function(i)
-                                         grepl("series\\s*id", paste(z[i,], collapse=" "), 
-                                               ignore.case=TRUE)) %>% which
-                   z                                   %<>%
-                     set_names(z[HeaderRow,]      %>%
-                                 gsub("\\.","",.)   %>%
-                                 gsub("\\s","_",.)) %>%        ## Rename variables
-                     rename(date = Series_ID) %>%              ## Name date field
-                     .[-(1:HeaderRow),] %>%                    ## Drop header rows
-                     .[,!is.na(names(.))] %>%                  ## Drop empty columns
-                     gather(Series_ID, Value, -date, convert=TRUE) %>%
-                     mutate(date = date %>% as.integer %>% as.Date.excel,
-                            Value = Value %>% as.numeric);
-                   return(z);
-                 })                                              %>%
-    do.call(rbind, .);
-  Data %<>% left_join(Metadata, by=c("Series_ID"="Series_ID"))
+                             grep(regex_catno_name, paste(.meta[i,], collapse=" "),
+                                  ignore.case=TRUE, value=TRUE));
+    catno_name <- gsub("(\\s*NA)+", "", sub(regex_catno_name, "\\1|\\3", unlist(catno_name), ignore.case=TRUE));
+    catno_name <- trimws(unlist(strsplit(catno_name, split="\\|")));
+    ##
+    ## -- Table number & name --
+    regex_table_name <- "^.*Tables*\\s+(\\w+(\\s+\\w+\\s+\\w+)*)\\.*\\s+(.+)$";
+    ## Note use of 'word' character    ^here                ^here for 13a, 6b, etc.
+    tableno_name <- sapply(1:header_row,
+                           function(i)
+                               grep(regex_table_name,
+                                    paste(.meta[i,], collapse=" "), ##  %>% unlist() %>% .[complete.cases(.)]
+                                    ignore.case=TRUE, value=TRUE));
+    tableno_name <- gsub("(\\s*NA)+", "", sub(regex_table_name, "\\1|\\3", unlist(tableno_name), ignore.case=TRUE));
+    tableno_name <- trimws(unlist(strsplit(tableno_name, split="\\|")));
+    ##
+    ## Add publication details to metadata table
+    metadata  <- transform(metadata,
+                           catalogue_no      = catno_name[1],
+                           publication_title = catno_name[2],
+                           table_no          = tableno_name[1],
+                           table_title       = tableno_name[2]);
+    ## Extract data
+    data <- lapply(grep("data", excel_sheets(file), ignore.case=TRUE, value=TRUE),
+                   function(sheet_name) {
+                       z <- read_excel(file, sheet=sheet_name);
+                       ## Return pre-header information from ABS files 
+                       header_row <- which(sapply(1:nrow(z),
+                                                  function(i)
+                                                      grepl("series\\s*id", paste(z[i,], collapse=" "), 
+                                                            ignore.case=TRUE)));
+                       names(z) <- gsub("\\s","_", gsub("\\.","", z[header_row,])); ## Rename variables
+                       names(z) <- sub("Series_ID", "date", names(z), ignore.case=TRUE); ## Rename Series_ID field
+                       z <- z[-(1:header_row), !is.na(names(z))];                   ## Drop empty columns
+                       z <- gather(z, Series_ID, Value, -date, convert=TRUE);       ## Transform data to key:value pairs
+                       z <- transform(z,
+                                      date = excel2Date(as.integer(date)),
+                                      Value = as.numeric(Value));
+                       return(z);
+                   });
+    data <- do.call(rbind, data);
+    data <- left_join(data, metadata, by="Series_ID");
+    data <- data[complete.cases(data),];
+    names(data) <- tolower(names(data));
+    return(data);
 }
 
 
 ### Update
-
-## Where read_abs_() attempts to retrieve the Cat and Table metadata,
-## you have the following (and similarly for CatNo_Name):
-
-##   ## TableNo_Name <- sapply(1:HeaderRow,
-##   ##                        function(i)
-##   ##                          grep(grepTableName, paste(.meta[i,] %>% na.remove, collapse=" "),
-##   ##                               ignore.case=TRUE, value=TRUE)) %>% unlist %>%
-##   ##   sub(grepTableName, "\\2|\\4", .) %>%
-##   ##   strsplit(., split="\\|") %>% unlist %>% trimws;
-
-
-## This isn’t working for me, I assume due to some library issues—my
-## environment is calling imputeTS::na.remove(), whereas I suspect
-## you’re intending to call tseries::na.remove(), which can obviously
-## be specified. (Also noting that tseries is commented out in
-## 01-Libraries.R.)
-
-
-## Alternatively, I can get a base solution with the following:
-
-##   TableNo_Name <- sapply(1:HeaderRow,
-##                          function(i)
-##                              grep(grepTableName,
-##                                   paste(.meta[i,] %>% unlist() %>%
-##                                             .[complete.cases(.)],
-##                                         collapse=" "),
-##                                   ignore.case=TRUE, value=TRUE)) %>%
-##       unlist %>%
-##       sub(grepTableName, "\\2|\\4", ., ignore.case = TRUE) %>%
-##       strsplit(., split="\\|") %>% unlist %>% trimws;
-
-## Do you have a preference for the tseries or base approach?
 
 ## Further, the Engineering Construction tables seem to require that
 ## the sub(grepTableName, ...) has ignore.case = TRUE (to capture
