@@ -5,9 +5,9 @@ rba_stats_url <- function()
 
 ### Function: rba_table_cache
 #' @name rba_table_cache
-#' @title Download an updated list of data tables available from the
-#'     RBA website
-#' @description ...
+#' @title Return list of RBA tables
+#' @description Funtion to return an updated list of data tables
+#'     available from the RBA website.
 #' @importFrom rvest html_session follow_link html_attr html_text
 #'     html_nodes
 #' @param files Names of one or more ABS data file
@@ -39,31 +39,32 @@ rba_table_cache <- function()
     statistical_tables <- data.frame(table_type = "statistical tables",
                                      table = html_text(.paths[grepl("xls", .paths, ignore.case=TRUE)]),
                                      path = paste0(sub("/$", "", options()$raustats["rba_domain"]),
-                                                   html_attr(.paths[grepl("xls", .paths, ignore.case=TRUE)], "href")));
+                                                   html_attr(.paths[grepl("xls", .paths, ignore.case=TRUE)],
+                                                             "href")));
     ## Get list of historical data tables
     rs <- jump_to(s, path_historical_data);
     .paths <- html_nodes(rs, "a");
     historical_tables <- data.frame(table_type = "historical data",
                                     table = html_text(.paths[grepl("xls", .paths, ignore.case=TRUE)]),
                                     path = paste0(sub("/$", "", options()$raustats["rba_domain"]),
-                                                  html_attr(.paths[grepl("xls", .paths, ignore.case=TRUE)], "href")));
+                                                  html_attr(.paths[grepl("xls", .paths, ignore.case=TRUE)],
+                                                            "href")));
     ## Get list of discontinued data tables
     rs <- jump_to(s, path_discontinued_data);
     .paths <- html_nodes(rs, "a");
     discontinued_tables <- data.frame(table_type = "discontinued data",
                                       table = html_text(.paths[grepl("xls", .paths, ignore.case=TRUE)]),
                                       path = paste0(sub("/$", "", options()$raustats["rba_domain"]),
-                                                    html_attr(.paths[grepl("xls", .paths, ignore.case=TRUE)], "href")));
+                                                    html_attr(.paths[grepl("xls", .paths, ignore.case=TRUE)],
+                                                              "href")));
     z <- rbind(statistical_tables,
                historical_tables,
                discontinued_tables);
     z <- transform(z,
                    ## Regexp for en-dash: \u2013
                    ##   ''       em-dash: \u2014
-                   ## table_name = sub("(.+)\\s(–|-)\\s(\\w\\d)$", "\\1", table),
-                   ## table_code = sub("(.+)\\s(–|-)\\s(\\w\\d)$", "\\3", table));
-                   table_name = sub("(.+)\\s(\u2013|-)\\s(\\w\\d+(\\.\\d+)*)$", "\\1", table),
-                   table_code = sub("(.+)\\s(\u2013|-)\\s(\\w\\d+(\\.\\d+)*)$", "\\3", table));
+                   table_name = sub("(.+)\\s(\\u2013|-)\\s(\\w\\d+(\\.\\d+)*)$", "\\1", table),
+                   table_code = sub("(.+)\\s(\\u2013|-)\\s(\\w\\d+(\\.\\d+)*)$", "\\3", table));
     z <- z[,c("table_code", "table_name", "table_type", "path")];
     return(z);
 }
@@ -72,7 +73,7 @@ rba_table_cache <- function()
 ### Function: rba_search
 #' @name rba_search
 #' @title Return list of data tables from RBA website
-#' @description ...
+#' @description Function to return a list of all RBA data tables.
 #' @export
 #' @param pattern Character string or regular expression to be matched
 #' @param fields Character vector of column names through which to
@@ -105,8 +106,8 @@ rba_search <- function(pattern, fields="table_name", update_cache=FALSE)
 
 
 #' @name rba_data
-#' @title Return data files from a specified url
-#' @description TBC
+#' @title Return data for a specified RBA time series
+#' @description Function to get data from a specified RBA time series.
 #' @importFrom rvest html_session follow_link html_attr
 #' @importFrom xml2 read_xml read_html
 #' @importFrom urltools url_parse url_compose
@@ -165,8 +166,8 @@ rba_data <- function(table_code, series_type="statistical tables", update_cache=
 
 ### Function: rba_read_tss
 #' @name rba_read_tss
-#' @title Import RBA time series data files
-#' @description
+#' @title Read RBA time series spreadsheet
+#' @description Functions to extract data from a specified RBA time series spreadsheet.
 #' @importFrom readxl read_excel excel_sheets
 #' @importFrom dplyr left_join
 #' @importFrom tidyr gather

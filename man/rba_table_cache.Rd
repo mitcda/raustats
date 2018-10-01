@@ -2,14 +2,16 @@
 % Please edit documentation in R/rba-data.R
 \name{rba_table_cache}
 \alias{rba_table_cache}
-\title{Download an updated list of data tables available from the RBA website}
+\title{Download an updated list of data tables available from the
+    RBA website}
 \usage{
 rba_table_cache()
 }
 \arguments{
 \item{files}{Names of one or more ABS data file}
 
-\item{type}{One of 'ts' - time series or 'dem' - demographic data}
+\item{type}{One of 'tss' - time series spreadsheets or 'css' -
+cross-section spreadsheets}
 }
 \value{
 data frame in long format
@@ -18,5 +20,5 @@ data frame in long format
 ...
 }
 \examples{
-  rba_tables <- rba_table_cache();
+  rba_tablecache <- rba_table_cache();
 }

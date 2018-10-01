@@ -4,12 +4,13 @@
 \alias{rba_read_tss}
 \title{Import RBA time series data files}
 \usage{
-rba_read_tss(files, type = "ts")
+rba_read_tss(files)
 }
 \arguments{
 \item{files}{Names of one or more ABS data file}
 
-\item{type}{One of 'ts' - time series or 'dem' - demographic data}
+\item{type}{One of 'tss' - time series spreadsheet or 'css' - cross
+section spreadsheet}
 }
 \value{
 data frame in long format
@@ -18,7 +19,7 @@ data frame in long format
 Import RBA time series data files
 }
 \examples{
-  File <- file.path(DataDir, "5206001_Key_Aggregates.xls");
-  ABS.5206001 <- read_abs(File);
+  file <- file.path("data-raw", "a01whist-summary.xls");
+  rba_a1_summ <- rba_read_tss(file);
   ABS.5206001 \%>\% as.data.frame \%>\% head;
 }

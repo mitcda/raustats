@@ -4,12 +4,16 @@
 \alias{rba_search}
 \title{Return list of data tables from RBA website}
 \usage{
-rba_search(url)
+rba_search(pattern, fields = "table_name", update_cache = FALSE)
 }
 \arguments{
-\item{files}{Names of one or more ABS data file}
+\item{pattern}{Character string or regular expression to be matched}
 
-\item{type}{One of 'ts' - time series or 'dem' - demographic data}
+\item{fields}{Character vector of column names through which to
+search}
+
+\item{update_cache}{Update table cache (\code{rba_tablecache}),
+FALSE by default.}
 }
 \value{
 data frame in long format
@@ -18,7 +22,6 @@ data frame in long format
 ...
 }
 \examples{
-File <- file.path(DataDir, "5206001_Key_Aggregates.xls");
-ABS.5206001 <- read_abs(File);
-ABS.5206001 \%>\% as.data.frame \%>\% head;
+  x <- rba_search(pattern = "A1", fields="table_code", update_cache=TRUE);
+
 }

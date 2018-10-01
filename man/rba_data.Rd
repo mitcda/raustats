@@ -4,21 +4,26 @@
 \alias{rba_data}
 \title{Return data files from a specified url}
 \usage{
-rba_data(table_code)
+rba_data(table_code, series_type = "statistical tables",
+  update_cache = FALSE)
 }
 \arguments{
-\item{series}{Character vector specifying one or more ABS collections or catalogue numbers to
-download.}
+\item{series}{Character vector specifying one or more ABS
+collections or catalogue numbers to download.}
 
-\item{tables}{A character vector of regular expressions denoting tables to download. The default
-('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list
-to specify different table sets for each specified ABS catalogue number.}
+\item{tables}{A character vector of regular expressions denoting
+tables to download. The default ('All') downloads all time
+series spreadsheet tables for each specified catalogue. Use a
+list to specify different table sets for each specified ABS
+catalogue number.}
 
-\item{releases}{Date or character string object specifying the month and year denoting which
-release to download. Default is "Latest", which downloads the latest available data. See
+\item{releases}{Date or character string object specifying the
+month and year denoting which release to download. Default is
+"Latest", which downloads the latest available data. See
 examples for further details.}
 
-\item{type}{One of either 'tss' - time series spreadsheet (DEFALT or 'dem' - demographic data}
+\item{type}{One of either 'tss' - time series spreadsheet (the
+default) or 'css' - cross-section spreadsheet}
 
 \item{...}{other arguments to}
 }
@@ -29,10 +34,9 @@ data frame in long format
 TBC
 }
 \examples{
-   x <- get_abs_data("3101.0");
-   y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
-
-   x <- get_abs_data("5206.0", tables="Table 1", release="Dec 2017");
+   x <- rba_data("A1");
+   y <- rba_data("A1", update_cache=TRUE);
+   
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>
