@@ -19,7 +19,7 @@ FALSE by default.}
 data frame in long format
 }
 \description{
-...
+Function to return a list of all RBA data tables.
 }
 \examples{
   x <- rba_search(pattern = "A1", fields="table_code", update_cache=TRUE);

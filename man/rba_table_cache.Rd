@@ -2,8 +2,7 @@
 % Please edit documentation in R/rba-data.R
 \name{rba_table_cache}
 \alias{rba_table_cache}
-\title{Download an updated list of data tables available from the
-    RBA website}
+\title{Return list of RBA tables}
 \usage{
 rba_table_cache()
 }
@@ -17,7 +16,8 @@ cross-section spreadsheets}
 data frame in long format
 }
 \description{
-...
+Funtion to return an updated list of data tables
+    available from the RBA website.
 }
 \examples{
   rba_tablecache <- rba_table_cache();

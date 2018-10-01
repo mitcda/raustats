@@ -2,7 +2,7 @@
 % Please edit documentation in R/rba-data.R
 \name{rba_data}
 \alias{rba_data}
-\title{Return data files from a specified url}
+\title{Return data for a specified RBA time series}
 \usage{
 rba_data(table_code, series_type = "statistical tables",
   update_cache = FALSE)
@@ -31,7 +31,7 @@ default) or 'css' - cross-section spreadsheet}
 data frame in long format
 }
 \description{
-TBC
+Function to get data from a specified RBA time series.
 }
 \examples{
    x <- rba_data("A1");

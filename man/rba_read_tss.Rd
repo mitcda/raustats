@@ -2,7 +2,7 @@
 % Please edit documentation in R/rba-data.R
 \name{rba_read_tss}
 \alias{rba_read_tss}
-\title{Import RBA time series data files}
+\title{Read RBA time series spreadsheet}
 \usage{
 rba_read_tss(files)
 }
@@ -16,7 +16,7 @@ section spreadsheet}
 data frame in long format
 }
 \description{
-Import RBA time series data files
+Functions to extract data from a specified RBA time series spreadsheet.
 }
 \examples{
   file <- file.path("data-raw", "a01whist-summary.xls");
