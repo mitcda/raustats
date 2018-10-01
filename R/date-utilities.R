@@ -4,9 +4,9 @@
 #' @description Function to convert Excel numeric date to R Date object
 #' @param x Excel-based date numeric object
 #' @return Date object
-#' @examples
-#' xDate <- as.Date.excel(x);
 #' @export
+#' @examples
+#' xDate <- excel2Date(x);
 excel2Date <-
   function(x) as.Date(x, origin="1899-12-30");
 
@@ -19,6 +19,7 @@ excel2Date <-
 #' @param base.month Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.
 #' @param format The input date format. Default is "%Y-Q%q".
 #' @return This function returns a Date format object.
+#' @export
 #' @examples
 #' x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
 #' quarter2Date(x);
@@ -51,15 +52,15 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 #' @name lastDay
 #' @title Set Date object to the last day of the month
 #' @description Function to change the date of a Date object to the last day of the month
+#' @importFrom lubridate ceiling_date days
 #' @param date date object
 #' @return Date object
+#' @export
 #' @examples
 #' Date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
 #' last_day(Date)
-#' @import lubridate
-#' @export
 lastDay <- function(date)
-  lubridate::ceiling_date(date, "month") - lubridate::days(1)
+  ceiling_date(date, "month") - days(1);
 
 
 ### Function: finYear
@@ -69,10 +70,10 @@ lastDay <- function(date)
 #' @param date date object
 #' @param ending character string abbreviation or number denoting ending month of the financial year
 #' @return Date object 
+#' @export
 #' @examples
 #' x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
 #' finYear(x)
-#' @export
 finYear <- function(date, ending="Jun")
 {
   if (is.character(ending)) {

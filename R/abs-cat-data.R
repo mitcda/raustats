@@ -2,14 +2,13 @@ abs_ausstats_url <- function()
   paste0(options()$raustats["abs_domain"],
          options()$raustats["abs_ausstats_path"]);
 
-#' @name get_abs_data
+#' @name abs_cat_data
 #' @title Return data files from a specified url
 #' @description TBC
 #' @importFrom magrittr %>% inset
 #' @importFrom rvest html_session follow_link html_attr
 #' @importFrom xml2 read_xml read_html
 #' @importFrom urltools url_parse url_compose
-#' @importFrom utils download.file unzip
 #' @param series Character vector specifying one or more ABS collections or catalogue numbers to
 #'   download.
 #' @param tables A character vector of regular expressions denoting tables to download. The default
@@ -24,11 +23,11 @@ abs_ausstats_url <- function()
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- get_abs_data("3101.0");
-#'    y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
+#'    x <- abs_cat_data("3101.0");
+#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
 #' 
-#'    x <- get_abs_data("5206.0", tables="Table 1", release="Dec 2017");
-get_abs_data <- function(series, tables="All", releases="Latest", type="tss")
+#'    x <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
 {
   DEBUG <- FALSE
   if (DEBUG) {
@@ -115,13 +114,12 @@ get_abs_data <- function(series, tables="All", releases="Latest", type="tss")
   library(readxl)
   zz <- sapply(z, unzip_abs_files);
   data <- sapply(zz, read_abs);
-
-  new_data <- read_abs_(zz[1]);
-  
+  data <- do.call(rbind, data);
+  return(data);
 }
 
 
-#' @name download_abs_data
+#' @name abs_download_data
 #' @title Function to download files from the ABS website and store locally
 #' @description TBC
 #' @importFrom utils download.file unzip
@@ -132,11 +130,11 @@ get_abs_data <- function(series, tables="All", releases="Latest", type="tss")
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- get_abs_data("3101.0");
-#'    y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
+#'    x <- abs_cat_data("3101.0");
+#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
 #' 
-#'    x <- get_abs_data("5206.0", tables="Table 1", release="Dec 2017");
-download_abs_data <- function(data_urls) {
+#'    x <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+abs_download_data <- function(data_urls) {
     ## Create local file names for storin 
     local_filenames <- sprintf("%s_%s.%s",
                                sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
@@ -144,7 +142,7 @@ download_abs_data <- function(data_urls) {
                                sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
     
     ## -- Download files --
-    mapply(function(x, y) utils::download.file(x, y, mode="wb"),
+    mapply(function(x, y) download.file(x, y, mode="wb"),
            data_urls,
            file.path(tempdir(), local_filenames));
     
@@ -152,7 +150,7 @@ download_abs_data <- function(data_urls) {
 }
 
 
-#' @name unzip_abs_data
+#' @name abs_unzip_files
 #' @title Function to download files from the ABS website and store locally
 #' @description TBC
 #' @importFrom utils download.file unzip
@@ -162,11 +160,11 @@ download_abs_data <- function(data_urls) {
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- get_abs_data("3101.0");
-#'    y <- get_abs_data("5206.0", tables=c("Table 1", "Table 2"));
+#'    x <- abs_cat_data("3101.0");
+#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
 #' 
-#'    x <- get_abs_data("5206.0", tables="Table 1", release="Dec 2017");
-unzip_abs_files <- function(files) {
+#'    x <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+abs_unzip_files <- function(files) {
     DEBUG <- FALSE;
     if (DEBUG) x <- z[1]; # files <- file.path(tempdir(), local_files);
     ## Only extract from zip files
@@ -185,7 +183,7 @@ unzip_abs_files <- function(files) {
 }
         
 
-#' @name get_abs_cat_tables
+#' @name abs_cat_tables
 #' @title Return ABS catalogue tables
 #' @description Return list of tables from specified ABS catalogue number
 #' @importFrom rvest html_session follow_link html_attr
@@ -196,9 +194,9 @@ unzip_abs_files <- function(files) {
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    url <- get_abs_data("5206.0", tables=c("Table 1"));
-#'    tables <- get_abs_cat_tables(url);
-get_abs_cat_tables <- function(url)
+#'    url <- abs_cat_data("5206.0", tables=c("Table 1"));
+#'    tables <- abs_cat_tables(url);
+abs_cat_tables <- function(url)
 {
   ## Test URL is valid and Downloads page accessible
   s <- html_session(url);
@@ -255,9 +253,9 @@ get_abs_cat_tables <- function(url)
 }
 
 
-### Function: read_abs
-#' @name read_abs
-#' @aliases read_abs read_abs_ read_abs_tss
+### Function: abs_read_tss
+#' @name abs_read_tss
+#' @aliases abs_read_tss abs_read_tss_
 #' @title Read ABS time series data file(s)
 #' @description This function extracts time series data from ABS data files.
 #' @importFrom readxl read_excel excel_sheets
@@ -278,18 +276,18 @@ get_abs_cat_tables <- function(url)
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'   x <- file.path(DataDir, "5206001_Key_Aggregates.xls");
-#' ABS.5206001 <- read_abs(File);
+#' ABS.5206001 <- abs_read_tss(File);
 #' ABS.5206001 %>% as.data.frame %>% head;
-read_abs <- function(files, catno, tables=NULL, type="tss") {
+abs_read_tss <- function(files, catno, tables=NULL, type="tss") {
     x <- lapply(files,
                 function(file)
-                    read_abs_(file, type=type));
+                    abs_read_tss_(file, type=type));
     z <- do.call(rbind, x);
     return(z);
 }
 
 
-read_abs_ <- function(file, type="tss") {
+abs_read_tss_ <- function(file, type="tss") {
     DEBUG <- FALSE
     if (DEBUG) {
         library(readxl)

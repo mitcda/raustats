@@ -1,7 +1,7 @@
 ## =========================================================================
 ## Filename:     get-url.R
 ## Created:      August 2018
-## Updated:      <2018-08-22 21:51:48 david at grover>
+## Updated:      <2018-09-04 21:20:21 david at grover>
 ## Author:       David Mitchell (david.mitchell@infrastructure.gov.au)
 ## Description: 
 ##
@@ -10,9 +10,9 @@
 #' @name create_url
 #' @title Create search url
 #' @description
-#' @import rvest html_session follow_link html_link html_attr
-#' @import xml2 read_xml
-#' @import urltools url_parse url_compose
+#' @importFrom rvest html_session follow_link html_attr
+#' @importFrom xml2 read_xml
+#' @importFrom urltools url_parse url_compose
 create_url <- function(base_url, catno, files)
 {
   url_compose
@@ -24,11 +24,11 @@ create_url <- function(base_url, catno, files)
 #' @name get_data
 #' @title Return data files from a specified url 
 #' @description
-#' @import magrittr %>% inset
-#' @import rvest html_session follow_link html_link html_attr
-#' @import xml2 read_xml
-#' @import urltools url_parse url_compose
-#' @import utils unzip download.file
+#' @importFrom magrittr %>% inset
+#' @importFrom rvest html_session follow_link html_attr
+#' @importFrom xml2 read_xml
+#' @importFrom urltools url_parse url_compose
+#' @importFrom utils unzip download.file
 #' @param url 
 #' @export
 get_data <- function(url)

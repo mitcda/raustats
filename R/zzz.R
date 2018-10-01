@@ -1,21 +1,19 @@
-.onAttach <- function(libname, pkgname)
-{
-  packageStartupMessage("Attaching package: 'raustats'");
+.onAttach <- function(libname, pkgname) {
+    packageStartupMessage("Attaching package: 'raustats'");
 }
 
-.onLoad <- function(libname, pkgname)
-{
-  options(raustats=c(abs_domain = "http://www.abs.gov.au/",
-                     abs_ausstats_path = "ausstats/abs@.nsf/mf",
-                     abs_downloads_regex = "Downloads",
-                     abs_releases_regex = "Past.*Future.*Releases",
-                     rba_domain = "http://www.rba.gov.au/",
-                     rba_stats_path = "statistics"));
-  }
+.onLoad <- function(libname, pkgname) {
+    options(raustats=c(abs_domain = "http://www.abs.gov.au/",
+                       abs_ausstats_path = "ausstats/abs@.nsf/mf",
+                       abs_downloads_regex = "Downloads",
+                       abs_releases_regex = "Past.*Future.*Releases",
+                       rba_domain = "http://www.rba.gov.au/",
+                       rba_stats_path = "statistics",
+                       rba_tables_path = "tables"));
+}
 
-.onDetach <- function(libname, pkgname)
-{
-  options(RecRep.options = NULL);
+.onDetach <- function(libname, pkgname) {
+    options(RecRep.options = NULL);
 }
 
 ## .Last <- function()
