@@ -3,7 +3,7 @@
 \docType{data}
 \name{abs_tablecache}
 \alias{abs_tablecache}
-\title{Cached list of ABS catalogue tables}
+\title{List of ABS catalogue tables}
 \format{A data frame containing five columns:
 \itemize{
 \item \code{publication_title} ABS publication title.
@@ -16,6 +16,6 @@
 abs_tablecache
 }
 \description{
-
+This data set provides a list of the most common ABS catalogue tables.
 }
 \keyword{datasets}

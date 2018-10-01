@@ -15,6 +15,6 @@
 rba_tablecache
 }
 \description{
-
+This data is a cached result of the \code{\link{rba_table_cache}} function. By default functions \code{\link{rba_search}} and \code{\link{rba_data}} use this data if the \code{update_cache} parameter is \code{TRUE}.
 }
 \keyword{datasets}

@@ -5,13 +5,8 @@ rba_stats_url <- function()
 ### Function: rba_table_cache
 #' @name rba_table_cache
 #' @title Return list of RBA tables
-#' @description Function to return an updated list of data tables
-#'     available from the RBA website.
-#' @importFrom rvest html_session follow_link html_attr html_text
-#'     html_nodes
-#' @param files Names of one or more ABS data file
-#' @param type One of 'tss' - time series spreadsheets or 'css' -
-#'     cross-section spreadsheets
+#' @description Function to return an updated list of data tables available from the RBA website.
+#' @importFrom rvest html_session follow_link html_attr html_text html_nodes
 #' @return data frame in long format
 #' @export
 #' @examples
@@ -75,10 +70,8 @@ rba_table_cache <- function()
 #' @description Function to return a list of all RBA data tables.
 #' @export
 #' @param pattern Character string or regular expression to be matched
-#' @param fields Character vector of column names through which to
-#'     search
-#' @param update_cache Update table cache (\code{rba_tablecache}),
-#'     FALSE by default.
+#' @param fields Character vector of column names through which to search
+#' @param update_cache Update table cache (\code{rba_tablecache}), FALSE by default.
 #' @return data frame in long format
 #' @export
 #' @examples
@@ -107,24 +100,10 @@ rba_search <- function(pattern, fields="table_name", update_cache=FALSE)
 #' @name rba_data
 #' @title Return data for a specified RBA time series
 #' @description Function to get data from a specified RBA time series.
-#' @importFrom rvest html_session follow_link html_attr
-#' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
 #' @importFrom utils download.file unzip
-#' @param series Character vector specifying one or more ABS
-#'     collections or catalogue numbers to download.
-#' @param tables A character vector of regular expressions denoting
-#'     tables to download. The default ('All') downloads all time
-#'     series spreadsheet tables for each specified catalogue. Use a
-#'     list to specify different table sets for each specified ABS
-#'     catalogue number.
-#' @param releases Date or character string object specifying the
-#'     month and year denoting which release to download. Default is
-#'     "Latest", which downloads the latest available data. See
-#'     examples for further details.
-#' @param type One of either 'tss' - time series spreadsheet (the
-#'     default) or 'css' - cross-section spreadsheet
-#' @param ... other arguments to
+#' @param table_code Character vector specifying one or more ABS collections or catalogue numbers to download.
+#' @param series_type RBA series type, one of either 'statistical tables', 'historical data' or 'discontinued data'.
+#' @param update_cache Boolean argument expressing whether to retrieve an updated list of RBA tables or not (Default).
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
@@ -149,8 +128,9 @@ rba_data <- function(table_code, series_type="statistical tables", update_cache=
         rba_table_list <- raustats::rba_tablecache;
     }
     ## Select the relevant tables
-    paths <- rba_table_list[grepl("statistical tables", rba_table_list$table_type, ignore.case=TRUE) &
-                            grepl(paste(table_code, collapse="|"), rba_table_list$table_code, ignore.case=TRUE),];
+    paths <- rba_table_list[grepl(series_type, rba_table_list$table_type, ignore.case=TRUE) &
+                            grepl(paste(table_code, collapse="|"), rba_table_list$table_code,
+                                  ignore.case=TRUE),];
     ## Download files
     local_files <- file.path(tempdir(), basename(as.character(paths$path)));
     cat("Downloading data\n");
@@ -171,8 +151,6 @@ rba_data <- function(table_code, series_type="statistical tables", update_cache=
 #' @importFrom dplyr left_join
 #' @importFrom tidyr gather
 #' @param files Names of one or more ABS data file
-#' @param type One of 'tss' - time series spreadsheet or 'css' - cross
-#'     section spreadsheet
 #' @return data frame in long format
 #' @export
 #' @examples

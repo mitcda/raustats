@@ -9,11 +9,9 @@ rba_search(pattern, fields = "table_name", update_cache = FALSE)
 \arguments{
 \item{pattern}{Character string or regular expression to be matched}
 
-\item{fields}{Character vector of column names through which to
-search}
+\item{fields}{Character vector of column names through which to search}
 
-\item{update_cache}{Update table cache (\code{rba_tablecache}),
-FALSE by default.}
+\item{update_cache}{Update table cache (\code{rba_tablecache}), FALSE by default.}
 }
 \value{
 data frame in long format

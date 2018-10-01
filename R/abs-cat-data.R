@@ -8,15 +8,10 @@ abs_ausstats_url <- function()
 #' @importFrom rvest html_session follow_link html_attr
 #' @importFrom xml2 read_xml read_html
 #' @importFrom urltools url_parse url_compose
-#' @param series Character vector specifying one or more ABS collections or catalogue numbers to
-#'   download.
-#' @param tables A character vector of regular expressions denoting tables to download. The default
-#'   ('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list
-#'   to specify different table sets for each specified ABS catalogue number.
-#' @param releases Date or character string object specifying the month and year denoting which
-#'   release to download. Default is "Latest", which downloads the latest available data. See
-#'   examples for further details.
-#' @param type One of either 'tss' - time series spreadsheet (DEFALT or 'dem' - demographic data
+#' @param series Character vector specifying one or more ABS collections or catalogue numbers to download.
+#' @param tables A character vector of regular expressions denoting tables to download. The default ('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list to specify different table sets for each specified ABS catalogue number.
+#' @param releases Date or character string object specifying the month and year denoting which release to download. Default is "Latest", which downloads the latest available data. See examples for further details.
+#' @param type One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section spreadsheet.
 #' @param ... other arguments to
 #' @return data frame in long format
 #' @export

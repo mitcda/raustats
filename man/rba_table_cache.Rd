@@ -6,18 +6,11 @@
 \usage{
 rba_table_cache()
 }
-\arguments{
-\item{files}{Names of one or more ABS data file}
-
-\item{type}{One of 'tss' - time series spreadsheets or 'css' -
-cross-section spreadsheets}
-}
 \value{
 data frame in long format
 }
 \description{
-Function to return an updated list of data tables
-    available from the RBA website.
+Function to return an updated list of data tables available from the RBA website.
 }
 \examples{
   rba_tablecache <- rba_table_cache();

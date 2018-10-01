@@ -8,9 +8,6 @@ rba_read_tss(files)
 }
 \arguments{
 \item{files}{Names of one or more ABS data file}
-
-\item{type}{One of 'tss' - time series spreadsheet or 'css' - cross
-section spreadsheet}
 }
 \value{
 data frame in long format

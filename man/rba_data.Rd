@@ -8,24 +8,11 @@ rba_data(table_code, series_type = "statistical tables",
   update_cache = FALSE)
 }
 \arguments{
-\item{series}{Character vector specifying one or more ABS
-collections or catalogue numbers to download.}
+\item{table_code}{Character vector specifying one or more ABS collections or catalogue numbers to download.}
 
-\item{tables}{A character vector of regular expressions denoting
-tables to download. The default ('All') downloads all time
-series spreadsheet tables for each specified catalogue. Use a
-list to specify different table sets for each specified ABS
-catalogue number.}
+\item{series_type}{RBA series type, one of either 'statistical tables', 'historical data' or 'discontinued data'.}
 
-\item{releases}{Date or character string object specifying the
-month and year denoting which release to download. Default is
-"Latest", which downloads the latest available data. See
-examples for further details.}
-
-\item{type}{One of either 'tss' - time series spreadsheet (the
-default) or 'css' - cross-section spreadsheet}
-
-\item{...}{other arguments to}
+\item{update_cache}{Boolean argument expressing whether to retrieve an updated list of RBA tables or not (Default).}
 }
 \value{
 data frame in long format

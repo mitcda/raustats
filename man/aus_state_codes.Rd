@@ -14,6 +14,6 @@
 aus_state_codes
 }
 \description{
-
+A list of Australian state and territory codes.
 }
 \keyword{datasets}
