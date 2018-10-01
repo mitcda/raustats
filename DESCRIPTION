@@ -1,12 +1,24 @@
 Package: raustats
 Type: Package
-Title: Access to data and statistics from the ABS and RBA websites
+Title: Access data and statistics from the ABS and RBA websites
+Description: An R package for downloading Australian economic data statistics
+  from the Australian Bureau of Statistics (ABS) and Reserve Bank of Australia
+  (RBA) websites.
 Version: 0.1
 Date: 2018-09-03
-Author: David Mitchell
+Authors@R: c(
+  person("David", "Mitchell", email = "david.mitchell@infrastructure.gov.au", role = c("aut", "cre"))
+  )
 Maintainer: David Mitchell <david.mitchell@infrastructure.gov.au>
-Description: An R package for downloading Australian economic data statistics from the Australian Bureau of Statistics (ABS) and Reserve Bank of Australia (RBA) websites.
+URL: https://github.com/mitcda/raustats
 License: GPL-2 | GPL-3
 Depends: R (>= 3.0.0)
 Suggests: repo
+LazyData: TRUE
 RoxygenNote: 6.1.0
+VignetteBuilder: knitr
+NeedsCompilation: no
+
+
+Imports: httr, jsonlite, tidyr
+Suggests: ggplot2, knitr, lubridate (>= 1.5.0)
