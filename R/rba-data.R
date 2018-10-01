@@ -2,11 +2,10 @@ rba_stats_url <- function()
   paste0(options()$raustats["rba_domain"],
          options()$raustats["rba_stats_path"]);
 
-
 ### Function: rba_table_cache
 #' @name rba_table_cache
 #' @title Return list of RBA tables
-#' @description Funtion to return an updated list of data tables
+#' @description Function to return an updated list of data tables
 #'     available from the RBA website.
 #' @importFrom rvest html_session follow_link html_attr html_text
 #'     html_nodes

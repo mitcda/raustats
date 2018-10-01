@@ -16,7 +16,7 @@ cross-section spreadsheets}
 data frame in long format
 }
 \description{
-Funtion to return an updated list of data tables
+Function to return an updated list of data tables
     available from the RBA website.
 }
 \examples{

@@ -5,7 +5,6 @@ abs_ausstats_url <- function()
 #' @name abs_cat_data
 #' @title Return data files from a specified url
 #' @description TBC
-#' @importFrom magrittr %>% inset
 #' @importFrom rvest html_session follow_link html_attr
 #' @importFrom xml2 read_xml read_html
 #' @importFrom urltools url_parse url_compose
@@ -227,29 +226,6 @@ abs_cat_tables <- function(url)
   dt <- dt[,colSums(is.na(dt)) < nrow(dt)]
   names(dt) <- c("table_name", "path1", "path2");
   return(dt);
- 
-  ## z <- url %>%
-  ##   html_session %>%
-  ##   follow_link( options()$raustats["abs_downloads_regex"]) %>%
-  ##   html_nodes("table") %>% html_nodes("table") %>%
-  ##   sapply(.,
-  ##          function(x) 
-  ##            x %>% html_nodes("tr") %>%
-  ##            sapply(.,
-  ##                   function(x)
-  ##                     c(x %>% html_nodes("td") %>% html_text,
-  ##                       x %>% html_nodes("td") %>% html_nodes("a") %>% html_attr("href"))
-  ##                   ),
-  ##          simplify=FALSE) %>%
-  ##   unlist(recursive = FALSE) %>%
-  ##   do.call(rbind, .) %>%
-  ##   as.data.frame %>%
-  ##   set_names(paste0("x", seq_len(ncol(.))));
-  ## z  <- z[grepl("^Table|All Time Series", z$x1, ignore.case=TRUE), ] %>%
-  ##   replace(., . == "", NA_character_) %>%
-  ##   select_if(function(x) any(!is.na(x))) %>%
-  ##   set_names("table_name", "path1", "path2");
-  ## return(z);
 }
 
 
@@ -332,7 +308,7 @@ abs_read_tss_ <- function(file, type="tss") {
     tableno_name <- sapply(1:header_row,
                            function(i)
                                grep(regex_table_name,
-                                    paste(.meta[i,], collapse=" "), ##  %>% unlist() %>% .[complete.cases(.)]
+                                    paste(.meta[i,], collapse=" "),
                                     ignore.case=TRUE, value=TRUE));
     tableno_name <- gsub("(\\s*NA)+", "", sub(regex_table_name, "\\1|\\3", unlist(tableno_name), ignore.case=TRUE));
     tableno_name <- trimws(unlist(strsplit(tableno_name, split="\\|")));

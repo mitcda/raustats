@@ -48,8 +48,8 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 }
 
 
-### Function: lastDay
-#' @name lastDay
+### Function: last_day
+#' @name last_day
 #' @title Set Date object to the last day of the month
 #' @description Function to change the date of a Date object to the last day of the month
 #' @importFrom lubridate ceiling_date days
@@ -59,12 +59,12 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 #' @examples
 #' Date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
 #' last_day(Date)
-lastDay <- function(date)
+last_day <- function(date)
   ceiling_date(date, "month") - days(1);
 
 
-### Function: finYear
-#' @name finYear
+### Function: fin_year
+#' @name fin_year
 #' @title Create financial year date object
 #' @description Function to create a financial year date object
 #' @param date date object
@@ -73,8 +73,8 @@ lastDay <- function(date)
 #' @export
 #' @examples
 #' x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-#' finYear(x)
-finYear <- function(date, ending="Jun")
+#' fin_year(x)
+fin_year <- function(date, ending="Jun")
 {
   if (is.character(ending)) {
     if (!substr(ending,1,3) %in% month.abb)
