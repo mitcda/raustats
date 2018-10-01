@@ -17,7 +17,7 @@ excel2Date <-
 #' @description Function to convert dates formatted as year-quarter to date-format objects
 #' @param x Year-quarter date format
 #' @param base.month Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.
-#' @param format The input date format. Default is "%Y-Q%q".
+#' @param format The input date format. Default is "\%Y-Q\%q".
 #' @return This function returns a Date format object.
 #' @export
 #' @examples

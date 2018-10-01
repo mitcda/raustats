@@ -4,7 +4,7 @@
 #' @description Function to capitalise strings.
 #' @param s Character vector or string
 #' @param split Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.
-#' @param strict The input date format. Default is "%Y-Q%q".
+#' @param strict The input date format. Default is "\%Y-Q\%q".
 #' @return Function returns a character vector object.
 #' @note This function 
 #' @examples
@@ -33,7 +33,7 @@ capwords <- function (s, split = c("\\W"), strict = FALSE)
 #' @description Function to capitalise strings
 #' @param s Character vector or string
 #' @param split Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.
-#' @param strict The input date format. Default is "%Y-Q%q".
+#' @param strict The input date format. Default is "\%Y-Q\%q".
 #' @return Function returns a character vector object.
 #' @note This
 #' @examples

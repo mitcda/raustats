@@ -11,7 +11,7 @@ capwords(s, split = c("\\\\W"), strict = FALSE)
 
 \item{split}{Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.}
 
-\item{strict}{The input date format. Default is "%Y-Q%q".}
+\item{strict}{The input date format. Default is "\%Y-Q\%q".}
 }
 \value{
 Function returns a character vector object.
