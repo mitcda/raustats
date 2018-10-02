@@ -162,8 +162,9 @@ rba_read_tss <- function(files)
   x <- lapply(files,
               function(file)
                 rba_read_tss_(file)
-              ) %>%
-    do.call(rbind, .)
+              )
+  z <- do.call(rbind, x);
+  return(z)
 }
 
 
