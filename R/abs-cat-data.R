@@ -56,7 +56,7 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
   cat_tables <- sapply(.paths,
                        function(x) {
                            .url <- jump_to(s, x)
-                           z <- get_abs_cat_tables(.url$url)
+                           z <- abs_cat_tables(.url$url)
                        },
                        simplify=FALSE);
   
