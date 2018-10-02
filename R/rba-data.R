@@ -6,17 +6,13 @@ rba_stats_url <- function()
 #' @name rba_table_cache
 #' @title Return list of RBA tables
 #' @description Function to return an updated list of data tables available from the RBA website.
-#' @importFrom rvest html_session follow_link jump_to html_attr html_text html_nodes
+#' @importFrom rvest html_session jump_to html_attr html_text html_nodes
 #' @return data frame in long format
 #' @export
 #' @examples
 #'   rba_tablecache <- rba_table_cache();
 rba_table_cache <- function()
 {
-    ## DEBUG <- FALSE
-    ## if (DEBUG) {
-    ##     library(magrittr); library(dplyr); library(purrr); library(rvest); library(urltools);
-    ## }
     ## Create ABS URL and open session 
     url <- file.path(rba_stats_url());
     s <- html_session(url);
@@ -79,14 +75,9 @@ rba_table_cache <- function()
 #'
 rba_search <- function(pattern, fields="table_name", update_cache=FALSE)
 {
-    DEBUG <- FALSE
-    if (DEBUG) {
-        library(magrittr); library(dplyr); library(purrr); library(rvest); library(urltools);
-        table_code = "A1";
-    }
+    
     if (missing(pattern))
         stop("No pattern supplied")
-
     if (update_cache) {
         rba_cache <- rba_table_cache();
     } else {
@@ -113,13 +104,6 @@ rba_search <- function(pattern, fields="table_name", update_cache=FALSE)
 #'    
 rba_data <- function(table_code, series_type="statistical tables", update_cache=FALSE)
 {
-    ## DEBUG <- FALSE
-    ## if (DEBUG) {
-    ##     library(magrittr); library(dplyr); library(purrr); library(rvest); library(urltools);
-    ##     table_code = "A1";
-    ##     series_type="statistical tables";
-    ##     update_cache=FALSE;
-    ## }
     ## Update RBA table list
     if (update_cache) {
         cat("Updating RBA table cache.\n");
@@ -187,9 +171,9 @@ rba_read_tss_ <- function(file)
   metadata <- metadata[complete.cases(metadata),];            ## Drop NA rows
   metadata <- as.data.frame(t(metadata), stringsAsFactors=FALSE);
   rownames(metadata) <- seq_len(nrow(metadata));
-  names(metadata) <- gsub("\\s","_",
-                          gsub("\\.", "",
-                               metadata[1,]));                ## Rename variables
+  names(metadata) <- tolower(gsub("\\s","_",
+                                  gsub("\\.", "",
+                                       metadata[1,])));       ## Rename variables
   metadata <- metadata[-1,];
   metadata$Publication_date  <- excel2Date(as.integer(metadata$Publication_date));
   ## -- Extract table name --
@@ -212,18 +196,19 @@ rba_read_tss_ <- function(file)
                                                   function(i)
                                                       grepl("series\\s*id", paste(z[i,], collapse=" "), 
                                                             ignore.case=TRUE)));
-                       names(z) <- gsub("\\s","_", gsub("\\.","", z[header_row,])); ## Rename variables
-                       names(z) <- sub("Series_ID", "date",
+                       names(z) <- tolower(gsub("\\s","_",
+                                                gsub("\\.","", z[header_row,]))); ## Rename variables
+                       names(z) <- sub("series_id", "date",
                                        names(z), ignore.case=TRUE);           ## Rename Series_ID field
                        z <- z[-(1:header_row), !is.na(names(z))];             ## Drop empty columns
-                       z <- gather(z, Series_ID, Value, -date, convert=TRUE); ## Transform to key:value pairs
+                       z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform to key:value pairs
                        z <- transform(z,
                                       date = excel2Date(as.integer(date)),
-                                      Value = as.numeric(Value));
+                                      value = as.numeric(value));
                        return(z);
                  });
   data <- do.call(rbind, data);
-  data <- left_join(data, metadata, by="Series_ID");
+  data <- left_join(data, metadata, by="series_id");
   data <- data[complete.cases(data),];
   names(data) <- tolower(names(data));
   return(data);

@@ -38,53 +38,47 @@ metrics. Key RBA statistics include:
   * Exchange rates
   * Inflation and inflation expectations.
 
+The ABS and RBA currently make their statistics primarily available
+through Excel and/or CSV spreadsheets. This is not machine readable,
 
-The ABS and RBA make their statistics primarily available through
-Excel and/or CSV spreadsheets. The functions 
-
-<!-- UP TO HERE -->
+... The functions
+<!-- UP TO HERE --> [TO BE COMPLETED]
 
 
 
- The
-World Bank themselves, provide a well structured RESTful
-API^[<http://data.worldbank.org/developers>]. While this API is very
-useful for integration into web services and other high-level
-applications, it becomes quickly overwhelming for researchers who have
-neither the time nor the expertise to develop software to interface
-with the API. This leaves the researcher to rely on manual bulk
-downloads of spreadsheets of the data they are interested in. This too
-is can quickly become overwhelming, as the work is manual, time
-consuming, and not easily reproducible. The goal of the `raustats`
-R-package is to provide a bridge between these alternatives and allow
-researchers to focus on their research questions and not the question
-of accessing the data. The `raustats` package allows researchers to
-quickly search and download the data of their particular interest in a
-programmatic and reproducible fashion; this facilitates a seamless
-integration into their workflow and allows analysis to be quickly
-rerun on different areas of interest and with realtime access to the
+The ABS also has a Beta API access portal:
+[ABS.Stat](http://stat.data.abs.gov.au/), which provides access to a
+truncated range of ABS data and statistics. This package also provides
+some functions to search and download data from the ABS.Stat
+API. Please note that as the API is currently in development, changes
+in the API backend may break the functions provided in this package.
+
+The `raustats` package allows researchers to quickly search and
+download ABS and RBA data of interest in a programmatic and
+reproducible fashion. This facilitates seamless integration into
+projects and enables analysis to be more seamlessly re-run using the
 latest available data.
 
 
-<!-- 
 ### Main features of the `raustats` package: 
 
-- Uses version 2 of the World Bank API that provides access to more indicators and metadata than the previous API version
-- Access to all annual, quarterly, and monthly data available in the API
-- Support for searching and downloading data in multiple languages
-- Access to the World Bank Data Catalog Metadata, providing among other information; update schedules and supported languages
-- Ability to return `POSIXct` dates for easy integration into plotting and time-series analysis techniques
-- Returns data in either long (default) or wide format for direct integration with packages like `ggplot2` and `dplyr`
-- Support for Most Recent Value queries
-- Support for `grep` style searching for data descriptions and names
-- Ability to download data not only by country, but by aggregates as well, such as High Income or South Asia
-- Ability to specify `countries_only` or `aggregates` when querying data
-
--->
+  * Access to all time series data in the ABS statistical catalogue
+    and the RBA website.
+  * Access to the ABS Beta API: ABS.Stat 
+  * Ability to return `POSIXct` dates for easy integration into
+    plotting and time-series analysis techniques 
+  * Returns data in long (tidy) format for direct
+    integration with packages like `ggplot2`, `tidyr` and `dplyr`
+  * Support for Most Recent Value queries
+  * Support for `grep` style searching for data descriptions and names
 
 
 
 # Getting Started
+
+## Downloading ABS Catalogue data
+
+<!-- UP TO HERE -->
 
 Unless you know the country and indicator codes that you want to
 download the first step would be searching for the data you are
