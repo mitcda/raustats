@@ -107,7 +107,7 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
   z <- sapply(sel_urls, abs_download_data);
   library(readxl)
   zz <- sapply(z, abs_unzip_files);
-  data <- sapply(zz, read_abs);
+  data <- sapply(zz, abs_read_tss);
   data <- do.call(rbind, data);
   return(data);
 }
