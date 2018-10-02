@@ -5,7 +5,7 @@ abs_ausstats_url <- function()
 #' @name abs_cat_data
 #' @title Return data files from a specified url
 #' @description TBC
-#' @importFrom rvest html_session follow_link html_attr
+#' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
 #' @importFrom urltools url_parse url_compose
 #' @param series Character vector specifying one or more ABS collections or catalogue numbers to download.

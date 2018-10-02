@@ -6,7 +6,7 @@ rba_stats_url <- function()
 #' @name rba_table_cache
 #' @title Return list of RBA tables
 #' @description Function to return an updated list of data tables available from the RBA website.
-#' @importFrom rvest html_session follow_link html_attr html_text html_nodes
+#' @importFrom rvest html_session follow_link jump_to html_attr html_text html_nodes
 #' @return data frame in long format
 #' @export
 #' @examples
@@ -156,7 +156,6 @@ rba_data <- function(table_code, series_type="statistical tables", update_cache=
 #' @examples
 #'   file <- file.path("data-raw", "a01whist-summary.xls");
 #'   rba_a1_summ <- rba_read_tss(file);
-#'   ABS.5206001 %>% as.data.frame %>% head;
 rba_read_tss <- function(files)
 {
   x <- lapply(files,
