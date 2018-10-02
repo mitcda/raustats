@@ -39,9 +39,11 @@ metrics. Key RBA statistics include:
   * Inflation and inflation expectations.
 
 
-The ABS and RBA statistics available 
+The ABS and RBA make their statistics primarily available through
+Excel and/or CSV spreadsheets. The functions 
 
 <!-- UP TO HERE -->
+
 
 
  The
@@ -53,10 +55,10 @@ neither the time nor the expertise to develop software to interface
 with the API. This leaves the researcher to rely on manual bulk
 downloads of spreadsheets of the data they are interested in. This too
 is can quickly become overwhelming, as the work is manual, time
-consuming, and not easily reproducible. The goal of the `wbstats`
+consuming, and not easily reproducible. The goal of the `raustats`
 R-package is to provide a bridge between these alternatives and allow
 researchers to focus on their research questions and not the question
-of accessing the data. The `wbstats` R-package allows researchers to
+of accessing the data. The `raustats` package allows researchers to
 quickly search and download the data of their particular interest in a
 programmatic and reproducible fashion; this facilitates a seamless
 integration into their workflow and allows analysis to be quickly
@@ -105,7 +107,7 @@ called `wb_cachelist` and provides a snapshot of available countries,
 indicators, and other relevant information. `wb_cachelist` is by
 default the the source from which `wbsearch()` and `wb()` uses to find
 matching information. The structure of `wb_cachelist` is as follows
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 str(wb_cachelist, max.level = 1)
@@ -123,7 +125,7 @@ returned from `wbcache()`. It is always a good idea to use this
 updated information to insure that you have access to the latest
 available information, such as newly added indicators or data sources.
 
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 # default language is english
@@ -147,7 +149,7 @@ matching rows. The `indicatorID` values are inputs into `wb()`, the
 function for downloading the data. To return all columns for the
 `indicators` data frame, you can set `extra = TRUE`.
 
-```{r}
+```{r eval=FALSE}
 library(wbstats)
 
 unemploy_vars <- wbsearch(pattern = "unemployment")
@@ -156,7 +158,7 @@ head(unemploy_vars)
 ```
 
 Other fields can be searched by simply changing the `fields` parameter. For example
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 blmbrg_vars <- wbsearch(pattern = "Bloomberg", fields = "sourceOrg")
@@ -165,7 +167,7 @@ head(blmbrg_vars)
 ```
 
 Regular expressions are also supported.
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 # 'poverty' OR 'unemployment' OR 'employment'
@@ -186,7 +188,7 @@ the data source does not have a translation for a certain field or
 indicator then the result is `NA`, this may result in a varying number
 matches depending upon the language you select.
 
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 # download wbcache in spanish
@@ -203,7 +205,7 @@ head(gini_vars)
 Once you have found the set of indicators that you would like to explore further, the next step is downloading the data with `wb()`. The following examples are meant to highlight the different ways in which `wb()` can be used and demonstrate the major optional parameters.
 
 The default value for the `country` parameter is a special value of `all` which as you might expect, returns data on the selected `indicator` for every available country or region.
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 # Population, total
@@ -213,7 +215,7 @@ head(pop_data)
 ```
 
 If you are interested in only some subset of countries or regions you can pass along the specific codes to the `country` parameter. The country and region codes that can be passed to the `country` parameter correspond to the coded values from the `iso2c`, `iso3c`, `regionID`, `adminID`, and `incomeID` from the `countries` data frame in `wb_cachelist` or the return of `wbcache()`. Any values from the above columns can mixed together and passed to the same call
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 # Population, total
@@ -225,7 +227,7 @@ head(pop_data)
 ```
 
 Queries with multiple indicators return the data in a long data format by default
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 pop_gdp_long <- wb(country = c("US", "NO"), indicator = c("SP.POP.TOTL", "NY.GDP.MKTP.CD"),
@@ -235,7 +237,7 @@ head(pop_gdp_long)
 ```
 
 or a wide format if parameter `return_wide = TRUE`. Note that to necessitate a this transformation the `indicator` column is dropped.
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 pop_gdp_wide <- wb(country = c("US", "NO"), indicator = c("SP.POP.TOTL", "NY.GDP.MKTP.CD"),
@@ -246,7 +248,7 @@ head(pop_gdp_wide)
 
 ### Using `mrv`
 If you do not know the latest date an indicator you are interested in is available for you country you can use the `mrv` instead of `startdate` and `enddate`. `mrv` stands for most recent value and takes a `integer` corresponding to the number of most recent values you wish to return
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 eg_data <- wb(country = c("IN"), indicator = 'EG.ELC.ACCS.ZS', mrv = 1)
@@ -255,7 +257,7 @@ eg_data
 ```
 
 You can increase this value and it will return no more than the `mrv` value. However, if `mrv` is greater than the number of available data it will return less
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 eg_data <- wb(country = c("IN"), indicator = 'EG.ELC.ACCS.ZS', mrv = 10)
@@ -272,7 +274,7 @@ the last observed value carried forward.The only difference in the
 data call below from the one directly above is `gapfill = TRUE` (the
 default is `FALSE`). Note the very important difference
 
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 eg_data <- wb(country = c("IN"), indicator = 'EG.ELC.ACCS.ZS', mrv = 10, gapfill = TRUE)
@@ -295,7 +297,7 @@ represents. This option requires the use of the package `lubridate (>=
 1.5.0)`. If `POSIXct = TRUE` and `lubridate (>= 1.5.0)` is not
 available, a `warning` is produced and the option is ignored
 
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 oil_data <- wb(indicator = "CRUDE_BRENT", mrv = 10, freq = "M", POSIXct = TRUE)
@@ -353,7 +355,7 @@ those dates. In other words the `mrv` value is not determined on a
 country by country basis, rather it is determined across the entire
 selection.
 
-```{r}
+```{r eval=FALSE}
 library(raustats)
 
 per_data_1 <- wb(country = "all", indicator = 'per_lm_ac.cov_pop_tot', mrv = 1)
@@ -366,7 +368,7 @@ per_data_2
 
 ## Searching in other languages
 Not all data sources support all languages. If an indicator does not have a translation for a particular language, the non-supported fields will return as `NA`. This could potentially result in a differing number of matching indicators from `wbsearch()`
-```{r}
+```{r eval=FALSE}
 
 library(raustats)
 

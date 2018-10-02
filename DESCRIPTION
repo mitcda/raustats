@@ -18,7 +18,3 @@ LazyData: TRUE
 RoxygenNote: 6.1.0
 VignetteBuilder: knitr
 NeedsCompilation: no
-
-
-Imports: httr, jsonlite, tidyr
-Suggests: ggplot2, knitr, lubridate (>= 1.5.0)
