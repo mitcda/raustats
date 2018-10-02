@@ -338,13 +338,3 @@ abs_read_tss_ <- function(file, type="tss") {
     names(data) <- tolower(names(data));
     return(data);
 }
-
-
-### Update
-
-## Further, the Engineering Construction tables seem to require that
-## the sub(grepTableName, ...) has ignore.case = TRUE (to capture
-## "TABLE").
-
-## Can I save these changes to the files in Modelling\abs_data, or
-## should I place a copy elsewhere?
