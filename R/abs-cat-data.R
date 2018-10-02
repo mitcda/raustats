@@ -104,7 +104,7 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
                      ## Replace all spaces with '%20'
                      gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
   
-  z <- sapply(sel_urls, download_abs_data);
+  z <- sapply(sel_urls, abs_download_data);
   library(readxl)
   zz <- sapply(z, unzip_abs_files);
   data <- sapply(zz, read_abs);
