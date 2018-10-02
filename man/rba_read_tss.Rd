@@ -18,5 +18,4 @@ Functions to extract data from a specified RBA time series spreadsheet.
 \examples{
   file <- file.path("data-raw", "a01whist-summary.xls");
   rba_a1_summ <- rba_read_tss(file);
-  ABS.5206001 \%>\% as.data.frame \%>\% head;
 }
