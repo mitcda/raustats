@@ -3,4 +3,6 @@
 * The ABS Engineering Construction tables seem to require that the
   sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - Complete 15/09/2018
 
+* abs_cat_tables function is downloading tables twice
+
 

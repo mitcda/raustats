@@ -52,6 +52,23 @@ test_that("abs_cat_tables returns a valid data.frame",
 })
 
 
+test_that("abs_local_filename created valid file name",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  test_all <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&all_time_series_workbooks.zip&5206.0&Time%20Series%20Spreadsheet&23EA5772544F27BECA2582FE001507D1&0&Jun%202018&05.09.2018&Latest"
+  test_table_xls <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.xls&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
+  test_table_zip <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.zip&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
+
+  expect_match(abs_local_filename(test_all), "^\\w+\\.(zip|xlsx*)$");
+  expect_match(abs_local_filename(test_table_xls), "^\\w+\\.(zip|xlsx*)$");
+  expect_match(abs_local_filename(test_table_zip), "^\\w+\\.(zip|xlsx*)$");
+})
+
+
+
 test_that("abs_cat_tables fails well",
 {
   skip_on_cran()
@@ -72,26 +89,9 @@ test_that("abs_cat_data returns valid data frame",
 
   library(rvest); library(readxl); library(tidyr); library(dplyr);
 
-  series <- "5206.0";
-  ## -- Previous tables --
-  tables <- c("Table 1", "Table 2");
-  releases <- c("Mar 2017", "Dec 2016", "Sep 2016", "Jun 2016", "Mar 2016");
-
-  ## Following commands presently fail
-
-  expect_s3_class(x <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2")), "data.frame");
+  expect_s3_class(abs_cat_data("5206.0", tables="Table 1"), "data.frame");
   expect_s3_class(abs_cat_data("5206.0", tables=c("Table 1", "Table 2")), "data.frame");
-
-  expect_s3_class(abs_cat_data("5206.0"), "data.frame");
-
+  expect_s3_class(abs_cat_data("5206.0", tables="all"), "data.frame");
   expect_s3_class(abs_cat_data("5206.0", tables="Table 1", release="Dec 2017"), "data.frame");
-
-  
-  # TO DO
-  DEBUG <- FALSE
-  if (DEBUG) {
-    ## -- Current tables --
-    ## tables <- "All";
-    ## releases <- "Latest";
-  }
+  expect_s3_class(abs_cat_data("5206.0", tables="all", release="Dec 2016"), "data.frame");
 })

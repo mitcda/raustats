@@ -45,16 +45,15 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
     .paths <- html_attr(.paths, "href");
   }
   ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
-  cat_tables <- sapply(.paths,
+  cat_tables <- lapply(.paths,
                        function(x) {
                          .url <- jump_to(s, x)
                          z <- abs_cat_tables(.url$url)
-                       },
-                       simplify=FALSE);
+                       });
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
     ## If 'all' tables, download all
-    sel_tables <- sapply(cat_tables,
+    sel_tables <- lapply(cat_tables,
                          function(x)
                            if (any(grepl("^all time series.*", x$table_name, ignore.case=TRUE))) {
                              ## Check whether all tables provided as single compressed archive and use
@@ -62,21 +61,19 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
                            } else {
                              ## Else load all tables
                              x
-                           },
-                         simplify=FALSE)
+                           });
   } else {
     ## Else, return only selected tables
-    sel_tables <- sapply(cat_tables,
+    sel_tables <- lapply(cat_tables,
                          function(x) {
                            x[grepl(paste0("^(",
                                           paste(paste0(tables, "\\W.+" ), collapse="|"),
                                           ")"),
                                    x$table_name, ignore.case=TRUE),]
-                         },
-                         simplify=FALSE);
+                         });
   }
   ## Select only the user specified tables ('sel_tables')
-  sel_paths <- sapply(sel_tables,
+  sel_paths <- lapply(sel_tables,
                       function(x)
                         apply(x, 1, 
                               function(y) {
@@ -86,17 +83,17 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
                                 } else {
                                   grep("\\.xlsx*", unlist(y), ignore.case=TRUE, value=TRUE)
                                 }
-                              }),
-                      simplify=FALSE);
+                              }));
   ## Create URLs for selected files
   sel_urls <- paste0(options()$raustats["abs_domain"],
                      ## Replace all spaces with '%20'
                      gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
-  
-  z <- sapply(sel_urls, abs_download_data);
-  zz <- sapply(z, abs_unzip_files);
-  data <- sapply(zz, abs_read_tss);
+  ## Combine data into 
+  z <- lapply(sel_urls, abs_download_data);
+  z <- lapply(z, abs_unzip_files);
+  data <- lapply(z, abs_read_tss);
   data <- do.call(rbind, data);
+  rownames(data) <- seq_len(nrow(data));
   return(data);
 }
 
@@ -112,21 +109,29 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- abs_cat_data("3101.0");
-#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
-#'    z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+#' 
 abs_download_data <- function(data_urls) {
-  ## Create local file names for storin 
-  local_filenames <- sprintf("%s_%s.%s",
-                             sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
-                             sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", data_urls),
-                             sub("^.+&(\\d+\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
+  local_filenames <- abs_local_filename(data_urls);
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, mode="wb"),
          data_urls,
          file.path(tempdir(), local_filenames));
   ## Return results
   return(file.path(tempdir(), local_filenames));
+}
+
+#' @name abs_local_filename
+#' @title Create local file names for storing downloaded ABS data files
+#' @description Function to create local filename from web-based file name
+#' @param url Character vector specifying one or more ABS data URLs.
+#' @return Returns a local file names (character vector) in which downloaded files will be saved.
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+abs_local_filename <- function(url)
+{
+  sprintf("%s_%s.%s",
+          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
+          sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", data_urls),
+          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
 }
 
 
@@ -184,14 +189,13 @@ abs_cat_tables <- function(url)
   ## and associated links.
   l <- follow_link(s, options()$raustats["abs_downloads_regex"])
   ht <- html_nodes(html_nodes(l, "table"), "table")
-  nodes <- sapply(
+  nodes <- lapply(
     sapply(ht,
            function(x) 
              html_nodes(x, "tr")),
     function(x)
       c(html_text(html_nodes(x, "td")),
-        html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")),
-    simplify=FALSE);
+        html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
   dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
   names(dt) <- paste0("x", seq_len(ncol(dt)));
   dt <- dt[grepl("^Table|All Time Series", dt$x1, ignore.case=TRUE), ];
