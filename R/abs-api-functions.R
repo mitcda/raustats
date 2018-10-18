@@ -115,379 +115,348 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   x <- abs_datasets("CPI");
+#'   x <- abs_metadata("CPI");
 abs_metadata <- function(id, lang="en")
 {
   DEBUG <- FALSE
   if (DEBUG) {
-    library(testthat);  library(rvest); library(xml2);
-    id <- "CPI";
+    id <- "CPI"
+    lang <- "en"
   }
-  
   ## Return xml document of ABS indicators
   url <- abs_api_call(path=abs_api_urls()$datastr_path, args=id);
   x <- abs_call_api(url);
 
-  ## Return all CodeLists
+  ## Return all codelists
   i_codelist <- grep("codelist", xml_name(xml_children(x)), ignore.case=TRUE);
   n_codelists <- xml_length(xml_child(x, i_codelist));
-
   ## Dataset dimensions and codes
-  codelists_attrs <- do.call(rbind,
-                             lapply(seq_len(n_codelists),
-                                    function(i)
-                                      xml_attrs(xml_child(xml_child(x, 2),i))
-                                    ));
-  codelists_attrs <- as.data.frame(codelists_attrs, stringsAsFactors = FALSE);
-
-  ## Dataset content
+  codelists_attrs <- as.data.frame(
+    do.call(rbind,
+            lapply(seq_len(n_codelists),
+                   function(i)
+                     xml_attrs(xml_child(xml_child(x, 2),i))
+                   )),
+    stringsAsFactors = FALSE);
+  ## Codelist content
   codelists <- lapply(seq_len(n_codelists),
                       function(i) {
-                        y <- xml_child(xml_child(x, i_codelist), i);
-                        J <- which(xml_name(xml_children(y)) == "Code");
-                        codelist <- lapply(J,
-                                           function(j)
-                                             list(Code = xml_attr(xml_child(y, j),
-                                                                  grep("value", names(xml_attrs(xml_child(y, j))),
-                                                                       ignore.case=TRUE, value=TRUE)),
-                                                  Description = xml_text(xml_contents(xml_child(y, j)))[
-                                                    xml_name(xml_children(xml_child(y, j))) ==
-                                                    grep("description",
-                                                         xml_name(xml_children(xml_child(y, j))),
-                                                         ignore.case=TRUE, value=TRUE) &
-                                                    xml_attrs(xml_children(xml_child(y, j))) == lang])
-                                           );
-                        codelist <- as.data.frame(do.call(rbind, codelist), stringsAsFactors=FALSE);
-                      })
-  names(codelists) <- c(codelists_attrs$id);
-  ## Add conceptRef attributes
-  i_keyfamilies <- grep("keyfamilies", lvl1_names, ignore.case=TRUE);
-  n_keyfamilies <- xml_length(xml_child(x, i_keyfamilies));
-  z <- xml_children(xml_child(xml_child(x, i_keyfamilies),1));
-  i_components <- grep("component", xml_name(z), ignore.case=TRUE);
-  keyfamilies <- as.data.frame(list(codelist = xml_attr(xml_contents(z[i_components]), "codelist"),
-                                    conceptRef = xml_attr(xml_contents(z[i_components]), "conceptRef")),
-                               stringsAsFactors = FALSE);
-  keyfamilies <- keyfamilies[complete.cases(keyfamilies),];
-  attr(codelists, "conceptRef") <- keyfamilies$conceptRef[match(names(codelists),
-                                                                keyfamilies$codelist)];
+                        ## Note 'xml_ns_strip' essential to extracting Description
+                        y <- xml_ns_strip(xml_child(xml_child(x, i_codelist), i));
+                  
+                        codelist <- data.frame(
+                          Code = xml_text(xml_find_all(xml_children(y), "@value")),
+                          Description = xml_text(xml_find_all(y,
+                                                              sprintf(".//Code//Description[@xml:lang='%s']",
+                                                                      lang))),
+                          stringsAsFactors=FALSE);
+                        ## -- OLD CODE (R lapply method - works) --
+                        ## J <- which(xml_name(xml_children(y)) == "Code");
+                        ## codelist <- lapply(J,
+                        ##                    function(j)
+                        ##                      list(Code = xml_attr(xml_child(y, j),
+                        ##                                           grep("value", names(xml_attrs(xml_child(y, j))),
+                        ##                                                ignore.case=TRUE, value=TRUE)),
+                        ##                           Description = xml_text(xml_contents(xml_child(y, j)))[
+                        ##                             xml_name(xml_children(xml_child(y, j))) ==
+                        ##                             grep("description",
+                        ##                                  xml_name(xml_children(xml_child(y, j))),
+                        ##                                  ignore.case=TRUE, value=TRUE) &
+                        ##                             xml_attrs(xml_children(xml_child(y, j))) == lang])
+                        ##                    );
+                        ## codelist <- as.data.frame(do.call(rbind, codelist), stringsAsFactors=FALSE);
+                      });
+  ## Return components
+  i_keyfamilies <- grep("keyfamilies", xml_name(xml_children(x)), ignore.case=TRUE);
+  z <- xml_parent(xml_find_all(xml_children(xml_child(x, i_keyfamilies)),
+                               ".//@codelist"));
+  components <- data.frame(codes = xml_text(xml_find_all(z, ".//@codelist")),
+                           conceptRef = xml_text(xml_find_all(z, ".//@conceptRef")),
+                           type = xml_name(z),
+                           stringsAsFactors=FALSE);
+  ## Return concepts
+  i_concepts <- grep("concepts", xml_name(xml_children(x)), ignore.case=TRUE);
+  w <- xml_children(xml_child(x, i_concepts));
+  concepts <- data.frame(concept = xml_attr(xml_find_all(w, "."), "id"),
+                         agencyID = xml_attr(xml_find_all(w, "."), "agencyID"),
+                         conceptRef=xml_text(xml_find_all(w, sprintf(".//Name[@xml:lang='%s']", lang))),
+                         stringsAsFactors=FALSE);
+  ## Set names/attributes
+  names(codelists) <- components$codes;
+  ## Add dataset and dataset_desc attributes
+  attr(codelists, "concept") <- components$conceptRef;
+  attr(codelists, "description") <- concepts$conceptRef[match(components$conceptRef, concepts$concept)];
+  attr(codelists, "type") <- components$type;
   return(codelists);
 }
 
 
-## -- UP TO HERE --
-
-#' @name abs_data
-#' @title Return data for a specified data series
+#' @name abs_cache
+#' @title Download updated list of datasets and dimensions information from the ABS API
 #' @description TBC
-#' @importFrom rvest html_session follow_link html_attr jump_to
-#' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
-#' @param series Character vector specifying one or more ABS collections or catalogue numbers to
-#'   download.
-#' @param tables A character vector of regular expressions denoting tables to download. The default
-#'   ('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list
-#'   to specify different table sets for each specified ABS catalogue number.
-#' @param releases Date or character string object specifying the month and year denoting which
-#'   release to download. Default is "Latest", which downloads the latest available data. See
-#'   examples for further details.
-#' @param type One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section
-#'   spreadsheet.
-#' @return data frame in long format
-#' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-#' @examples
-#'    x <- abs_cat_data("3101.0");
-#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
-#'    z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
-abs_data <- function(id, filter
-                     tables="All", releases="Latest", type="tss")
-{
-
-  
-  ## Create ABS URL and open session 
-  url <- file.path(abs_ausstats_url(), series);
-  s <- html_session(url);
-  
-  releases <- unique(tolower(releases));
-  if (length(releases) == 1 && releases == "latest") {
-    .paths <- "";
-  } else {
-    ## Get path to 'Past & Future Releases' page
-    .paths <- html_nodes(s, "a");
-    .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
-    .paths <- html_attr(.paths, "href");
-    s <- jump_to(s, .paths)
-    .paths <- html_nodes(s, "a");
-    .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
-    .paths <- html_attr(.paths, "href");
-  }
-  ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
-  cat_tables <- lapply(.paths,
-                       function(x) {
-                         .url <- jump_to(s, x)
-                         z <- abs_cat_tables(.url$url)
-                       });
-  ## Select only the user specified tables ('sel_tables')
-  if (length(tables) == 1 && tolower(tables) == "all") {
-    ## If 'all' tables, download all
-    sel_tables <- lapply(cat_tables,
-                         function(x)
-                           if (any(grepl("^all time series.*", x$table_name, ignore.case=TRUE))) {
-                             ## Check whether all tables provided as single compressed archive and use
-                             x[grepl("^all time series.*", x$table_name, ignore.case=TRUE),]
-                           } else {
-                             ## Else load all tables
-                             x
-                           });
-  } else {
-    ## Else, return only selected tables
-    sel_tables <- lapply(cat_tables,
-                         function(x) {
-                           x[grepl(paste0("^(",
-                                          paste(paste0(tables, "\\W.+" ), collapse="|"),
-                                          ")"),
-                                   x$table_name, ignore.case=TRUE),]
-                         });
-  }
-  ## Select only the user specified tables ('sel_tables')
-  sel_paths <- lapply(sel_tables,
-                      function(x)
-                        apply(x, 1, 
-                              function(y) {
-                                ## if zip in path1/path2, select zip file, else select xls(x) file
-                                if (any(grepl("\\.zip", y, ignore.case=TRUE))) {
-                                  grep("\\.zip", unlist(y), ignore.case=TRUE, value=TRUE)
-                                } else {
-                                  grep("\\.xlsx*", unlist(y), ignore.case=TRUE, value=TRUE)
-                                }
-                              }));
-  ## Create URLs for selected files
-  sel_urls <- paste0(options()$raustats["abs_domain"],
-                     ## Replace all spaces with '%20'
-                     gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
-  ## Combine data into 
-  z <- lapply(sel_urls, abs_download_data);
-  z <- lapply(z, abs_unzip_files);
-  data <- lapply(z, abs_read_tss);
-  data <- do.call(rbind, data);
-  rownames(data) <- seq_len(nrow(data));
-  return(data);
-}
-
-
-#' @name abs_download_data
-#' @title Function to download files from the ABS website and store locally
-#' @description TBC
-#' @importFrom utils download.file unzip
-#' @param data_urls Character vector specifying one or more ABS data
-#'     URLs.
-#' @return Downloads data from the ABS website and returns a character
-#'     vector listing the location where files are saved.
-#' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-#' @examples
+#' @param lang Language in which to return the results. If \code{lang} is unspecified, English
+#'   ('en') is the default.
+#' @param progress Report download progress. Arguments accepts integer, logical or NULL. Set
+#'   \code{progress} to \code{NULL} (default) to disable progress
+#'   reporting. Otherwise set progress equal to integer value frequency.
 #' 
-abs_download_data <- function(data_urls) {
-  local_filenames <- abs_local_filename(data_urls);
-  ## -- Download files --
-  mapply(function(x, y) download.file(x, y, mode="wb"),
-         data_urls,
-         file.path(tempdir(), local_filenames));
-  ## Return results
-  return(file.path(tempdir(), local_filenames));
-}
+#' @return A list of available ABS data series each comprising a list of available data dimensions,
+#'   typically containing:
+#'   \itemize{
+#'     \item \code{MEASURE}: Measurement units (e.g. Persons, $ million, Index, Percentage change, etc.)
+#'     \item \code{REGION}: Australian region name
+#'     \item \code{INDEX}: Data item code and description
+#'     \item \code{TSEST}: Time series estimate type (e.g. Original, Seasonally Adjusted, etc.)
+#'     \item \code{FREQUENCY}: Available data frequency (Monthly, Quarterly, Annual)
+#'     \item \code{TIME}: Available observation period index
+#'     \item \code{OBS_STATUS}: Observation status notes code and description
+#'       (e.g. 'r' - revised, 'q' - not available, 'u' - not applicable)
+#'     \item \code{TIME_FORMAT}: Available time format (e.g. Annual, Quarterly, Monthly, Daily).
+#'   }
+#' 
+#' @note Saving the results of this function and using it as the cache parameter in \code{abs_stats}
+#'   and \code{abs_search} replaces the default cached version \code{abs_cachelist} that comes with
+#'   the package. Note, however, that this function can take a long time to extract metadata for all
+#'   ABS datasets (e.g. approximately 20 minutes for 400 data sets), so use sparingly. For this
+#'   reason, we also recommend specifying a progress update using the \code{progress} argument
+#'   (default: 10).
 
-#' @name abs_local_filename
-#' @title Create local file names for storing downloaded ABS data files
-#' @description Function to create local filename from web-based file name
-#' @param url Character vector specifying one or more ABS data URLs.
-#' @return Returns a local file names (character vector) in which downloaded files will be saved.
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-abs_local_filename <- function(url)
-{
-  sprintf("%s_%s.%s",
-          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
-          sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", data_urls),
-          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
-}
-
-
-#' @name abs_unzip_files
-#' @title Function to download files from the ABS website and store locally
-#' @description TBC
-#' @importFrom utils download.file unzip
-#' @param files One or more local zip files.
-#' @return Downloads data from the ABS website and returns a character
-#'     vector listing the location where files are saved.
-#' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-abs_unzip_files <- function(files) {
-  ## Only extract from zip files
-  files <- files[grepl("\\.zip$", files, ignore.case=TRUE)];
-  xl_files <- sapply(files,
-                     function(x)
-                       if (grepl("\\.zip$", x, ignore.case=TRUE)) {
-                         destdir <- sub("\\.zip", "", basename(x));
-                         unzip(x, exdir=file.path(tempdir(), destdir));
-                         file.path(tempdir(), destdir, unzip(x, list=TRUE)$Name);
-                       } else {
-                         x;
-                       });
-  return(xl_files);
-}
-
-
-#' @name abs_cat_tables
-#' @title Return ABS catalogue tables
-#' @description Return list of tables from specified ABS catalogue number
-#' @importFrom rvest html_session follow_link html_attr
-#' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
-#' @param url Valid ABS data collection URL.
-#' @return Returns a data frame listing the data collection tables and links.
+#'   Not all data returns have support for languages other than english. If the specific
+#'   return does not support your requested language by default it will return NA. The options for
+#'   \code{lang} on the ABS API are presently:
+#'   \itemize{
+#'     \item en: English
+#'     \item fr: French
+#'   }
+#' 
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    url <- abs_cat_data("5206.0", tables=c("Table 1"));
-#'    tables <- abs_cat_tables(url);
-abs_cat_tables <- function(url)
+#'  \donotrun{
+#'    z <- abs_cache(lang='en', progress=5)
+#'  }
+abs_cache <- function(lang="en", progress=10)
 {
-  ## Test URL is valid and Downloads page accessible
-  s <- html_session(url);
-  if (!options()$raustats["abs_downloads_regex"] %in% html_text(html_nodes(s, "a")))
-    stop(sprintf("URL: %s is not a valid ABS catalogue link.", url));
-
-  ## Return data table
-  ## The ABS data catalogue lists the data inside a HTML table within a table, i.e.
-  ##  <table>
-  ##    <table> </table>
-  ##  </table>
-  ## The following code exploits this structure to extract the list of available tables
-  ## and associated links.
-  l <- follow_link(s, options()$raustats["abs_downloads_regex"])
-  ht <- html_nodes(html_nodes(l, "table"), "table")
-  nodes <- lapply(
-    sapply(ht,
-           function(x) 
-             html_nodes(x, "tr")),
-    function(x)
-      c(html_text(html_nodes(x, "td")),
-        html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
-  dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
-  names(dt) <- paste0("x", seq_len(ncol(dt)));
-  dt <- dt[grepl("^Table|All Time Series", dt$x1, ignore.case=TRUE), ];
-  dt <- replace(dt, dt == "", NA_character_);
-  dt <- dt[,colSums(is.na(dt)) < nrow(dt)]
-  names(dt) <- c("table_name", "path1", "path2");
-  return(dt);
-}
-
-
-### Function: abs_read_tss
-#' @name abs_read_tss
-#' @aliases abs_read_tss abs_read_tss_
-#' @title Read ABS time series data file(s)
-#' @description This function extracts time series data from ABS data files.
-#' @importFrom readxl read_excel excel_sheets
-#' @importFrom dplyr left_join
-#' @importFrom tidyr gather
-#' @param files Names of one or more ABS data file [DEPRECATED]
-#' @param type One of either 'tss' - time series spreadsheet (DEFAULT
-#'     or 'dem' - demographic data
-#' @param ... other arguments to ... 
-#' @return data frame in long format
-#' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-#' @examples
-#'   x <- abs_read_tss(file.path("data-raw", "5206001_Key_Aggregates.xls"));
-#'   y <- abs_read_tss(file.path("data-raw", c("5206001_Key_Aggregates.xls","5206002_expenditure_volume_measures.xls")));
-abs_read_tss <- function(files, type="tss") {
-  x <- lapply(files,
-              function(file)
-                abs_read_tss_(file, type=type));
-  z <- do.call(rbind, x);
+  ## DEBUG <- FALSE
+  ## if (DEBUG) {
+  ##   library(xml2); library(rvest);
+  ##   lang="en"
+  ##   progress <- 5
+  ##   limit <- 15
+  ##   x <-  abs_datasets(lang=lang)[21:25,];
+  ## }
+  ## TEST <- FALSE
+  ## if (TEST) {
+  ##   abs_cachelist <- abs_cache(progress=5)
+  ## }
+  x <- abs_datasets(lang=lang)
+  if ( !is.null(progress) ) {
+    t0 <- proc.time();
+    i_report <- unique(c(seq(progress, nrow(x), by=progress), nrow(x)));
+  }
+  z <- lapply(seq_len(nrow(x)),
+              function(i) {
+                ## Download metadata
+                y <- abs_metadata(x$id[i], lang=lang);
+                ## Add dataset id & name information as attributes
+                attr(y, "dataset") <- x$id[i];
+                attr(y, "agency") <- x$agencyID[i];
+                attr(y, "dataset_desc") <- x$name[i];
+                ## Report progress
+                if (!is.null(progress))
+                  if (i %in% i_report)
+                    cat(sprintf("Retrieved metadata for %d (of %d) datasets. Total time: %.2f",
+                                i, nrow(x), (proc.time() - t0)["elapsed"]), "\n");
+                return(y)
+              });
+  names(z) <- x$id;
   return(z);
 }
 
 
-abs_read_tss_ <- function(file, type="tss") {
-  sheet_names <- tolower(excel_sheets(file));
-  if (!all(c("index", "data1")  %in% sheet_names))
-    stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
-  ## -- Read metadata --
-  .meta <- read_excel(file,
-                      sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE));
-  ## Return pre-header information from ABS files 
-  header_row <- which(sapply(1:nrow(.meta),
-                             function(i)
-                               grepl("series\\s*id", paste(.meta[i,], collapse=" "), ignore.case=TRUE)));
-  metadata <- .meta;
-  names(metadata) <- tolower(gsub("\\s","_",
-                                  gsub("\\.", "",
-                                       .meta[header_row,])));         ## Rename variables
-  metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & empty columns
-  metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
-  metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid 
-  metadata <- transform(metadata,
-                        series_start     = excel2Date(as.integer(series_start)),
-                        series_end       = excel2Date(as.integer(series_end)),
-                        no_obs           = as.integer(no_obs),
-                        collection_month = as.integer(collection_month));
-  ##
-  ## Get publication details
-  ## -- Catalogue number & name --
-  regex_catno_name <- "^.*(\\d{4}\\.\\d+(\\.\\d+)*)\\s+(.+)$";
-  catno_name <- sapply(1:header_row,
-                       function(i)
-                         grep(regex_catno_name, paste(.meta[i,], collapse=" "),
-                              ignore.case=TRUE, value=TRUE));
-  catno_name <- gsub("(\\s*NA)+", "", sub(regex_catno_name, "\\1|\\3", unlist(catno_name), ignore.case=TRUE));
-  catno_name <- trimws(unlist(strsplit(catno_name, split="\\|")));
-  ##
-  ## -- Table number & name --
-  regex_table_name <- "^.*Tables*\\s+(\\w+(\\s+\\w+\\s+\\w+)*)\\.*\\s+(.+)$";
-  ## Note use of 'word' character    ^here                ^here for 13a, 6b, etc.
-  tableno_name <- sapply(1:header_row,
-                         function(i)
-                           grep(regex_table_name,
-                                paste(.meta[i,], collapse=" "),
-                                ignore.case=TRUE, value=TRUE));
-  tableno_name <- gsub("(\\s*NA)+", "",
-                       sub(regex_table_name, "\\1|\\3", unlist(tableno_name), ignore.case=TRUE));
-  tableno_name <- trimws(unlist(strsplit(tableno_name, split="\\|")));
-  ##
-  ## Add publication details to metadata table
-  metadata  <- transform(metadata,
-                         catalogue_no      = catno_name[1],
-                         publication_title = catno_name[2],
-                         table_no          = tableno_name[1],
-                         table_title       = tableno_name[2]);
-  ## Extract data
-  data <- lapply(grep("data", excel_sheets(file), ignore.case=TRUE, value=TRUE),
-                 function(sheet_name) {
-                   z <- read_excel(file, sheet=sheet_name);
-                   ## Return pre-header information from ABS files 
-                   header_row <- which(sapply(1:nrow(z),
-                                              function(i)
-                                                grepl("series\\s*id", paste(z[i,], collapse=" "), 
-                                                      ignore.case=TRUE)));
-                   names(z) <- gsub("\\s","_",
-                                    gsub("\\.","", z[header_row,]));       ## Rename variables
-                   names(z) <- sub("series_id", "date", names(z), ignore.case=TRUE); ## Rename Series_ID field
-                   z <- z[-(1:header_row), !is.na(names(z))];              ## Drop empty columns
-                   z <- gather(z, series_id, value, -date, convert=TRUE);  ## Transform data to key:value pairs
-                   z <- transform(z,
-                                  date = excel2Date(as.integer(date)),
-                                  value = as.numeric(value));
-                   names(z) <- tolower(names(z));
-                   return(z);
-                 });
-  data <- do.call(rbind, data);
-  data <- left_join(data, metadata, by="series_id");
-  data <- data[complete.cases(data),];
-  names(data) <- tolower(names(data));
-  return(data);
+#' @name abs_cachelist2table
+#' @title Converts an abs_cachelist to abs_cachetable
+#' @description This function converts an \code{abs_cachelist} to an \code{abs_cachetable} suitable
+#'   for use with \code{\link{abs_search}}.
+#' @param cache An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
+#'   \code{NULL}, uses the stored package cachelist.
+#'
+#' @return A table containing three columns:
+#'   \itemize{
+#'     \item \code{dataset}: ABS API dataset identifier.
+#'     \item \code{dataset_description}: ABS API dataset description.
+#'     \item \code{measure}: ABS API dataset measure identifier.
+#'     \item \code{measure_description}: ABS API dataset measure description
+#'   }
+#' 
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @note This is an internal library function and is not exported.
+#' @examples
+#'  \donotrun{
+#'    abs_ct <- abs_cachelist2table(abs_cachelist)
+#'  }
+abs_cachelist2table <- function(cache)
+{
+  if (missing(cache)) 
+    cache <- raustats::abs_cachelist;
+  cache_table <-
+    suppressWarnings(lapply(cache,
+                            function(x) {
+                              names(x) <- attr(x, "concept");
+                              y <- setNames(
+                                data.frame(attr(x, "dataset"),
+                                           attr(x, "dataset_desc")##,
+                                           ## if(is.null(x$MEASURE$Code)) "" else x$MEASURE$Code,
+                                           ## if(is.null(x$MEASURE$Description)) "" else x$MEASURE$Description,
+                                           ## if(is.null(x$INDEX$Code)) "" else x$INDEX$Code,
+                                           ## if(is.null(x$INDEX$Description)) "" else x$INDEX$Description
+                                           ),
+                                c("dataset","dataset_description"##,
+                                  ## "measure","measure_description",
+                                  ## "index","index_description"
+                                  ));
+                              return(y)
+                            })
+                     );
+  cache_table <- do.call(rbind, cache_table);
+  row.names(cache_table) <- seq_len(nrow(cache_table))
+  return(cache_table);
 }
 
-(Q))
+
+#' @name abs_search
+#' @title Search dataset information from the ABS API
+#' @description This function finds datasets that match a search term and returns a data
+#'   frame of matching results.
+#' @param pattern Character string or regular expression to be matched.
+#' @param fields Character vector of column names through which to search.
+#' @param extra If FALSE, only the indicator ID and short name are returned, if TRUE, all columns of
+#'   the cache parameter's indicator data frame are returned.
+#' @param cache List of data frames returned from \code{abs_cache}. If omitted, \code{abs_cachelist}
+#'   is used.
+#' @return A data frame with datasets and data items that match the search pattern.
+#' @export
+#' @note With acknowledgements to \code{wb_search} function.
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @examples
+#'   x <- abs_search(pattern = "consumer price index")
+#'   x <- abs_search(pattern = "census")
+#'   x <- abs_search(pattern = "labour force")
+#'   # with regular expression operators
+#'   # 'unemployment' OR 'employment'
+#'   x <- abs_search(pattern = "unemployment|employment")
+abs_search <- function(pattern,
+                       fields=c("dataset", "dataset_description"),
+                       extra=FALSE, cache)
+{
+  DEBUG <- FALSE
+  if (DEBUG) {
+    pattern <- "consumer price index"
+    fields <- c("dataset", "dataset_description")
+    extra <- FALSE
+    load(file.path("data", "abs_cachelist.rda"))
+    cache <- abs_cachelist
+  }
+  if (missing(cache)) 
+    cache <- raustats::abs_cachelist;
+  cache_table <- abs_cachelist2table(cache);
+  ## -- UP TO HERE --
+  ##  CHECK FUNCTION
+  ## NOT REQUIRED FOR abs_search:  ind_cache <- cache$indicators;
+  match_index <- sapply(fields,
+                        function(i) grep(pattern, 
+                                         cache_table[, i], ignore.case=TRUE),
+                        USE.NAMES = FALSE);
+  match_index <- sort(unique(unlist(match_index)));
+  if (length(match_index) == 0)
+    warning(sprintf("No matches were found for the search term %s. Returning an empty data frame.", 
+                    pattern));
+  if (extra) {
+    match_df <- unique(cache_table[match_index, ])
+  } else {
+    match_df <- unique(cache_table[match_index, c("dataset", "dataset_description")])
+  }
+  return(match_df);
+}
+
+
+#' @name abs_stats
+#' @title Download data from the ABS API
+#' @description This function downloads the specified ABS data series from the ABS API.
+#' @importFrom rvest html_session follow_link html_attr jump_to
+#' @importFrom xml2 read_xml read_html
+#' @importFrom urltools url_parse url_compose
+#' @param series Character vector of indicator codes. These codes correspond to the
+#'   \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
+#'   \code{abs_cachelist}, or the result of \code{abs_indicators}.
+#' @param filter A list that contains filter of dimensions available in the specified \code{series}
+#'   to use in the API call. If NULL, no filter is set and the query tries to return all dimensions
+#'   of the dataset. Valid dimensions to include in the list supplied to filter include: MEASURE,
+#'   REGION, INDEX, TSEST and FREQUENCY.
+#' @param startdate Numeric or character. If numeric it must be in %Y form (i.e. four digit
+#'   year). For data at the sub-annual granularity the API supports a format as follows: Monthly
+#'   data -- "2016-M01", Quarterly data -- "2016-Q1", Semi-annual data -- 2016-B2, Financial year
+#'   data -- 2016-17.
+#' @param enddate Numeric or character (refer to \code{startdate}).
+#' @param lang Language in which to return the results. If \code{lang} is unspecified, english is
+#'   the default.
+#' @param check_query If \code{TRUE} then the query length and estimated number of observations
+#'   returned are first checked to ensure they're within the ABS-specified API limits (see
+#'   \link{Notes} section).
+#' @param remove_na If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
+#'   values are removed from the return.
+#' @param include_dec 
+#' @param include_unit If \code{TRUE}, the column unit is not removed from the return. If
+#'   \code{FALSE}, this column is removed.
+#' @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from the return. If
+#'   \code{FALSE}, this column is removed= FALSE.
+#' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting
+#'   tables to download. The default ('All') downloads all time series spreadsheet tables for each
+#'   specified catalogue. Use a list to specify different table sets for each specified ABS
+#'   catalogue number.
+#' @return data frame in long format
+#' @note The data query submitted by this function uses the ABS RESTful API based on the SDMX-JSON
+#'   standard. It has a maximum allowable character limit of 1000 characters allowed in the data
+#'   URL.
+#'
+#'   Further limitations known at this time include:
+#'   \itemize{
+#'     \item Only anonymous queries are supported, there is no authentication
+#'     \item Each response is limited to 1 million observations
+#'     \item Errors are not returned in the JSON format but HTTP status codes and messages are
+#'       set according to the Web Services Guidelines
+#'     \item The lastNObservations parameter is not supported
+#'     \item Observations follow the time series (or import-specific) order even if
+#'       \code{dimensionAtObservation=AllDimensions} is used.
+#'   }
+#' 
+#' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @examples
+#'    x <- abs_stats(series="CPI");
+#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
+#'    z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+abs_stats <- function(dataset, filter, startdate, enddate, lang=c("en","fr"),
+                      remove_na=TRUE, include_obsStatus=FALSE,
+                      include_lastUpdated=FALSE, update_cache=FALSE)
+{
+  DEBUG <- FALSE
+  if (DEBUG) {
+    library(xml2); library(rvest);
+    dataset <- "CPI";
+    lang <- "en";
+  }
+  ## Check dataset present and valid 
+  if (missing(dataset))
+    stop("No dataset supplied.");
+  if (!dataset %in% abs_datasets()$id)
+    stop(sprintf("%s not valid dataset name.", substitute(dataset)));
+  
+  ## Create ABS URL and open session 
+  url <- file.path(abs_ausstats_url(), series);
+  if (!missing(filter))
+    ## -- UP TO HERE --
+    
+    
+    return(data);
+}

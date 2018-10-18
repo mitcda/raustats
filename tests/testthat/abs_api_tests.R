@@ -37,7 +37,7 @@ test_that("abs_series returns object of class data.frame with specified names",
 })
 
 
-test_that("abs_metadata returns object of class data.frame with specified names",
+test_that("abs_metadata returns object of class list with specified names",
 {
   skip_on_cran()
   skip_on_travis()
