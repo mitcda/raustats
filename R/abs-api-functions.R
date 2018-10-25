@@ -7,8 +7,10 @@ abs_api_urls <- function()
 {
   base_url <- "http://stat.data.abs.gov.au"
   datastr_path <- "restsdmx/sdmx.ashx/GetDataStructure"
+  sdmx_json_path <- "SDMX-JSON/data"
   url_list <- list(base_url = base_url,
-                   datastr_path = datastr_path);
+                   datastr_path = datastr_path,
+                   sdmx_json_path = sdmx_json_path);
   return(url_list);
 }
 
@@ -380,13 +382,57 @@ abs_search <- function(pattern,
 }
 
 
+#' @name abs_dimensions
+#' @title Return available dimensions of ABS series
+#' @description This function returns the available dimeninsions for a specified ABS API dataset.
+#' @param dataset Character vector of dataset codes. These codes correspond to the
+#'   \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
+#'   \code{abs_cachelist}, or the result of \code{abs_indicators}.
+#' @param lang Language in which to return the results. If \code{lang} is unspecified, english is
+#'   the default.
+#' @param cache An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
+#'   \code{NULL}, uses the stored package cachelist.
+#' @return a data frame with available dataset dimensions.
+#' @note @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @examples
+#'    x <- abs_dimensions("CPI");
+abs_dimensions <- function(dataset, lang=c("en","fr"), cache)
+{
+  DEBUG <- FALSE
+  if (DEBUG) {
+    library(xml2); library(rvest);
+    dataset <- "CPI";
+    lang <- "en";
+    metadata <- abs_metadata("CPI")
+        metadata <- abs_metadata("ABS_ERP_LGA2017")
+  }
+  ## Check dataset present and valid 
+  if (missing(dataset))
+    stop("No dataset supplied.");
+  if (!dataset %in% abs_datasets()$id)
+    stop(sprintf("%s not valid dataset name.", dataset));
+  ## Return metadata
+  if (missing(cache)) {
+    metadata <- raustats::abs_cachelist[[dataset]];
+  } else {
+    metadata <- cache[[dataset]];
+  }
+  ## Return data frame of dataset dimensions:
+  ## z <- attr(metadata, "concept")[grepl("^dimension$", attr(metadata, "type"), ignore.case=TRUE)]
+  z <- data.frame(name = attr(metadata, "concept"),
+                  type = attr(metadata, "type"));
+  return(z)
+}
+
+
 #' @name abs_stats
 #' @title Download data from the ABS API
 #' @description This function downloads the specified ABS data series from the ABS API.
 #' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
-#' @param series Character vector of indicator codes. These codes correspond to the
+#' @importFrom jsonlite fromJSON
+#' @param dataset Character vector of indicator codes. These codes correspond to the
 #'   \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 #'   \code{abs_cachelist}, or the result of \code{abs_indicators}.
 #' @param filter A list that contains filter of dimensions available in the specified \code{series}
@@ -414,7 +460,9 @@ abs_search <- function(pattern,
 #'   tables to download. The default ('All') downloads all time series spreadsheet tables for each
 #'   specified catalogue. Use a list to specify different table sets for each specified ABS
 #'   catalogue number.
-#' @return data frame in long format
+#' @param cache An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
+#'   \code{NULL}, uses the stored package cachelist.
+#' @return Returns a data frame of the selected series from specified ABS dataset.
 #' @note The data query submitted by this function uses the ABS RESTful API based on the SDMX-JSON
 #'   standard. It has a maximum allowable character limit of 1000 characters allowed in the data
 #'   URL.
@@ -438,25 +486,98 @@ abs_search <- function(pattern,
 #'    z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
 abs_stats <- function(dataset, filter, startdate, enddate, lang=c("en","fr"),
                       remove_na=TRUE, include_obsStatus=FALSE,
-                      include_lastUpdated=FALSE, update_cache=FALSE)
+                      dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
+                      detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
+                      cache)
 {
   DEBUG <- FALSE
   if (DEBUG) {
-    library(xml2); library(rvest);
+    library(xml2); library(rvest); library(jsonlite);
     dataset <- "CPI";
     lang <- "en";
+    metadata <- abs_metadata("CPI")
+    filter <- list(MEASURE=c(1), REGION=c(1:8,50), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
+    load(file.path("data", "abs_cachelist.rda"));
+    cache <- abs_cachelist
+    dimensionAtObservation <- "AllDimensions"
+    detail <- "Full"
   }
   ## Check dataset present and valid 
   if (missing(dataset))
     stop("No dataset supplied.");
   if (!dataset %in% abs_datasets()$id)
-    stop(sprintf("%s not valid dataset name.", substitute(dataset)));
-  
+    stop(sprintf("%s not valid dataset name.", dataset));
+  ## ## Return metadata
+  if (missing(cache)) {
+    metadata <- raustats::abs_cachelist[[dataset]];
+  } else {
+    metadata <- cache[[dataset]];
+  }
+  ## Get list of Dimension name:
+  metadata_dims <- abs_dimensions(dataset)
+  metadata_dims <- metadata_dims[grepl("^dimension$", metadata_dims$type, ignore.case=TRUE), "name"];
+  #### ## Return agency name
+  #### agency_name <- unlist(attr(cache[[dataset]], "agency"));
+  ## Check the  dimensions supplied in 'filter''
+  if (missing(filter))
+    stop(sprintf("filter argument not supplied. Needs to be a valid list with following dimensions: %s",
+                 paste(metadata_dims, collapse=", ")));
+  if (any(!metadata_dims %in% names(filter))) {
+    stop(sprintf("Following dataset dimensions not listed in filter: %s",
+                 paste(metadata_dims[!metadata_dims %in% names(filter)], collapse=", ")));
+  }
   ## Create ABS URL and open session 
-  url <- file.path(abs_ausstats_url(), series);
-  if (!missing(filter))
-    ## -- UP TO HERE --
-    
-    
-    return(data);
+  url <- file.path(abs_api_urls()$base_url, abs_api_urls()$sdmx_json_path,
+                   dataset,
+                   paste(lapply(filter,
+                                function(x) #{
+                                  ## if(grepl("all", x, ignore.case=TRUE))
+                                  ##   ## -- UP TO HERE --
+                                  ## x <- metadata
+                                  paste(x, collapse="+")),
+                         collapse="."),
+                   "all");
+  ## dimensionAtObservation
+  dimensionAtObservation <- match.arg(dimensionAtObservation);
+  if (!dimensionAtObservation %in% c("AllDimensions","TimeDimension","MeasureDimension"))
+    stop("dimensionAtObservation argument invalid!")
+  detail <- match.arg(detail);
+  if (!detail %in% c("Full","DataOnly","SeriesKeysOnly","NoData"))
+    stop("detail argument invalid!")
+  ## 
+  url <- paste0(url, "?",
+                "detail", detail, "&",
+                "dimensionAtObservation=", dimensionAtObservation);
+  ## Add start/end dates
+  if (!missing(start_date))
+    url <- paste0(url, "&", start_date)
+  if (!missing(end_date))
+    url <- paste0(url, "&", end_date);
+  ## Download data
+  x_json <- fromJSON(url)
+
+  ## -- UP TO HERE --
+  x_obs <- x_json$dataSets$observation;
+  x_str <- x_json$structure$dimensions$observation;
+  y <- setNames(data.frame(do.call(rbind, unlist(x_obs, recursive=FALSE))),
+                c("values","obs_status","unknown"))
+  y <- cbind(setNames(data.frame(do.call(rbind, strsplit(row.names(y), ":"))),
+                      tolower(sub("\\s+","_", x_str$name))),
+             y);
+  ## Rename
+  for (name in tolower(sub("\\s+","_", x_str$name)))
+    y[,name] <- as.integer(as.character(y[,name])) + 1;
+  names_y <- setNames(lapply(seq_len(nrow(x_str)),
+                             function(j) unlist(x_str[j,"values"], recursive=FALSE)
+                             ),
+                      tolower(sub("\\s+","_", x_str$name)));
+  ## Substitute dimension IDs for Names
+  for (name in names(names_y))
+    y[,name] <- names_y[[name]]$name[y[,name]]
+  ## Dataset name
+  y$dataset_name <- x_json$structure$name;
+  
+  ## Return data
+  row.names(y) <- seq_len(nrow(y));
+  return(y);
 }
