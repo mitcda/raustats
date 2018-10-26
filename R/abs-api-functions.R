@@ -19,7 +19,6 @@ abs_api_urls <- function()
 #' @title Download updated indicator information from the ABS API
 #' @description TBC
 #' @importFrom xml2 read_xml read_html as_list
-#' @importFrom urltools url_parse url_compose
 #' @param path Character vector specifying one or more ABS collections or catalogue numbers to
 #'   download.
 #' @param args Named list of arguments to supply to call.
@@ -55,9 +54,7 @@ abs_call_api <- function(url)
 #' @name abs_datasets
 #' @title Download updated data series information from the ABS API
 #' @description TBC
-#' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
 #' @param lang Preferred language (default 'en' - English).
 #' @param include_notes Include ABS annotation information for each series.
 #' @return data frame in long format
@@ -106,9 +103,7 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @name abs_metadata
 #' @title Download updated data series information from the ABS API
 #' @description TBC
-#' @importFrom rvest html_session follow_link html_attr jump_to
-#' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
+#' @import xml2
 #' @param id ABS dataset ID.
 #' @param lang Preferred language (default 'en' - English).
 #' @param include_notes Include ABS annotation information for each series.
@@ -428,7 +423,6 @@ abs_dimensions <- function(dataset, lang=c("en","fr"), cache)
 #' @name abs_stats
 #' @title Download data from the ABS API
 #' @description This function downloads the specified ABS data series from the ABS API.
-#' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
 #' @importFrom jsonlite fromJSON
 #' @param dataset Character vector of indicator codes. These codes correspond to the
