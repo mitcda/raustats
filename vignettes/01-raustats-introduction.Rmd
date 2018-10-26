@@ -64,36 +64,59 @@ latest available data.
 
   * Access to all time series data in the ABS statistical catalogue
     and the RBA website.
-  * Access to the ABS Beta API: ABS.Stat 
+  * Access to the ABS Beta API: [ABS.Stat](http://stat.data.abs.gov.au) 
   * Ability to return `POSIXct` dates for easy integration into
     plotting and time-series analysis techniques 
-  * Returns data in long (tidy) format for direct
+  * Returns data in long (or tidy) format for direct
     integration with packages like `ggplot2`, `tidyr` and `dplyr`
-  * Support for Most Recent Value queries
-  * Support for `grep` style searching for data descriptions and names
+  * Support for `grep` style searching for data descriptions and names.
 
 
 
-# Getting Started
+# Quick start guide
 
 ## Downloading ABS Catalogue data
+
+
+## Downloading ABS data via [ABS.Stat](https://stat.data.abs.gov.au/)
+
+
+
+## Downloading RBA data
+
+
+
+
+# ABS data access functions
+
+##  ABS Catalogue data functions
+
+
+
+##  ABS API data access functions - Beta 
+
+
+
+# RBA data access functions
+
+
 
 <!-- UP TO HERE -->
 
 Unless you know the country and indicator codes that you want to
 download the first step would be searching for the data you are
-interested in. `wbsearch()` provides `grep` style searching of all
-available indicators from the World Bank API and returns the indicator
+interested in. `abs_search()` provides `grep` style searching of all
+available indicators from the ABS API and returns the indicator
 information that matches your query.
 
 To access what countries or regions are available you can use the
-`countries` data frame from either `wb_cachelist` or the saved return
-from `wbcache()`. This data frame contains relevant information
+`countries` data frame from either `abs_cachelist` or the saved return
+from `abs_cache()`. This data frame contains relevant information
 regarding each country or region. More information on how to use this
 for downloading data is covered later.
 
 
-## Finding available data with `wb_cachelist`
+## Finding available data with `abs_cachelist`
 
 For performance and ease of use, a cached version of useful
 information is provided with the `wbstats` R-package. This data is

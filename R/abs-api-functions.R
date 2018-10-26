@@ -30,7 +30,6 @@ abs_api_urls <- function()
 #'   spreadsheet.
 #' @return data frame in long format
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-#' @examples
 abs_api_call <- function(path, args)
 {
     if (missing(path))

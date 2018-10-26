@@ -5,18 +5,10 @@
 \alias{abs_read_tss_}
 \title{Read ABS time series data file(s)}
 \usage{
-abs_read_tss(files, catno, tables = NULL, type = "tss")
+abs_read_tss(files, type = "tss")
 }
 \arguments{
 \item{files}{Names of one or more ABS data file [DEPRECATED]}
-
-\item{catno}{Character vector specifying one or more ABS Catalogue
-numbers to download.}
-
-\item{tables}{Regular expression denoting tables to download. If
-NULL (Default), downloads all time series spreadsheet tables
-for each specified catalogue. Use a list to specify different
-table sets for each specified ABS catalogue number.}
 
 \item{type}{One of either 'tss' - time series spreadsheet (DEFAULT
 or 'dem' - demographic data}
@@ -30,9 +22,8 @@ data frame in long format
 This function extracts time series data from ABS data files.
 }
 \examples{
-  x <- file.path(DataDir, "5206001_Key_Aggregates.xls");
-ABS.5206001 <- abs_read_tss(File);
-ABS.5206001 \%>\% as.data.frame \%>\% head;
+  x <- abs_read_tss(file.path("data-raw", "5206001_Key_Aggregates.xls"));
+  y <- abs_read_tss(file.path("data-raw", c("5206001_Key_Aggregates.xls","5206002_expenditure_volume_measures.xls")));
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

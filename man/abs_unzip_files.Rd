@@ -16,12 +16,6 @@ Downloads data from the ABS website and returns a character
 \description{
 TBC
 }
-\examples{
-   x <- abs_cat_data("3101.0");
-   y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
-
-   x <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
-}
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>
 }

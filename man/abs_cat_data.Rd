@@ -8,15 +8,19 @@ abs_cat_data(series, tables = "All", releases = "Latest",
   type = "tss")
 }
 \arguments{
-\item{series}{Character vector specifying one or more ABS collections or catalogue numbers to download.}
+\item{series}{Character vector specifying one or more ABS collections or catalogue numbers to
+download.}
 
-\item{tables}{A character vector of regular expressions denoting tables to download. The default ('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list to specify different table sets for each specified ABS catalogue number.}
+\item{tables}{A character vector of regular expressions denoting tables to download. The default
+('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list
+to specify different table sets for each specified ABS catalogue number.}
 
-\item{releases}{Date or character string object specifying the month and year denoting which release to download. Default is "Latest", which downloads the latest available data. See examples for further details.}
+\item{releases}{Date or character string object specifying the month and year denoting which
+release to download. Default is "Latest", which downloads the latest available data. See
+examples for further details.}
 
-\item{type}{One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section spreadsheet.}
-
-\item{...}{other arguments to}
+\item{type}{One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section
+spreadsheet.}
 }
 \value{
 data frame in long format
@@ -27,8 +31,7 @@ TBC
 \examples{
    x <- abs_cat_data("3101.0");
    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
-
-   x <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+   z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>
