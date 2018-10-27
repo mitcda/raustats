@@ -7,7 +7,6 @@ abs_ausstats_url <- function()
 #' @description TBC
 #' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
 #' @param series Character vector specifying one or more ABS collections or catalogue numbers to
 #'   download.
 #' @param tables A character vector of regular expressions denoting tables to download. The default
@@ -165,7 +164,6 @@ abs_unzip_files <- function(files) {
 #' @description Return list of tables from specified ABS catalogue number
 #' @importFrom rvest html_session follow_link html_attr
 #' @importFrom xml2 read_xml read_html
-#' @importFrom urltools url_parse url_compose
 #' @param url Valid ABS data collection URL.
 #' @return Returns a data frame listing the data collection tables and links.
 #' @export
