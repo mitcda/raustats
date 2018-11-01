@@ -18,6 +18,8 @@ data frame in long format
 TBC
 }
 \examples{
+  datasets <- abs_datasets()
+  datasets <- abs_datasets(include_notes=TRUE)
 The following code extracts the relevant ABS series information from the returned
 XML document by first saving the relevant part of the XML document to an R list and
 then explicitly extracting the relevant information from specific nodes by name.

@@ -4,11 +4,11 @@
 \alias{abs_stats}
 \title{Download data from the ABS API}
 \usage{
-abs_stats(dataset, filter, startdate, enddate, lang = c("en", "fr"),
+abs_stats(dataset, filter, start_date, end_date, lang = c("en", "fr"),
   remove_na = TRUE, include_obsStatus = FALSE,
   dimensionAtObservation = c("AllDimensions", "TimeDimension",
   "MeasureDimension"), detail = c("Full", "DataOnly", "SeriesKeysOnly",
-  "NoData"), cache)
+  "NoData"), return_url = FALSE, cache)
 }
 \arguments{
 \item{dataset}{Character vector of indicator codes. These codes correspond to the
@@ -20,12 +20,12 @@ to use in the API call. If NULL, no filter is set and the query tries to return 
 of the dataset. Valid dimensions to include in the list supplied to filter include: MEASURE,
 REGION, INDEX, TSEST and FREQUENCY.}
 
-\item{startdate}{Numeric or character. If numeric it must be in %Y form (i.e. four digit
+\item{start_date}{Numeric or character. If numeric it must be in %Y form (i.e. four digit
 year). For data at the sub-annual granularity the API supports a format as follows: Monthly
 data -- "2016-M01", Quarterly data -- "2016-Q1", Semi-annual data -- 2016-B2, Financial year
 data -- 2016-17.}
 
-\item{enddate}{Numeric or character (refer to \code{startdate}).}
+\item{end_date}{Numeric or character (refer to \code{startdate}).}
 
 \item{lang}{Language in which to return the results. If \code{lang} is unspecified, english is
 the default.}
@@ -35,6 +35,8 @@ values are removed from the return.}
 
 \item{include_obsStatus}{If \code{TRUE}, the column obsStatus is not removed from the return. If
 \code{FALSE}, this column is removed= FALSE.}
+
+\item{return_url}{If \code{TRUE}, return the generated request URL only.}
 
 \item{cache}{An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
 \code{NULL}, uses the stored package cachelist.}
@@ -76,9 +78,9 @@ The data query submitted by this function uses the ABS RESTful API based on the 
   }
 }
 \examples{
-   x <- abs_stats(series="CPI");
-   y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
-   z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
+   x <- abs_stats("CPI");
+   x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
+   x <- abs_stats(dataset="CPI", filter = list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

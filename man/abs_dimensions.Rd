@@ -4,15 +4,12 @@
 \alias{abs_dimensions}
 \title{Return available dimensions of ABS series}
 \usage{
-abs_dimensions(dataset, lang = c("en", "fr"), cache)
+abs_dimensions(dataset, cache)
 }
 \arguments{
 \item{dataset}{Character vector of dataset codes. These codes correspond to the
 \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 \code{abs_cachelist}, or the result of \code{abs_indicators}.}
-
-\item{lang}{Language in which to return the results. If \code{lang} is unspecified, english is
-the default.}
 
 \item{cache}{An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
 \code{NULL}, uses the stored package cachelist.}
@@ -27,7 +24,10 @@ This function returns the available dimeninsions for a specified ABS API dataset
 @export
 }
 \examples{
-   x <- abs_dimensions("CPI");
+  # CPI - Consumer Price Index
+  x <- abs_dimensions("CPI");
+  # LF - Labour Force
+  x <- abs_dimensions("LF");
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

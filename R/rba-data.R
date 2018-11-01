@@ -126,7 +126,6 @@ rba_data <- function(table_code, series_type="statistical tables", update_cache=
 }
 
 
-
 ### Function: rba_read_tss
 #' @name rba_read_tss
 #' @title Read RBA time series spreadsheet

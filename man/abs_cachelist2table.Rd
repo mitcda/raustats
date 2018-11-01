@@ -28,7 +28,7 @@ This is an internal library function and is not exported.
 }
 \examples{
  \\donotrun{
-   abs_ct <- abs_cachelist2table(abs_cachelist)
+   abs_ct <- abs_cachelist2table(raustats::abs_cachelist)
  }
 }
 \author{

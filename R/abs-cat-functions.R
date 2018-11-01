@@ -2,6 +2,7 @@ abs_ausstats_url <- function()
   paste0(options()$raustats["abs_domain"],
          options()$raustats["abs_ausstats_path"]);
 
+
 #' @name abs_cat_data
 #' @title Return data files from a specified url
 #' @description TBC
@@ -17,6 +18,7 @@ abs_ausstats_url <- function()
 #'   examples for further details.
 #' @param type One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section
 #'   spreadsheet.
+#' @param return_urls Return data URLs only, no data (Default: FALSE).
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
@@ -24,7 +26,7 @@ abs_ausstats_url <- function()
 #'    x <- abs_cat_data("3101.0");
 #'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
 #'    z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
-abs_cat_data <- function(series, tables="All", releases="Latest", type="tss")
+abs_cat_data <- function(series, tables="All", releases="Latest", type="tss", return_urls=FALSE)
 {
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), series);
@@ -118,6 +120,7 @@ abs_download_data <- function(data_urls) {
   ## Return results
   return(file.path(tempdir(), local_filenames));
 }
+
 
 #' @name abs_local_filename
 #' @title Create local file names for storing downloaded ABS data files

@@ -35,6 +35,8 @@ With acknowledgements to \code{wb_search} function.
   # with regular expression operators
   # 'unemployment' OR 'employment'
   x <- abs_search(pattern = "unemployment|employment")
+  # '^labour force$'
+  x <- abs_search(pattern = "^labour force$")
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>
