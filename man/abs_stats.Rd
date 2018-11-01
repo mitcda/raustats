@@ -5,7 +5,7 @@
 \title{Download data from the ABS API}
 \usage{
 abs_stats(dataset, filter, start_date, end_date, lang = c("en", "fr"),
-  remove_na = TRUE, include_obsStatus = FALSE,
+  remove_na = TRUE, include_unit = TRUE, include_obsStatus = FALSE,
   dimensionAtObservation = c("AllDimensions", "TimeDimension",
   "MeasureDimension"), detail = c("Full", "DataOnly", "SeriesKeysOnly",
   "NoData"), return_url = FALSE, cache)
@@ -33,27 +33,30 @@ the default.}
 \item{remove_na}{If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
 values are removed from the return.}
 
+\item{include_unit}{If \code{TRUE}, the column unit is not removed from the return. If
+\code{FALSE}, this column is removed.}
+
 \item{include_obsStatus}{If \code{TRUE}, the column obsStatus is not removed from the return. If
 \code{FALSE}, this column is removed= FALSE.}
+
+\item{dimensionAtObservation}{The identifier of the dimension to be attached at the observation
+level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
+AllDimensions results in a flat list of observations without any grouping.}
+
+\item{detail}{This argument specifies the desired amount of information to be returned. Possible values
+  are:
+
+  \itemize{
+    \item Full: all data and documentation, including annotations (default)
+    \item DataOnly: attributes – and therefore groups – will be excluded
+    \item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
+    \item NoData: returns the groups and series, including attributes and annotations, without observations
+  }}
 
 \item{return_url}{If \code{TRUE}, return the generated request URL only.}
 
 \item{cache}{An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
 \code{NULL}, uses the stored package cachelist.}
-
-\item{check_query}{If \code{TRUE} then the query length and estimated number of observations
-returned are first checked to ensure they're within the ABS-specified API limits (see
-\link{Notes} section).}
-
-\item{include_dec}{}
-
-\item{include_unit}{If \code{TRUE}, the column unit is not removed from the return. If
-\code{FALSE}, this column is removed.}
-
-\item{include_lastUpdated}{= FALSEtables A character vector of regular expressions denoting
-tables to download. The default ('All') downloads all time series spreadsheet tables for each
-specified catalogue. Use a list to specify different table sets for each specified ABS
-catalogue number.}
 }
 \value{
 Returns a data frame of the selected series from specified ABS dataset.

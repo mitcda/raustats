@@ -109,8 +109,6 @@ abs_cat_data <- function(series, tables="All", releases="Latest", type="tss", re
 #'     vector listing the location where files are saved.
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-#' @examples
-#' 
 abs_download_data <- function(data_urls) {
   local_filenames <- abs_local_filename(data_urls);
   ## -- Download files --

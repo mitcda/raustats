@@ -17,9 +17,6 @@ Downloads data from the ABS website and returns a character
 \description{
 TBC
 }
-\examples{
-
-}
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>
 }

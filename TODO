@@ -6,3 +6,11 @@
 * abs_cat_tables function is downloading tables twice
 
 * Test all ABS API call functions
+
+
+* Candidate additional arguments for abs_stats
+#' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting
+#'   tables to download. The default ('All') downloads all time series spreadsheet tables for each
+#'   specified catalogue. Use a list to specify different table sets for each specified ABS
+#'   catalogue number.
+

@@ -10,8 +10,6 @@ abs_metadata(id, lang = "en")
 \item{id}{ABS dataset ID.}
 
 \item{lang}{Preferred language (default 'en' - English).}
-
-\item{include_notes}{Include ABS annotation information for each series.}
 }
 \value{
 data frame in long format

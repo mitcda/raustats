@@ -112,7 +112,6 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @import xml2
 #' @param id ABS dataset ID.
 #' @param lang Preferred language (default 'en' - English).
-#' @param include_notes Include ABS annotation information for each series.
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
@@ -433,20 +432,25 @@ abs_dimensions <- function(dataset, cache)
 #' @param end_date Numeric or character (refer to \code{startdate}).
 #' @param lang Language in which to return the results. If \code{lang} is unspecified, english is
 #'   the default.
-#' @param check_query If \code{TRUE} then the query length and estimated number of observations
-#'   returned are first checked to ensure they're within the ABS-specified API limits (see
-#'   \link{Notes} section).
 #' @param remove_na If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
 #'   values are removed from the return.
-#' @param include_dec 
 #' @param include_unit If \code{TRUE}, the column unit is not removed from the return. If
 #'   \code{FALSE}, this column is removed.
 #' @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from the return. If
 #'   \code{FALSE}, this column is removed= FALSE.
-#' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting
-#'   tables to download. The default ('All') downloads all time series spreadsheet tables for each
-#'   specified catalogue. Use a list to specify different table sets for each specified ABS
-#'   catalogue number.
+#' @param dimensionAtObservation The identifier of the dimension to be attached at the observation
+#'   level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
+#'   AllDimensions results in a flat list of observations without any grouping.
+#' @param detail This argument specifies the desired amount of information to be returned. Possible values
+#'   are:
+#' 
+#'   \itemize{
+#'     \item Full: all data and documentation, including annotations (default)
+#'     \item DataOnly: attributes – and therefore groups – will be excluded
+#'     \item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
+#'     \item NoData: returns the groups and series, including attributes and annotations, without observations
+#'   }
+#' 
 #' @param return_url If \code{TRUE}, return the generated request URL only.
 #' @param cache An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
 #'   \code{NULL}, uses the stored package cachelist.
@@ -473,7 +477,7 @@ abs_dimensions <- function(dataset, cache)
 #'    x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
 #'    x <- abs_stats(dataset="CPI", filter = list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
 abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
-                      remove_na=TRUE, include_obsStatus=FALSE,
+                      remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
                       return_url=FALSE, cache)
