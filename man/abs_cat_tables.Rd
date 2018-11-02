@@ -16,7 +16,7 @@ Returns a data frame listing the data collection tables and links.
 Return list of tables from specified ABS catalogue number
 }
 \examples{
-   url <- abs_cat_data("5206.0", tables=c("Table 1"));
+   url <- abs_cat_stats("5206.0", tables=c("Table 1"));
    tables <- abs_cat_tables(url);
 }
 \author{
