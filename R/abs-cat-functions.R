@@ -129,9 +129,9 @@ abs_download_data <- function(data_urls) {
 abs_local_filename <- function(url)
 {
   sprintf("%s_%s.%s",
-          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", data_urls),
-          sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", data_urls),
-          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", data_urls));
+          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", url),
+          sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", url),
+          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", url));
 }
 
 
