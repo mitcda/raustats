@@ -476,6 +476,8 @@ abs_dimensions <- function(dataset, cache)
 #'    x <- abs_stats("CPI");
 #'    x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
 #'    x <- abs_stats(dataset="CPI", filter = list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
+#'    x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"))
+#'     x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"), return_url=TRUE)
 abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
@@ -491,7 +493,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
     filter <- "all"
     filter <- list(MEASURE=c(1), REGION=c(1:8,50), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
     filter <- list(MEASURE=c(1), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
-    filter <- list(MEASURE=c(1), INDEX=c(10001), REGION=c(1:8,50), FREQUENCY="Q", TSEST=10)
+    filter <- list(MEASURE="all", INDEX=10001, REGION=c(1:8,50), FREQUENCY="Q", TSEST=10)
     load(file.path("data", "abs_cachelist.rda"));
     cache <- abs_cachelist
     dimensionAtObservation <- "AllDimensions"
@@ -516,12 +518,12 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   metadata_names <- abs_dimensions(dataset)
   metadata_dims <- as.character(metadata_names[grepl("^dimension$", metadata_names$type, ignore.case=TRUE),
                                                "name"]);
-  #### ## Return agency name
+  names(metadata) <- metadata_names$name;
+#### ## Return agency name
   #### agency_name <- unlist(attr(cache[[dataset]], "agency"));
   ## Check the  dimensions supplied in 'filter''
-  if (filter == "all") {
+  if (length(filter) == 1 && filter == "all") {
     .filter <- metadata;
-    names(.filter) <- metadata_names$name;
     filter <- lapply(.filter,
                      function(x) x$Code ## x[,1]
                      )
@@ -533,7 +535,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
     filter <- filter[metadata_dims];
     for (name in names(filter)) {
       if(grepl("all", filter[[name]], ignore.case=TRUE))
-        filter[[name]] <- metadata[[name]]
+        filter[[name]] <- metadata[[name]]$Code
     }
   } else {
     stop("Argument filter must be either character string: 'all' or a valid list");

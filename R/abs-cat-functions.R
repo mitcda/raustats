@@ -3,7 +3,7 @@ abs_ausstats_url <- function()
          options()$raustats["abs_ausstats_path"]);
 
 
-#' @name abs_cat_data
+#' @name abs_cat_stats
 #' @title Return data files from a specified url
 #' @description TBC
 #' @importFrom rvest html_session follow_link html_attr jump_to
@@ -23,10 +23,10 @@ abs_ausstats_url <- function()
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- abs_cat_data("3101.0");
-#'    y <- abs_cat_data("5206.0", tables=c("Table 1", "Table 2"));
-#'    z <- abs_cat_data("5206.0", tables="Table 1", release="Dec 2017");
-abs_cat_data <- function(series, tables="All", releases="Latest", type="tss", return_urls=FALSE)
+#'    x <- abs_cat_stats("3101.0");
+#'    y <- abs_cat_stats("5206.0", tables=c("Table 1", "Table 2"));
+#'    z <- abs_cat_stats("5206.0", tables="Table 1", release="Dec 2017");
+abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", return_urls=FALSE)
 {
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), series);
@@ -142,7 +142,6 @@ abs_local_filename <- function(url)
 #' @param files One or more local zip files.
 #' @return Downloads data from the ABS website and returns a character
 #'     vector listing the location where files are saved.
-#' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 abs_unzip_files <- function(files) {
   ## Only extract from zip files
@@ -170,7 +169,7 @@ abs_unzip_files <- function(files) {
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    url <- abs_cat_data("5206.0", tables=c("Table 1"));
+#'    url <- abs_cat_stats("5206.0", tables=c("Table 1"));
 #'    tables <- abs_cat_tables(url);
 abs_cat_tables <- function(url)
 {

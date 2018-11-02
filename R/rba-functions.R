@@ -88,21 +88,24 @@ rba_search <- function(pattern, fields="table_name", update_cache=FALSE)
 }
 
 
-#' @name rba_data
+#' @name rba_stats
 #' @title Return data for a specified RBA time series
 #' @description Function to get data from a specified RBA time series.
 #' @importFrom utils download.file unzip
-#' @param table_code Character vector specifying one or more ABS collections or catalogue numbers to download.
-#' @param series_type RBA series type, one of either 'statistical tables', 'historical data' or 'discontinued data'.
-#' @param update_cache Boolean argument expressing whether to retrieve an updated list of RBA tables or not (Default).
+#' @param table_code Character vector specifying one or more ABS collections or catalogue numbers to
+#'   download.
+#' @param series_type RBA series type, one of either 'statistical tables', 'historical data' or
+#'   'discontinued data'.
+#' @param update_cache Boolean argument expressing whether to retrieve an updated list of RBA tables
+#'   or not (Default).
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- rba_data("A1");
-#'    y <- rba_data("A1", update_cache=TRUE);
+#'    x <- rba_stats("A1");
+#'    y <- rba_stats("A1", update_cache=TRUE);
 #'    
-rba_data <- function(table_code, series_type="statistical tables", update_cache=FALSE)
+rba_stats <- function(table_code, series_type="statistical tables", update_cache=FALSE)
 {
     ## Update RBA table list
     if (update_cache) {
