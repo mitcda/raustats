@@ -4,10 +4,16 @@
 \alias{abs_cat_tables}
 \title{Return ABS catalogue tables}
 \usage{
-abs_cat_tables(url)
+abs_cat_tables(cat_no, releases = "Latest", include_urls = FALSE)
 }
 \arguments{
-\item{url}{Valid ABS data collection URL.}
+\item{cat_no}{ABS catalogue numbers.}
+
+\item{releases}{Date or character string object specifying the month and year denoting which
+release to download. Default is "Latest", which downloads the latest available data. See
+examples for further details.}
+
+\item{include_urls}{Return data URLs only, no data (Default: FALSE).}
 }
 \value{
 Returns a data frame listing the data collection tables and links.

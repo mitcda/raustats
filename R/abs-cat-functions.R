@@ -28,29 +28,33 @@ abs_ausstats_url <- function()
 #'    z <- abs_cat_stats("5206.0", tables="Table 1", release="Dec 2017");
 abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", return_urls=FALSE)
 {
-  ## Create ABS URL and open session 
-  url <- file.path(abs_ausstats_url(), series);
-  s <- html_session(url);
+  ## -- OLD CODE --
+  ## ## Create ABS URL and open session 
+  ## url <- file.path(abs_ausstats_url(), series);
+  ## s <- html_session(url);
   
-  releases <- unique(tolower(releases));
-  if (length(releases) == 1 && releases == "latest") {
-    .paths <- "";
-  } else {
-    ## Get path to 'Past & Future Releases' page
-    .paths <- html_nodes(s, "a");
-    .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
-    .paths <- html_attr(.paths, "href");
-    s <- jump_to(s, .paths)
-    .paths <- html_nodes(s, "a");
-    .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
-    .paths <- html_attr(.paths, "href");
-  }
-  ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
-  cat_tables <- lapply(.paths,
-                       function(x) {
-                         .url <- jump_to(s, x)
-                         z <- abs_cat_tables(.url$url)
-                       });
+  ## releases <- unique(tolower(releases));
+  ## if (length(releases) == 1 && releases == "latest") {
+  ##   .paths <- "";
+  ## } else {
+  ##   ## Get path to 'Past & Future Releases' page
+  ##   .paths <- html_nodes(s, "a");
+  ##   .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
+  ##   .paths <- html_attr(.paths, "href");
+  ##   s <- jump_to(s, .paths)
+  ##   .paths <- html_nodes(s, "a");
+  ##   .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
+  ##   .paths <- html_attr(.paths, "href");
+  ## }
+  ## ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
+  ## cat_tables <- lapply(.paths,
+  ##                      function(x) {
+  ##                        .url <- jump_to(s, x)
+  ##                        z <- abs_cat_tables(.url$url)
+  ##                      });
+  ## -- END - OLD CODE --
+  cat_tables <- abs_cat_tables(cat_no=series, releases=releases, return_urls=TRUE)
+  ## -- UP TO HERE --
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
     ## If 'all' tables, download all
@@ -111,13 +115,14 @@ abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", r
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
 #'   examples for further details.
+#' @param include_urls Return data URLs only, no data (Default: FALSE).
 #' @return Returns a data frame listing the data collection tables and links.
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
 #'    url <- abs_cat_stats("5206.0", tables=c("Table 1"));
 #'    tables <- abs_cat_tables(url);
-abs_cat_tables <- function(cat_no, releases="Latest", return_urls=FALSE)
+abs_cat_tables <- function(cat_no, releases="Latest", include_urls=FALSE)
 {
   DEBUG <- FALSE
   if (DEBUG) {
@@ -126,7 +131,6 @@ abs_cat_tables <- function(cat_no, releases="Latest", return_urls=FALSE)
     releases <- "Latest";
     releases <- c("Dec 2017", "Sep 2017");
   }
-  ### -- New functionality from here --
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), cat_no);
   s <- html_session(url);
@@ -179,28 +183,17 @@ abs_cat_tables <- function(cat_no, releases="Latest", return_urls=FALSE)
               function(i) {
                 v[[i]]$release <- sub("^$", "Latest", releases[i]);
                 v[[i]]$cat_no <- cat_no;
-                return(v)
+                as.data.frame(v)
               });
 
   z <- do.call(rbind, v);
-  z <- z[,c("cat_no", "release", "table_name", "path1", "path2")];
+  z <- if (include_urls) {
+         z[,c("cat_no", "release", "table_name", "path1", "path2")]
+       } else {
+         z[,c("cat_no", "release", "table_name")]
+       }
+  row.names(z) <- seq_len(nrow(z));
   return(z)
-  ## Test URL is valid and Downloads page accessible
-  ## s <- html_session(url);
-  ## if (!options()$raustats["abs_downloads_regex"] %in% html_text(html_nodes(s, "a")))
-  ##   stop(sprintf("URL: %s is not a valid ABS catalogue link.", url));
-
-
-  ## l <- follow_link(v, options()$raustats["abs_downloads_regex"])
-  ## ht <- html_nodes(html_nodes(l, "table"), "table")
-  ## nodes <- lapply(
-  ##   sapply(ht,
-  ##          function(x) 
-  ##            html_nodes(x, "tr")),
-  ##   function(x)
-  ##     c(html_text(html_nodes(x, "td")),
-  ##       html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
-  ## return(dt);
 }
 
 
