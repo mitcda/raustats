@@ -89,27 +89,131 @@ abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", r
   sel_urls <- paste0(options()$raustats["abs_domain"],
                      ## Replace all spaces with '%20'
                      gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
-  ## Combine data into 
-  z <- lapply(sel_urls, abs_download_data);
-  z <- lapply(z, abs_unzip_files);
-  data <- lapply(z, abs_read_tss);
-  data <- do.call(rbind, data);
-  rownames(data) <- seq_len(nrow(data));
-  return(data);
+  if (return_urls) {
+    return(sel_urls)
+  } else {
+    ## Combine data into 
+    z <- lapply(sel_urls, abs_cat_download);
+    z <- lapply(z, abs_cat_unzip);
+    data <- lapply(z, abs_read_tss);
+    data <- do.call(rbind, data);
+    rownames(data) <- seq_len(nrow(data));
+    return(data);
+  }
 }
 
 
-#' @name abs_download_data
+#' @name abs_cat_tables
+#' @title Return ABS catalogue tables
+#' @description Return list of tables from specified ABS catalogue number
+#' @importFrom rvest html_session html_text html_nodes html_attr follow_link
+#' @param cat_no ABS catalogue numbers.
+#' @param releases Date or character string object specifying the month and year denoting which
+#'   release to download. Default is "Latest", which downloads the latest available data. See
+#'   examples for further details.
+#' @return Returns a data frame listing the data collection tables and links.
+#' @export
+#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @examples
+#'    url <- abs_cat_stats("5206.0", tables=c("Table 1"));
+#'    tables <- abs_cat_tables(url);
+abs_cat_tables <- function(cat_no, releases="Latest", return_urls=FALSE)
+{
+  DEBUG <- FALSE
+  if (DEBUG) {
+    library(rvest);
+    cat_no <- "6401.0";
+    releases <- "Latest";
+    releases <- c("Dec 2017", "Sep 2017");
+  }
+  ### -- New functionality from here --
+  ## Create ABS URL and open session 
+  url <- file.path(abs_ausstats_url(), cat_no);
+  s <- html_session(url);
+  
+  releases <- unique(releases);
+  if (length(releases) == 1 && tolower(releases) == "latest") {
+    .paths <- "";
+  } else {
+    ## Get path to 'Past & Future Releases' page
+    .paths <- html_nodes(s, "a");
+     .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
+     .paths <- html_attr(.paths, "href");
+     s <- jump_to(s, .paths)
+     .paths <- html_nodes(s, "a");
+     .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
+     .paths <- html_attr(.paths, "href");
+   }
+   ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
+  v <- lapply(.paths,
+              function(x) {
+                y <- jump_to(s, x)
+                ## z <- abs_cat_tables(.url$url)
+                l <- follow_link(y, options()$raustats["abs_downloads_regex"])
+                ht <- html_nodes(html_nodes(l, "table"), "table")
+                ## Return data table
+                ## The ABS data catalogue lists the data inside a HTML table within a table, i.e.
+                ##  <table>
+                ##    <table> </table>
+                ##  </table>
+                ## The following nested apply functions,  exploits this structure to extract the
+                ## list of available tables and associated links.
+                nodes <- lapply(sapply(ht, function(x) html_nodes(x, "tr")),
+                                function(x)
+                                  c(html_text(html_nodes(x, "td")),
+                                    html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
+                ## Tidy HTML return into data.frame
+                dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
+                names(dt) <- paste0("x", seq_len(ncol(dt)));
+                dt <- dt[grepl("^Table|All Time Series", dt$x1, ignore.case=TRUE), ];
+                dt <- replace(dt, dt == "", NA_character_);
+                dt <- dt[,colSums(is.na(dt)) < nrow(dt)]
+                names(dt) <- c("table_name", "path1", "path2");
+                dt$table_name <- trimws(dt$table_name);
+                dt$path1 <- paste0(options()$raustats["abs_domain"], gsub("\\s+", "%20", dt$path1));
+                dt$path2 <- paste0(options()$raustats["abs_domain"], gsub("\\s+", "%20", dt$path2));
+                return(dt);
+              });
+  ## Add catalogue number and release information to table
+  v <- lapply(length(v),
+              function(i) {
+                v[[i]]$release <- sub("^$", "Latest", releases[i]);
+                v[[i]]$cat_no <- cat_no;
+                return(v)
+              });
+
+  z <- do.call(rbind, v);
+  z <- z[,c("cat_no", "release", "table_name", "path1", "path2")];
+  return(z)
+  ## Test URL is valid and Downloads page accessible
+  ## s <- html_session(url);
+  ## if (!options()$raustats["abs_downloads_regex"] %in% html_text(html_nodes(s, "a")))
+  ##   stop(sprintf("URL: %s is not a valid ABS catalogue link.", url));
+
+
+  ## l <- follow_link(v, options()$raustats["abs_downloads_regex"])
+  ## ht <- html_nodes(html_nodes(l, "table"), "table")
+  ## nodes <- lapply(
+  ##   sapply(ht,
+  ##          function(x) 
+  ##            html_nodes(x, "tr")),
+  ##   function(x)
+  ##     c(html_text(html_nodes(x, "td")),
+  ##       html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
+  ## return(dt);
+}
+
+
+#' @name abs_cat_download
 #' @title Function to download files from the ABS website and store locally
 #' @description TBC
 #' @importFrom utils download.file unzip
-#' @param data_urls Character vector specifying one or more ABS data
-#'     URLs.
-#' @return Downloads data from the ABS website and returns a character
-#'     vector listing the location where files are saved.
+#' @param data_urls Character vector specifying one or more ABS data URLs.
+#' @return Downloads data from the ABS website and returns a character vector listing the location
+#'   where files are saved.
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-abs_download_data <- function(data_urls) {
+abs_cat_download <- function(data_urls) {
   local_filenames <- abs_local_filename(data_urls);
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, mode="wb"),
@@ -120,12 +224,12 @@ abs_download_data <- function(data_urls) {
 }
 
 
-#' @name abs_local_filename
-#' @title Create local file names for storing downloaded ABS data files
-#' @description Function to create local filename from web-based file name
-#' @param url Character vector specifying one or more ABS data URLs.
-#' @return Returns a local file names (character vector) in which downloaded files will be saved.
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+## @name abs_local_filename
+## @title Create local file names for storing downloaded ABS data files
+## @description Function to create local filename from web-based file name
+## @param url Character vector specifying one or more ABS data URLs.
+## @return Returns a local file names (character vector) in which downloaded files will be saved.
+## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 abs_local_filename <- function(url)
 {
   sprintf("%s_%s.%s",
@@ -135,7 +239,7 @@ abs_local_filename <- function(url)
 }
 
 
-#' @name abs_unzip_files
+#' @name abs_cat_unzip
 #' @title Function to download files from the ABS website and store locally
 #' @description TBC
 #' @importFrom utils download.file unzip
@@ -143,7 +247,7 @@ abs_local_filename <- function(url)
 #' @return Downloads data from the ABS website and returns a character
 #'     vector listing the location where files are saved.
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-abs_unzip_files <- function(files) {
+abs_cat_unzip <- function(files) {
   ## Only extract from zip files
   files <- files[grepl("\\.zip$", files, ignore.case=TRUE)];
   xl_files <- sapply(files,
@@ -156,51 +260,6 @@ abs_unzip_files <- function(files) {
                          x;
                        });
   return(xl_files);
-}
-
-
-#' @name abs_cat_tables
-#' @title Return ABS catalogue tables
-#' @description Return list of tables from specified ABS catalogue number
-#' @importFrom rvest html_session follow_link html_attr
-#' @importFrom xml2 read_xml read_html
-#' @param url Valid ABS data collection URL.
-#' @return Returns a data frame listing the data collection tables and links.
-#' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-#' @examples
-#'    url <- abs_cat_stats("5206.0", tables=c("Table 1"));
-#'    tables <- abs_cat_tables(url);
-abs_cat_tables <- function(url)
-{
-  ## Test URL is valid and Downloads page accessible
-  s <- html_session(url);
-  if (!options()$raustats["abs_downloads_regex"] %in% html_text(html_nodes(s, "a")))
-    stop(sprintf("URL: %s is not a valid ABS catalogue link.", url));
-
-  ## Return data table
-  ## The ABS data catalogue lists the data inside a HTML table within a table, i.e.
-  ##  <table>
-  ##    <table> </table>
-  ##  </table>
-  ## The following code exploits this structure to extract the list of available tables
-  ## and associated links.
-  l <- follow_link(s, options()$raustats["abs_downloads_regex"])
-  ht <- html_nodes(html_nodes(l, "table"), "table")
-  nodes <- lapply(
-    sapply(ht,
-           function(x) 
-             html_nodes(x, "tr")),
-    function(x)
-      c(html_text(html_nodes(x, "td")),
-        html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
-  dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
-  names(dt) <- paste0("x", seq_len(ncol(dt)));
-  dt <- dt[grepl("^Table|All Time Series", dt$x1, ignore.case=TRUE), ];
-  dt <- replace(dt, dt == "", NA_character_);
-  dt <- dt[,colSums(is.na(dt)) < nrow(dt)]
-  names(dt) <- c("table_name", "path1", "path2");
-  return(dt);
 }
 
 
