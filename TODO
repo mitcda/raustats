@@ -7,6 +7,16 @@
 
 * Test all ABS API call functions
 
+* Test all ABS catalogue functions
+
+* abs_cat_stats
+  - Insert code to handle Date class `releases` arguments, e.g. releases=as.Date("2017-12-01").
+  - Add `header_start` and `header_rows` argument to `abs_cat_stats` function.
+  - Add `return_urls` functionality to `abs_cat_stats` function.
+
+* abs_cat_tables
+  - Modify `abs_cat_tables` function to list tables for specified catalogue numbers. [DONE 2018-11-05]
+  - Generalise `abs_cat_tables` function to handle non-time series results with only one column of URLs.
 
 * Candidate additional arguments for abs_stats
 #' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting

@@ -53,7 +53,7 @@ abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", r
   ##                        z <- abs_cat_tables(.url$url)
   ##                      });
   ## -- END - OLD CODE --
-  cat_tables <- abs_cat_tables(cat_no=series, releases=releases, return_urls=TRUE)
+  cat_tables <- abs_cat_tables(cat_no=series, releases=releases, include_urls=TRUE)
   ## -- UP TO HERE --
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
