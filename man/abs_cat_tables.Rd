@@ -4,7 +4,9 @@
 \alias{abs_cat_tables}
 \title{Return ABS catalogue tables}
 \usage{
-abs_cat_tables(cat_no, releases = "Latest", include_urls = FALSE)
+abs_cat_tables(cat_no, releases = "Latest",
+  pub_types = c("Time Series Spreadsheet", "Data Cube"),
+  include_urls = FALSE)
 }
 \arguments{
 \item{cat_no}{ABS catalogue numbers.}
@@ -13,7 +15,12 @@ abs_cat_tables(cat_no, releases = "Latest", include_urls = FALSE)
 release to download. Default is "Latest", which downloads the latest available data. See
 examples for further details.}
 
-\item{include_urls}{Return data URLs only, no data (Default: FALSE).}
+\item{pub_types}{ABS publication types to return. Permissable options include one or more of:
+'Time Series Spreadsheet', 'Data Cube' and 'Publication'. Default downloads Time Series
+Spreadsheet and Data Cube.}
+
+\item{include_urls}{Include full URLs to returned ABS data files. Default (FALSE) does not
+include data file URLs.}
 }
 \value{
 Returns a data frame listing the data collection tables and links.
@@ -22,8 +29,21 @@ Returns a data frame listing the data collection tables and links.
 Return list of tables from specified ABS catalogue number
 }
 \examples{
-   url <- abs_cat_stats("5206.0", tables=c("Table 1"));
-   tables <- abs_cat_tables(url);
+  ## List latest available quarterly National Accounts tables
+  ana_tables <- abs_cat_tables("5206.0", releases="Latest");
+  ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+
+  ## List latest available CPI Time Series Spreadsheet tables only
+  cpi_tables <- abs_cat_tables("6401.0", releases="Latest", pub_types="Time Series Spreadsheet");
+  cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", pub_types="Time Series Spreadsheet", include_urls=TRUE);
+
+  ## List latest available ASGS Volume 3 Data Cubes
+  asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube");
+  asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube", include_urls=TRUE);
+
+  ## List latest available ASGS ANZSIC publications (PDF) files
+  anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", pub_types="Publication", include_urls=TRUE);
+
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

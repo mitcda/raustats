@@ -115,22 +115,46 @@ abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", r
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
 #'   examples for further details.
-#' @param include_urls Return data URLs only, no data (Default: FALSE).
+#' @param pub_types ABS publication types to return. Permissable options include one or more of:
+#'   'Time Series Spreadsheet', 'Data Cube' and 'Publication'. Default downloads Time Series
+#'   Spreadsheet and Data Cube.
+#' @param include_urls Include full URLs to returned ABS data files. Default (FALSE) does not
+#'   include data file URLs.
 #' @return Returns a data frame listing the data collection tables and links.
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    url <- abs_cat_stats("5206.0", tables=c("Table 1"));
-#'    tables <- abs_cat_tables(url);
-abs_cat_tables <- function(cat_no, releases="Latest", include_urls=FALSE)
+#'   ## List latest available quarterly National Accounts tables
+#'   ana_tables <- abs_cat_tables("5206.0", releases="Latest");
+#'   ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+#'
+#'   ## List latest available CPI Time Series Spreadsheet tables only
+#'   cpi_tables <- abs_cat_tables("6401.0", releases="Latest", pub_types="Time Series Spreadsheet");
+#'   cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", pub_types="Time Series Spreadsheet", include_urls=TRUE);
+#'
+#'   ## List latest available ASGS Volume 3 Data Cubes
+#'   asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube");
+#'   asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube", include_urls=TRUE);
+#'
+#'   ## List latest available ASGS ANZSIC publications (PDF) files
+#'   anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", pub_types="Publication", include_urls=TRUE);
+#' 
+abs_cat_tables <- function(cat_no, releases="Latest",
+                           pub_types=c("Time Series Spreadsheet", "Data Cube"),
+                           include_urls=FALSE)
 {
-  DEBUG <- FALSE
-  if (DEBUG) {
-    library(rvest);
-    cat_no <- "6401.0";
-    releases <- "Latest";
-    releases <- c("Dec 2017", "Sep 2017");
-  }
+  ## DEBUG <- FALSE
+  ## if (DEBUG) {
+  ##   library(rvest);
+  ##   cat_no <- "5206.0";
+  ##   cat_no <- "6401.0";
+  ##   cat_no <- "1270.0.55.001"
+  ##   cat_no <- "1270.0.55.003"
+  ##   releases <- "Latest";
+  ##   releases <- c("Dec 2017", "Sep 2017");
+  ##   pub_types <- c("Time Series Spreadsheet", "Data Cube")
+  ##   pub_types <- c("Publication")
+  ## }
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), cat_no);
   s <- html_session(url);
@@ -141,14 +165,14 @@ abs_cat_tables <- function(cat_no, releases="Latest", include_urls=FALSE)
   } else {
     ## Get path to 'Past & Future Releases' page
     .paths <- html_nodes(s, "a");
-     .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
-     .paths <- html_attr(.paths, "href");
-     s <- jump_to(s, .paths)
-     .paths <- html_nodes(s, "a");
-     .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
-     .paths <- html_attr(.paths, "href");
-   }
-   ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
+    .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
+    .paths <- html_attr(.paths, "href");
+    s <- jump_to(s, .paths)
+    .paths <- html_nodes(s, "a");
+    .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
+    .paths <- html_attr(.paths, "href");
+  }
+  ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
   v <- lapply(.paths,
               function(x) {
                 y <- jump_to(s, x)
@@ -160,26 +184,46 @@ abs_cat_tables <- function(cat_no, releases="Latest", include_urls=FALSE)
                 ##  <table>
                 ##    <table> </table>
                 ##  </table>
-                ## The following nested apply functions,  exploits this structure to extract the
-                ## list of available tables and associated links.
-                nodes <- lapply(sapply(ht, function(x) html_nodes(x, "tr")),
+                ## The following nested apply functions, exploits this structure to extract the
+                ## list of available publication types and associated links.
+                all_nodes <- lapply(sapply(ht, function(x) html_nodes(x, "tr")),
                                 function(x)
                                   c(html_text(html_nodes(x, "td")),
-                                    html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
+                                    ## html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
+                                    paste0(options()$raustats["abs_domain"],
+                                           html_attr(html_nodes(html_nodes(x, "td"), "a"), "href"))
+                                    ));
+                nodes <- all_nodes[unlist(lapply(all_nodes,
+                                                 function(x) any(grepl(sprintf("(%s)",
+                                                                               paste(pub_types, collapse="|")),
+                                                                       x, ignore.case=TRUE)) &
+                                                             any(grepl("ausstats", x, ignore.case=TRUE))
+                                                 ))];
+                ## Remove non-breaking space (&nbsp;) and blank entries
+                nodes <- lapply(nodes,
+                                 function(x) {
+                                   z <- trimws(gsub("\u00a0", "", x));
+                                   z <- replace(z, z == "", NA_character_);
+                                   z <- z[!is.na(z)]
+                                 });
                 ## Tidy HTML return into data.frame
                 dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
-                names(dt) <- paste0("x", seq_len(ncol(dt)));
-                dt <- dt[grepl("^Table|All Time Series", dt$x1, ignore.case=TRUE), ];
-                dt <- replace(dt, dt == "", NA_character_);
-                dt <- dt[,colSums(is.na(dt)) < nrow(dt)]
-                names(dt) <- c("table_name", "path1", "path2");
-                dt$table_name <- trimws(dt$table_name);
-                dt$path1 <- paste0(options()$raustats["abs_domain"], gsub("\\s+", "%20", dt$path1));
-                dt$path2 <- paste0(options()$raustats["abs_domain"], gsub("\\s+", "%20", dt$path2));
+                ## Check if non-'path' columns contain pub_types string, and discard if not
+                idx <- sapply(names(dt)[-1],
+                              function(x) any(grepl(sprintf("(%s)",
+                                                            paste(pub_types, collapse="|")),
+                                                    dt[,x], ignore.case=TRUE))
+                              );
+                dt <- dt[, c(TRUE, idx)];
+                ## Specify dt column names
+                names(dt) <- c("item_name", paste("path", seq_len(ncol(dt)-1), sep="_"));
+                ## Lastly replace spaces in URL paths with '%20' string
+                for(name in names(dt)[-1])
+                  dt[,name] <- gsub("\\s+", "%20", dt[,name]);
                 return(dt);
               });
   ## Add catalogue number and release information to table
-  v <- lapply(length(v),
+  v <- lapply(seq_along(v),
               function(i) {
                 v[[i]]$release <- sub("^$", "Latest", releases[i]);
                 v[[i]]$cat_no <- cat_no;
@@ -187,10 +231,14 @@ abs_cat_tables <- function(cat_no, releases="Latest", include_urls=FALSE)
               });
 
   z <- do.call(rbind, v);
-  z <- if (include_urls) {
-         z[,c("cat_no", "release", "table_name", "path1", "path2")]
+  ## If rbind breaks on different row names try:
+  ## z <- do.call(function(...) rbind(..., make.row.names=FALSE), v);
+  ## names(z) <- c("item_name", ..., "cat_no", "release");
+  z <- if (!include_urls) {
+         z[,c("cat_no", "release", "item_name")]
        } else {
-         z[,c("cat_no", "release", "table_name")]
+         z[,c("cat_no", "release", "item_name",
+              names(z)[!names(z) %in% c("cat_no", "release", "item_name")])]
        }
   row.names(z) <- seq_len(nrow(z));
   return(z)

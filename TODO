@@ -3,8 +3,6 @@
 * The ABS Engineering Construction tables seem to require that the
   sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - Complete 15/09/2018
 
-* abs_cat_tables function is downloading tables twice
-
 * Test all ABS API call functions
 
 * Test all ABS catalogue functions
@@ -16,7 +14,8 @@
 
 * abs_cat_tables
   - Modify `abs_cat_tables` function to list tables for specified catalogue numbers. [DONE 2018-11-05]
-  - Generalise `abs_cat_tables` function to handle non-time series results with only one column of URLs.
+  - Generalise `abs_cat_tables` function to handle non-time series results with only one column of URLs. [DONE 2018-11-06]
+  - Remove Released 'dd/mm/yyyy' columns from final results.
 
 * Candidate additional arguments for abs_stats
 #' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting
