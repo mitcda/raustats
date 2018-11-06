@@ -8,7 +8,7 @@ abs_ausstats_url <- function()
 #' @description TBC
 #' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
-#' @param series Character vector specifying one or more ABS collections or catalogue numbers to
+#' @param cat_no Character vector specifying one or more ABS collections or catalogue numbers to
 #'   download.
 #' @param tables A character vector of regular expressions denoting tables to download. The default
 #'   ('All') downloads all time series spreadsheet tables for each specified catalogue. Use a list
@@ -26,8 +26,18 @@ abs_ausstats_url <- function()
 #'    x <- abs_cat_stats("3101.0");
 #'    y <- abs_cat_stats("5206.0", tables=c("Table 1", "Table 2"));
 #'    z <- abs_cat_stats("5206.0", tables="Table 1", release="Dec 2017");
-abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", return_urls=FALSE)
+abs_cat_stats <- function(cat_no, tables="All", releases="Latest", type=c("tss", "css"), return_urls=FALSE)
 {
+  if (missing(cat_no))
+    stop("No cat_no supplied.");
+  ## if (tolower(releases) != "latest" ||
+  ##     releases IS NOT A DATE )
+  ##   stop("releases arguments ")
+  if (any(!type %in% c("tss","css")))
+    stop("Allowable type arguments limited to one or both: 'tss' and 'css'.");
+  if (!is.logical(return_urls))
+    stop("return_urls must be either TRUE or FALSE");
+
   ## -- OLD CODE --
   ## ## Create ABS URL and open session 
   ## url <- file.path(abs_ausstats_url(), series);
@@ -53,7 +63,7 @@ abs_cat_stats <- function(series, tables="All", releases="Latest", type="tss", r
   ##                        z <- abs_cat_tables(.url$url)
   ##                      });
   ## -- END - OLD CODE --
-  cat_tables <- abs_cat_tables(cat_no=series, releases=releases, include_urls=TRUE)
+  cat_tables <- abs_cat_tables(cat_no=cat_no, releases=releases, pub_type=type, include_urls=TRUE)
   ## -- UP TO HERE --
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
@@ -155,6 +165,16 @@ abs_cat_tables <- function(cat_no, releases="Latest",
   ##   pub_types <- c("Time Series Spreadsheet", "Data Cube")
   ##   pub_types <- c("Publication")
   ## }
+  if (missing(cat_no))
+    stop("No cat_no supplied.");
+  ## if (tolower(releases) != "latest" ||
+  ##     releases IS NOT A DATE )
+  ##   stop("releases arguments ")
+  if (any(!pub_type %in% c("Time Series Spreadsheet", "Data Cube", "Publication")))
+    stop("Allowable pub_type arguments limited to one or more: 'Time Series Spreadsheet', 'Data Cube' or 'Publication'.");
+  if (!is.logical(include_urls))
+    stop("include_urls must be either TRUE or FALSE");
+
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), cat_no);
   s <- html_session(url);

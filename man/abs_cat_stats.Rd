@@ -4,11 +4,11 @@
 \alias{abs_cat_stats}
 \title{Return data files from a specified url}
 \usage{
-abs_cat_stats(series, tables = "All", releases = "Latest",
-  type = "tss", return_urls = FALSE)
+abs_cat_stats(cat_no, tables = "All", releases = "Latest",
+  type = c("tss", "css"), return_urls = FALSE)
 }
 \arguments{
-\item{series}{Character vector specifying one or more ABS collections or catalogue numbers to
+\item{cat_no}{Character vector specifying one or more ABS collections or catalogue numbers to
 download.}
 
 \item{tables}{A character vector of regular expressions denoting tables to download. The default
