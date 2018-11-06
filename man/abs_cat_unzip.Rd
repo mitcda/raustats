@@ -2,19 +2,22 @@
 % Please edit documentation in R/abs-cat-functions.R
 \name{abs_cat_unzip}
 \alias{abs_cat_unzip}
-\title{Function to download files from the ABS website and store locally}
+\title{Uncompress locally-stored ABS Catalogue data file archives}
 \usage{
-abs_cat_unzip(files)
+abs_cat_unzip(files, exdir)
 }
 \arguments{
 \item{files}{One or more local zip files.}
+
+\item{exdir}{Target directory for extracted archive files. Directory is created if it doesn't
+exist. If missing, creates a new subdirectory in \code{tempdir()} using the respective zip
+files (specified in \code{files}.}
 }
 \value{
-Downloads data from the ABS website and returns a character
-    vector listing the location where files are saved.
+Returns a character vector listing the names of all files extracted.
 }
 \description{
-TBC
+Function to uncompress locally-stored ABS Catalogue data file archives
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

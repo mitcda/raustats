@@ -30,7 +30,7 @@ test_that("abs_read_tss returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(readxl); library(tidyr); 
+  library(readxl); library(tidyr);
   
   expect_s3_class(abs_read_tss(file.path("data-raw", "5206001_key_aggregates.xls")),
                   "data.frame");
@@ -47,8 +47,12 @@ test_that("abs_cat_tables returns a valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  abs_5206_url <- "http://www.abs.gov.au/ausstats/abs@.nsf/mf/5206.0"
-  expect_s3_class(abs_cat_tables(abs_5206_url), "data.frame");
+  expect_s3_class(abs_cat_tables("5206.0"), "data.frame");
+  expect_s3_class(abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE), "data.frame");
+  expect_s3_class(abs_cat_tables("6401.0", releases="Latest", types="tss"), "data.frame");
+  expect_s3_class(abs_cat_tables("1270.0.55.003", releases="Latest", types="css"), "data.frame");
+  expect_s3_class(anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE),
+                  "data.frame");
 })
 
 
@@ -81,17 +85,16 @@ test_that("abs_cat_tables fails well",
 
 
 
-test_that("abs_cat_data returns valid data frame",
+test_that("abs_cat_stats tss call returns valid data frame",
 {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
 
-  library(rvest); library(readxl); library(tidyr); library(dplyr);
+  library(rvest); library(readxl);
 
-  expect_s3_class(abs_cat_data("5206.0", tables="Table 1"), "data.frame");
-  expect_s3_class(abs_cat_data("5206.0", tables=c("Table 1", "Table 2")), "data.frame");
-  expect_s3_class(abs_cat_data("5206.0", tables="all"), "data.frame");
-  expect_s3_class(abs_cat_data("5206.0", tables="Table 1", release="Dec 2017"), "data.frame");
-  expect_s3_class(abs_cat_data("5206.0", tables="all", release="Dec 2016"), "data.frame");
+  expect_s3_class(abs_cat_stats("5206.0", tables="Table 1\\W+"), "data.frame");
+  expect_s3_class(abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+")), "data.frame");
+  expect_s3_class(abs_cat_stats("6401.0", tables="CPI.+All Groups"), "data.frame");
+  expect_s3_class(abs_cat_stats("6401.0", tables="CPI.+All Groups", releases="Dec 2017"), "data.frame");
 })

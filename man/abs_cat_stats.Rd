@@ -2,10 +2,10 @@
 % Please edit documentation in R/abs-cat-functions.R
 \name{abs_cat_stats}
 \alias{abs_cat_stats}
-\title{Return data files from a specified url}
+\title{Get ABS catalogue series data}
 \usage{
 abs_cat_stats(cat_no, tables = "All", releases = "Latest",
-  type = c("tss", "css"), return_urls = FALSE)
+  types = "tss")
 }
 \arguments{
 \item{cat_no}{Character vector specifying one or more ABS collections or catalogue numbers to
@@ -19,10 +19,8 @@ to specify different table sets for each specified ABS catalogue number.}
 release to download. Default is "Latest", which downloads the latest available data. See
 examples for further details.}
 
-\item{type}{One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section
-spreadsheet.}
-
-\item{return_urls}{Return data URLs only, no data (Default: FALSE).}
+\item{types}{One of either 'tss' -- ABS time series spreadsheet (the default) or 'css' -- ABS
+data cube (cross-section spreadsheet).}
 }
 \value{
 data frame in long format
@@ -31,9 +29,12 @@ data frame in long format
 TBC
 }
 \examples{
-   x <- abs_cat_stats("3101.0");
-   y <- abs_cat_stats("5206.0", tables=c("Table 1", "Table 2"));
-   z <- abs_cat_stats("5206.0", tables="Table 1", release="Dec 2017");
+  ## Download quarterly Australian National Accounts, Tables 1 & 2 
+  ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
+
+  ## Download December 2017 Australian National Accounts, Table 1
+  ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\\\W+", release="Dec 2017");
+
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

@@ -17,6 +17,12 @@
   - Generalise `abs_cat_tables` function to handle non-time series results with only one column of URLs. [DONE 2018-11-06]
   - Remove Released 'dd/mm/yyyy' columns from final results.
 
+* abs_cat_unzip
+  - Added exdir argument - CHECK
+
+* abs_cat_download
+  - Added exdir argument - CHECK
+
 * Candidate additional arguments for abs_stats
 #' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting
 #'   tables to download. The default ('All') downloads all time series spreadsheet tables for each

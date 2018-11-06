@@ -4,7 +4,7 @@ abs_ausstats_url <- function()
 
 
 #' @name abs_cat_stats
-#' @title Return data files from a specified url
+#' @title Get ABS catalogue series data
 #' @description TBC
 #' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
@@ -16,104 +16,84 @@ abs_ausstats_url <- function()
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
 #'   examples for further details.
-#' @param type One of either 'tss' - time series spreadsheet (the default) or 'css' - cross-section
-#'   spreadsheet.
-#' @param return_urls Return data URLs only, no data (Default: FALSE).
+#' @param types One of either 'tss' -- ABS time series spreadsheet (the default) or 'css' -- ABS
+#'   data cube (cross-section spreadsheet).
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- abs_cat_stats("3101.0");
-#'    y <- abs_cat_stats("5206.0", tables=c("Table 1", "Table 2"));
-#'    z <- abs_cat_stats("5206.0", tables="Table 1", release="Dec 2017");
-abs_cat_stats <- function(cat_no, tables="All", releases="Latest", type=c("tss", "css"), return_urls=FALSE)
+#'   ## Download quarterly Australian National Accounts, Tables 1 & 2 
+#'   ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
+#'
+#'   ## Download December 2017 Australian National Accounts, Table 1
+#'   ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\W+", release="Dec 2017");
+#' 
+abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 {
+  DEBUG <- FALSE
+  if (DEBUG) {
+    library(rvest);
+    cat_no <- "5206.0";
+    cat_no <- "6401.0";
+    cat_no <- "1270.0.55.001"
+    cat_no <- "1270.0.55.003"
+    tables <- "Table 1"
+    releases <- "Latest";
+    releases <- c("Dec 2017", "Sep 2017");
+    types <- c("tss")
+  }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
   ##     releases IS NOT A DATE )
   ##   stop("releases arguments ")
-  if (any(!type %in% c("tss","css")))
+  if (any(!types %in% c("tss","css")))
     stop("Allowable type arguments limited to one or both: 'tss' and 'css'.");
-  if (!is.logical(return_urls))
-    stop("return_urls must be either TRUE or FALSE");
-
-  ## -- OLD CODE --
-  ## ## Create ABS URL and open session 
-  ## url <- file.path(abs_ausstats_url(), series);
-  ## s <- html_session(url);
-  
-  ## releases <- unique(tolower(releases));
-  ## if (length(releases) == 1 && releases == "latest") {
-  ##   .paths <- "";
-  ## } else {
-  ##   ## Get path to 'Past & Future Releases' page
-  ##   .paths <- html_nodes(s, "a");
-  ##   .paths <- .paths[grepl(options()$raustats["abs_releases_regex"], .paths)];
-  ##   .paths <- html_attr(.paths, "href");
-  ##   s <- jump_to(s, .paths)
-  ##   .paths <- html_nodes(s, "a");
-  ##   .paths <- .paths[grepl(paste(releases, collapse="|"), .paths, ignore.case=TRUE)];
-  ##   .paths <- html_attr(.paths, "href");
-  ## }
-  ## ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
-  ## cat_tables <- lapply(.paths,
-  ##                      function(x) {
-  ##                        .url <- jump_to(s, x)
-  ##                        z <- abs_cat_tables(.url$url)
-  ##                      });
-  ## -- END - OLD CODE --
-  cat_tables <- abs_cat_tables(cat_no=cat_no, releases=releases, pub_type=type, include_urls=TRUE)
-  ## -- UP TO HERE --
+  ## Get available catalogue tables
+  cat_tables <- abs_cat_tables(cat_no=cat_no, releases=releases, types=types, include_urls=TRUE)
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
     ## If 'all' tables, download all
-    sel_tables <- lapply(cat_tables,
-                         function(x)
-                           if (any(grepl("^all time series.*", x$table_name, ignore.case=TRUE))) {
-                             ## Check whether all tables provided as single compressed archive and use
-                             x[grepl("^all time series.*", x$table_name, ignore.case=TRUE),]
-                           } else {
-                             ## Else load all tables
-                             x
-                           });
+    sel_tables <- if (any(grepl("^all time series.*", cat_tables$item_name, ignore.case=TRUE))) {
+                    ## If all tables provided as single compressed archive, select that
+                    cat_tables[grepl("^all time series.*", cat_tables$item_name, ignore.case=TRUE),]
+                  } else {
+                    ## Else, select all tables
+                    cat_tables
+                  };
   } else {
     ## Else, return only selected tables
-    sel_tables <- lapply(cat_tables,
-                         function(x) {
-                           x[grepl(paste0("^(",
-                                          paste(paste0(tables, "\\W.+" ), collapse="|"),
-                                          ")"),
-                                   x$table_name, ignore.case=TRUE),]
-                         });
+    sel_tables <- cat_tables[grepl(sprintf("(%s)", paste(tables, collapse="|")),
+                                   cat_tables$item_name, ignore.case=TRUE),]
   }
   ## Select only the user specified tables ('sel_tables')
-  sel_paths <- lapply(sel_tables,
-                      function(x)
-                        apply(x, 1, 
-                              function(y) {
-                                ## if zip in path1/path2, select zip file, else select xls(x) file
-                                if (any(grepl("\\.zip", y, ignore.case=TRUE))) {
-                                  grep("\\.zip", unlist(y), ignore.case=TRUE, value=TRUE)
-                                } else {
-                                  grep("\\.xlsx*", unlist(y), ignore.case=TRUE, value=TRUE)
-                                }
-                              }));
+  sel_urls <- apply(sel_tables, 1,
+                    ## lapply(sel_tables,
+                    ##         function(x)
+                    ##           apply(x, 1, 
+                    function(y) {
+                      ## if zip in path1/path2, select zip file, else select xls(x) file
+                      if (any(grepl("\\.zip", y, ignore.case=TRUE))) {
+                        grep("\\.zip", unlist(y), ignore.case=TRUE, value=TRUE)
+                      } else {
+                        grep("\\.xlsx*", unlist(y), ignore.case=TRUE, value=TRUE)
+                      }
+                    });
+  ## );
   ## Create URLs for selected files
-  sel_urls <- paste0(options()$raustats["abs_domain"],
-                     ## Replace all spaces with '%20'
-                     gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
-  if (return_urls) {
-    return(sel_urls)
-  } else {
-    ## Combine data into 
-    z <- lapply(sel_urls, abs_cat_download);
-    z <- lapply(z, abs_cat_unzip);
-    data <- lapply(z, abs_read_tss);
-    data <- do.call(rbind, data);
-    rownames(data) <- seq_len(nrow(data));
-    return(data);
-  }
+  ## Redundant due to changes in abs_cat_tables
+  ## sel_urls <- paste0(options()$raustats["abs_domain"],
+  ##                    ## Replace all spaces with '%20'
+  ##                    gsub("\\s", "%20", sub("^/","", unlist(sel_paths))));
+  ## Download ABS TSS/Data Cubes ..
+  ## -- UP TO HERE --
+  z <- lapply(sel_urls, abs_cat_download);
+  z <- lapply(z, abs_cat_unzip);
+  ## .. and extract into single data frame
+  data <- lapply(z, abs_read_tss);
+  data <- do.call(rbind, data);
+  rownames(data) <- seq_len(nrow(data));
+  return(data);
 }
 
 
@@ -125,9 +105,9 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", type=c("tss",
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
 #'   examples for further details.
-#' @param pub_types ABS publication types to return. Permissable options include one or more of:
-#'   'Time Series Spreadsheet', 'Data Cube' and 'Publication'. Default downloads Time Series
-#'   Spreadsheet and Data Cube.
+#' @param types ABS publication types to return. Permissable options include one or more of: 'tss'
+#'   -- ABS Time Series Spreadsheets, 'css' - ABS Data Cubes and 'pub' -- ABS Publications. The
+#'   default returns all Time Series Spreadsheets and Data Cubes.
 #' @param include_urls Include full URLs to returned ABS data files. Default (FALSE) does not
 #'   include data file URLs.
 #' @return Returns a data frame listing the data collection tables and links.
@@ -139,19 +119,17 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", type=c("tss",
 #'   ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 #'
 #'   ## List latest available CPI Time Series Spreadsheet tables only
-#'   cpi_tables <- abs_cat_tables("6401.0", releases="Latest", pub_types="Time Series Spreadsheet");
-#'   cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", pub_types="Time Series Spreadsheet", include_urls=TRUE);
+#'   cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
+#'   cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
 #'
 #'   ## List latest available ASGS Volume 3 Data Cubes
-#'   asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube");
-#'   asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube", include_urls=TRUE);
+#'   asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
+#'   asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css", include_urls=TRUE);
 #'
 #'   ## List latest available ASGS ANZSIC publications (PDF) files
-#'   anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", pub_types="Publication", include_urls=TRUE);
+#'   anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
 #' 
-abs_cat_tables <- function(cat_no, releases="Latest",
-                           pub_types=c("Time Series Spreadsheet", "Data Cube"),
-                           include_urls=FALSE)
+abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), include_urls=FALSE)
 {
   ## DEBUG <- FALSE
   ## if (DEBUG) {
@@ -162,19 +140,24 @@ abs_cat_tables <- function(cat_no, releases="Latest",
   ##   cat_no <- "1270.0.55.003"
   ##   releases <- "Latest";
   ##   releases <- c("Dec 2017", "Sep 2017");
-  ##   pub_types <- c("Time Series Spreadsheet", "Data Cube")
-  ##   pub_types <- c("Publication")
+  ##   types <- c("Time Series Spreadsheet", "Data Cube")
+  ##   types <- c("Publication")
   ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
   ##     releases IS NOT A DATE )
   ##   stop("releases arguments ")
-  if (any(!pub_type %in% c("Time Series Spreadsheet", "Data Cube", "Publication")))
-    stop("Allowable pub_type arguments limited to one or more: 'Time Series Spreadsheet', 'Data Cube' or 'Publication'.");
+  if (any(!types %in% c("tss", "css", "pub")))
+    stop("Allowable type arguments limited to one or more of: 'tss', 'css' or 'pub'.");
   if (!is.logical(include_urls))
     stop("include_urls must be either TRUE or FALSE");
-
+  ## Spell out type -- for ABS website scraping
+  types <- sapply(types,
+                     function(x) switch(x,
+                                        "tss" = "Time Series Spreadsheet",
+                                        "css" = "Data Cube",
+                                        "pub" = "Publication"));
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), cat_no);
   s <- html_session(url);
@@ -215,7 +198,7 @@ abs_cat_tables <- function(cat_no, releases="Latest",
                                     ));
                 nodes <- all_nodes[unlist(lapply(all_nodes,
                                                  function(x) any(grepl(sprintf("(%s)",
-                                                                               paste(pub_types, collapse="|")),
+                                                                               paste(types, collapse="|")),
                                                                        x, ignore.case=TRUE)) &
                                                              any(grepl("ausstats", x, ignore.case=TRUE))
                                                  ))];
@@ -228,10 +211,10 @@ abs_cat_tables <- function(cat_no, releases="Latest",
                                  });
                 ## Tidy HTML return into data.frame
                 dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
-                ## Check if non-'path' columns contain pub_types string, and discard if not
+                ## Check if non-'path' columns contain types string, and discard if not
                 idx <- sapply(names(dt)[-1],
                               function(x) any(grepl(sprintf("(%s)",
-                                                            paste(pub_types, collapse="|")),
+                                                            paste(types, collapse="|")),
                                                     dt[,x], ignore.case=TRUE))
                               );
                 dt <- dt[, c(TRUE, idx)];
@@ -270,18 +253,22 @@ abs_cat_tables <- function(cat_no, releases="Latest",
 #' @description TBC
 #' @importFrom utils download.file unzip
 #' @param data_urls Character vector specifying one or more ABS data URLs.
+#' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
+#'   created if it doesn't exist.
 #' @return Downloads data from the ABS website and returns a character vector listing the location
 #'   where files are saved.
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-abs_cat_download <- function(data_urls) {
+abs_cat_download <- function(data_urls, exdir=tempdir()) {
+  if(!dir.exists(exdir))
+    dir.create(exdir)
   local_filenames <- abs_local_filename(data_urls);
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, mode="wb"),
          data_urls,
-         file.path(tempdir(), local_filenames));
+         file.path(exdir, local_filenames));
   ## Return results
-  return(file.path(tempdir(), local_filenames));
+  return(file.path(exdir, local_filenames));
 }
 
 
@@ -291,6 +278,8 @@ abs_cat_download <- function(data_urls) {
 ## @param url Character vector specifying one or more ABS data URLs.
 ## @return Returns a local file names (character vector) in which downloaded files will be saved.
 ## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+## @examples
+##
 abs_local_filename <- function(url)
 {
   sprintf("%s_%s.%s",
@@ -301,22 +290,36 @@ abs_local_filename <- function(url)
 
 
 #' @name abs_cat_unzip
-#' @title Function to download files from the ABS website and store locally
-#' @description TBC
+#' @title Uncompress locally-stored ABS Catalogue data file archives
+#' @description Function to uncompress locally-stored ABS Catalogue data file archives
 #' @importFrom utils download.file unzip
 #' @param files One or more local zip files.
-#' @return Downloads data from the ABS website and returns a character
-#'     vector listing the location where files are saved.
+#' @param exdir Target directory for extracted archive files. Directory is created if it doesn't
+#'   exist. If missing, creates a new subdirectory in \code{tempdir()} using the respective zip
+#'   files (specified in \code{files}.
+#' @return Returns a character vector listing the names of all files extracted.
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-abs_cat_unzip <- function(files) {
+abs_cat_unzip <- function(files, exdir) {
+  if (any(!file.exists(files)))
+    stop(sprintf("Files %s do not exist",
+                 paste(files[!file.exists(files)], collapse=", ")));
+  if (missing(exdir))
+    exdir <- tempdir();
   ## Only extract from zip files
   files <- files[grepl("\\.zip$", files, ignore.case=TRUE)];
   xl_files <- sapply(files,
                      function(x)
                        if (grepl("\\.zip$", x, ignore.case=TRUE)) {
-                         destdir <- sub("\\.zip", "", basename(x));
-                         unzip(x, exdir=file.path(tempdir(), destdir));
-                         file.path(tempdir(), destdir, unzip(x, list=TRUE)$Name);
+                         ## If exdir NOT missing, then use it
+                         if (exdir == tempdir()) {
+                           exdir <- file.path(exdir, sub("\\.zip", "", basename(x)));
+                         } else {
+                           ## Else, use tempdir()
+                           if (!dir.exists(exdir))
+                             dir.create(exdir)
+                         }
+                         unzip(x, exdir=exdir);
+                         file.path(exdir, unzip(x, list=TRUE)$Name);
                        } else {
                          x;
                        });
@@ -333,9 +336,8 @@ abs_cat_unzip <- function(files) {
 #' @importFrom dplyr left_join
 #' @importFrom tidyr gather
 #' @param files Names of one or more ABS data file [DEPRECATED]
-#' @param type One of either 'tss' - time series spreadsheet (DEFAULT
-#'     or 'dem' - demographic data
-#' @param ... other arguments to ... 
+#' @param type One of either 'tss' -- ABS Time Series Spreadsheet (DEFAULT
+#'     or 'css' -- Data Cube
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
@@ -347,6 +349,7 @@ abs_read_tss <- function(files, type="tss") {
               function(file)
                 abs_read_tss_(file, type=type));
   z <- do.call(rbind, x);
+  rownames(z) <- seq_len(nrow(z));
   return(z);
 }
 

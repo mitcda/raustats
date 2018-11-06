@@ -4,8 +4,7 @@
 \alias{abs_cat_tables}
 \title{Return ABS catalogue tables}
 \usage{
-abs_cat_tables(cat_no, releases = "Latest",
-  pub_types = c("Time Series Spreadsheet", "Data Cube"),
+abs_cat_tables(cat_no, releases = "Latest", types = c("tss", "css"),
   include_urls = FALSE)
 }
 \arguments{
@@ -15,9 +14,9 @@ abs_cat_tables(cat_no, releases = "Latest",
 release to download. Default is "Latest", which downloads the latest available data. See
 examples for further details.}
 
-\item{pub_types}{ABS publication types to return. Permissable options include one or more of:
-'Time Series Spreadsheet', 'Data Cube' and 'Publication'. Default downloads Time Series
-Spreadsheet and Data Cube.}
+\item{types}{ABS publication types to return. Permissable options include one or more of: 'tss'
+-- ABS Time Series Spreadsheets, 'css' - ABS Data Cubes and 'pub' -- ABS Publications. The
+default returns all Time Series Spreadsheets and Data Cubes.}
 
 \item{include_urls}{Include full URLs to returned ABS data files. Default (FALSE) does not
 include data file URLs.}
@@ -34,15 +33,15 @@ Return list of tables from specified ABS catalogue number
   ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 
   ## List latest available CPI Time Series Spreadsheet tables only
-  cpi_tables <- abs_cat_tables("6401.0", releases="Latest", pub_types="Time Series Spreadsheet");
-  cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", pub_types="Time Series Spreadsheet", include_urls=TRUE);
+  cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
+  cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
 
   ## List latest available ASGS Volume 3 Data Cubes
-  asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube");
-  asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", pub_types="Data Cube", include_urls=TRUE);
+  asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
+  asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css", include_urls=TRUE);
 
   ## List latest available ASGS ANZSIC publications (PDF) files
-  anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", pub_types="Publication", include_urls=TRUE);
+  anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
 
 }
 \author{
