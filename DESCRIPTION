@@ -4,7 +4,7 @@ Title: Access data and statistics from the ABS and RBA websites
 Description: An R package for downloading Australian economic data statistics
   from the Australian Bureau of Statistics (ABS) and Reserve Bank of Australia
   (RBA) websites.
-Version: 0.1
+Version: 0.0.0.9000
 Date: 2018-09-03
 Authors@R: c(
   person("David", "Mitchell", email = "david.mitchell@infrastructure.gov.au", role = c("aut", "cre"))
@@ -15,7 +15,7 @@ License: GPL-2 | GPL-3
 Depends: R (>= 3.0.0)
 Suggests: repo
 LazyData: TRUE
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1
 VignetteBuilder: knitr
 NeedsCompilation: no
 Encoding: UTF-8
