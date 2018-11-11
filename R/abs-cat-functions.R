@@ -101,6 +101,8 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 #' @title Return ABS catalogue tables
 #' @description Return list of tables from specified ABS catalogue number
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
+#' @importFrom httr status_codes getFromNamespace
+#' @importFrom utils getFromNamespace
 #' @param cat_no ABS catalogue numbers.
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
@@ -140,8 +142,8 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
   ##   cat_no <- "1270.0.55.003"
   ##   releases <- "Latest";
   ##   releases <- c("Dec 2017", "Sep 2017");
-  ##   types <- c("Time Series Spreadsheet", "Data Cube")
-  ##   types <- c("Publication")
+  ##   types <- c("tss", "css")
+  ##   types <- c("pub")
   ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
@@ -160,8 +162,16 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                         "pub" = "Publication"));
   ## Create ABS URL and open session 
   url <- file.path(abs_ausstats_url(), cat_no);
-  s <- html_session(url);
-  
+  suppressWarnings(s <- html_session(url));
+  ## Check for status code errors 
+  status_codes <- getFromNamespace("status_codes", "httr")
+  if (status_codes(s) %in% 300:399)
+    stop(sprintf("URL redirect (HTTP status code: %d)", status_codes(s)))
+  if (status_codes(s) %in% 400:499)
+    stop(sprintf("Client error (HTTP status code: %d)", status_codes(s)))
+  if (status_codes(s) %in% 500:599)
+    stop(sprintf("Server error (HTTP status code: %d)", status_codes(s)))
+    
   releases <- unique(releases);
   if (length(releases) == 1 && tolower(releases) == "latest") {
     .paths <- "";
