@@ -2,18 +2,24 @@
 % Please edit documentation in R/abs-api-functions.R
 \name{abs_search}
 \alias{abs_search}
-\title{Search dataset information from the ABS API}
+\title{Search dataset information from the ABS.Stat API}
 \usage{
-abs_search(pattern, fields = c("dataset", "dataset_description"),
-  extra = FALSE, cache)
+abs_search(pattern, dataset = NULL, ignore.case = TRUE,
+  code_only = FALSE, cache)
 }
 \arguments{
 \item{pattern}{Character string or regular expression to be matched.}
 
-\item{fields}{Character vector of column names through which to search.}
+\item{dataset}{Character vector of ABS.Stat dataset codes. These codes correspond to the
+\code{indicatorID} column from the indicator data frame of \code{abs_cache} or
+\code{abs_cachelist}, or the result of \code{abs_indicators}. If NULL (default), then function
+undertakes a dataset mode search. If not NULL, function searches all dimensions of specified
+dataset.}
 
-\item{extra}{If FALSE, only the indicator ID and short name are returned, if TRUE, all columns of
-the cache parameter's indicator data frame are returned.}
+\item{ignore.case}{Case senstive pattern match or not.}
+
+\item{code_only}{If FALSE (default), all column/fields are returned. If TRUE, only the dataset
+identifier or indicator code are returned.}
 
 \item{cache}{List of data frames returned from \code{abs_cache}. If omitted, \code{abs_cachelist}
 is used.}
@@ -22,21 +28,22 @@ is used.}
 A data frame with datasets and data items that match the search pattern.
 }
 \description{
-This function finds datasets that match a search term and returns a data
-  frame of matching results.
+This function finds datasets or dimensions within a specific that match a specified
+  regular expresion and returns matching results.
 }
 \note{
 With acknowledgements to \code{wb_search} function.
 }
 \examples{
-  x <- abs_search(pattern = "consumer price index")
-  x <- abs_search(pattern = "census")
-  x <- abs_search(pattern = "labour force")
-  # with regular expression operators
-  # 'unemployment' OR 'employment'
-  x <- abs_search(pattern = "unemployment|employment")
-  # '^labour force$'
-  x <- abs_search(pattern = "^labour force$")
+  ## ABS dataset search
+  x <- abs_search(pattern="consumer price index")
+  x <- abs_search(pattern="census")
+  x <- abs_search(pattern="labour force")
+
+  ## ABS indicator search
+  x <- abs_search(pattern="all groups", dataset="CPI")
+  x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
+
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

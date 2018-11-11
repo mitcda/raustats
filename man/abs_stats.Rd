@@ -5,13 +5,14 @@
 \title{Download data from the ABS API}
 \usage{
 abs_stats(dataset, filter, start_date, end_date, lang = c("en", "fr"),
-  remove_na = TRUE, include_unit = TRUE, include_obsStatus = FALSE,
   dimensionAtObservation = c("AllDimensions", "TimeDimension",
   "MeasureDimension"), detail = c("Full", "DataOnly", "SeriesKeysOnly",
-  "NoData"), return_url = FALSE, cache)
+  "NoData"), remove_na = TRUE, include_unit = TRUE,
+  include_obsStatus = FALSE, enforce_api_limits = TRUE,
+  return_url = FALSE, cache)
 }
 \arguments{
-\item{dataset}{Character vector of indicator codes. These codes correspond to the
+\item{dataset}{Character vector of ABS.Stat dataset codes. These codes correspond to the
 \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 \code{abs_cachelist}, or the result of \code{abs_indicators}.}
 
@@ -22,13 +23,27 @@ REGION, INDEX, TSEST and FREQUENCY.}
 
 \item{start_date}{Numeric or character. If numeric it must be in %Y form (i.e. four digit
 year). For data at the sub-annual granularity the API supports a format as follows: Monthly
-data -- "2016-M01", Quarterly data -- "2016-Q1", Semi-annual data -- 2016-B2, Financial year
-data -- 2016-17.}
+data -- '2016-M01', Quarterly data -- '2016-Q1', Semi-annual data -- '2016-B2', Financial year
+data -- '2016-17'.}
 
 \item{end_date}{Numeric or character (refer to \code{startdate}).}
 
 \item{lang}{Language in which to return the results. If \code{lang} is unspecified, english is
 the default.}
+
+\item{dimensionAtObservation}{The identifier of the dimension to be attached at the observation
+level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
+AllDimensions results in a flat list of observations without any grouping.}
+
+\item{detail}{This argument specifies the desired amount of information to be returned. Possible
+  values are:
+
+  \itemize{
+    \item Full: all data and documentation, including annotations (default)
+    \item DataOnly: attributes – and therefore groups – will be excluded
+    \item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
+    \item NoData: returns the groups and series, including attributes and annotations, without observations (all values = NA)
+  }}
 
 \item{remove_na}{If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
 values are removed from the return.}
@@ -37,29 +52,21 @@ values are removed from the return.}
 \code{FALSE}, this column is removed.}
 
 \item{include_obsStatus}{If \code{TRUE}, the column obsStatus is not removed from the return. If
-\code{FALSE}, this column is removed= FALSE.}
+\code{FALSE}, this column is removed.}
 
-\item{dimensionAtObservation}{The identifier of the dimension to be attached at the observation
-level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
-AllDimensions results in a flat list of observations without any grouping.}
+\item{enforce_api_limits}{If \code{TRUE} (the default), the function enforces the ABS.Stat
+RESTful API limits and will not submit the query if the URL string length exceeds 1000
+characters or the query would return more than 1 million records. If \code{FALSE}, the function
+submits the API call regardless and attempts to return the results.}
 
-\item{detail}{This argument specifies the desired amount of information to be returned. Possible values
-  are:
-
-  \itemize{
-    \item Full: all data and documentation, including annotations (default)
-    \item DataOnly: attributes – and therefore groups – will be excluded
-    \item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
-    \item NoData: returns the groups and series, including attributes and annotations, without observations
-  }}
-
-\item{return_url}{If \code{TRUE}, return the generated request URL only.}
+\item{return_url}{Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
+request URL and does not submit the request.}
 
 \item{cache}{An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
-\code{NULL}, uses the stored package cachelist.}
+missing, the function uses the stored package cachelist.}
 }
 \value{
-Returns a data frame of the selected series from specified ABS dataset.
+Returns a data frame of the selected series from the specified ABS dataset.
 }
 \description{
 This function downloads the specified ABS data series from the ABS API.
@@ -72,7 +79,7 @@ The data query submitted by this function uses the ABS RESTful API based on the 
   Further limitations known at this time include:
   \itemize{
     \item Only anonymous queries are supported, there is no authentication
-    \item Each response is limited to 1 million observations
+    \item Each response is limited to no more than 1 million observations
     \item Errors are not returned in the JSON format but HTTP status codes and messages are
       set according to the Web Services Guidelines
     \item The lastNObservations parameter is not supported
@@ -81,11 +88,11 @@ The data query submitted by this function uses the ABS RESTful API based on the 
   }
 }
 \examples{
-   x <- abs_stats("CPI");
-   x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
-   x <- abs_stats(dataset="CPI", filter = list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
-   x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"))
-    x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"), return_url=TRUE)
+  x <- abs_stats("CPI");
+  x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
+  x <- abs_stats(dataset="CPI", filter = list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
+  x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"))
+  x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"), return_url=TRUE)
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

@@ -26,8 +26,10 @@ This function returns the available dimeninsions for a specified ABS API dataset
 \examples{
   # CPI - Consumer Price Index
   x <- abs_dimensions("CPI");
+  str(x)
   # LF - Labour Force
   x <- abs_dimensions("LF");
+  str(x)
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>
