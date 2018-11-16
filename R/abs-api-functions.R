@@ -106,7 +106,7 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @name abs_metadata
 #' @title Download updated data series information from the ABS API
 #' @description TBC
-#' @import xml2
+#' @importFrom xml2 xml_name xml_children xml_child xml_length xml_attrs xml_ns_strip xml_text xml_find_all xml_parent
 #' @param id ABS dataset ID.
 #' @param lang Preferred language (default 'en' - English).
 #' @return data frame in long format

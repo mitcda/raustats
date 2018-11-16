@@ -1,18 +1,13 @@
 ### =========================================================================
 ### Filename:     build-data.R
 ### Created:      2017-08-10
-### Updated:      <2018-11-14 21:31:59 david at grover>
+### Updated:      <2018-11-16 17:01:26 david at grover>
 ### Author:       David Mitchell <david.p.mitchell@homemail.com.au>
 ### Description:  Builds package data sets
 ### =========================================================================
 
 ######  Section 0 - Libraries & settings
-## library(magrittr);
-## library(dplyr);
-## library(tidyr);
-
-### Settings
-DEBUG <- FALSE
+## Nil
 
 ######  Section 1 - Import exports and imports table structure
 devtools::load_all("./");
