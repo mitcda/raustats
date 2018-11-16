@@ -1,7 +1,7 @@
 ### TO DO
 
 * The ABS Engineering Construction tables seem to require that the
-  sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - Complete 15/09/2018
+  sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [Completed 15/09/2018]
 
 * Test all ABS API call functions
 
@@ -10,7 +10,7 @@
 * abs_cat_stats
   - Insert code to handle Date class `releases` arguments, e.g. releases=as.Date("2017-12-01").
   - Add `header_start` and `header_rows` argument to `abs_cat_stats` function.
-  - Add `return_urls` functionality to `abs_cat_stats` function.
+  - Add `return_urls` functionality to `abs_cat_stats` function - [Completed 01/11/2018]
 
 * abs_cat_tables
   - Modify `abs_cat_tables` function to list tables for specified catalogue numbers. [DONE 2018-11-05]
@@ -18,10 +18,10 @@
   - Remove Released 'dd/mm/yyyy' columns from final results.
 
 * abs_cat_unzip
-  - Added exdir argument - CHECK
+  - Added exdir argument - [DONE 2018-11-01]
 
 * abs_cat_download
-  - Added exdir argument - CHECK
+  - Added exdir argument - [DONE 2018-11-01]
 
 * Candidate additional arguments for abs_stats
 #' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting

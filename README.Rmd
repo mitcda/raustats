@@ -72,6 +72,5 @@ CSV spreadsheets.
 This package provides functions to search and download data and statistics from
 the [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) and [Reserve
 Bank of Australia (RBA)](http://www.rba.gov.au/) websites, as well as draft
-access to the ABS.Stat - Beta data catalogue API.
-
+access to the [ABS.Stat](http://stat.data.abs.gov.au/) - Beta data catalogue API.
 

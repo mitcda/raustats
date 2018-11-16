@@ -11,7 +11,7 @@
 #'   \item \code{table_code} RBA table code.
 #'   \item \code{table_name} RBA table name.
 #'   \item \code{table_type} One of either current statistical tables, historical data or discontinued data
-#'   \item \code{path} RBA URL 
+#'   \item \code{url} RBA URL 
 #' }
 "rba_tablecache"
 
