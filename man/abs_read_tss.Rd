@@ -8,10 +8,10 @@
 abs_read_tss(files, type = "tss")
 }
 \arguments{
-\item{files}{Names of one or more ABS data file [DEPRECATED]}
+\item{files}{Names of one or more ABS data files}
 
-\item{type}{One of either 'tss' -- ABS Time Series Spreadsheet (DEFAULT
-or 'css' -- Data Cube}
+\item{type}{One of either 'tss' -- ABS Time Series Spreadsheet (the Default)
+or 'css' -- Data Cube.}
 }
 \value{
 data frame in long format

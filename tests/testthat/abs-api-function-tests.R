@@ -113,10 +113,10 @@ test_that("abs_stats fails well",
   skip_on_appveyor()
 
   library(testthat);
-  expect_error(abs_stats());       ## Invalid function call
+  expect_error(abs_stats());              ## No dataset provided
   expect_error(abs_stats("INVALID_ID"));  ## Non-existent dataset
-  expect_error(abs_stats("CPI"));  ## No filter supplied
-  expect_error(abs_stats("CPI", filter="invalid_filter"));  ## start_date > end_date
+  expect_error(abs_stats("CPI"));         ## No filter supplied
+  expect_error(abs_stats("CPI", filter="invalid_filter"));  ## Invalid filter value
   expect_error(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
                          start_date=2008, end_date=2006));  ## start_date > end_date
 }

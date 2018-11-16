@@ -7,13 +7,9 @@
 ## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 abs_api_urls <- function()
 {
-  base_url <- "http://stat.data.abs.gov.au"
-  datastr_path <- "restsdmx/sdmx.ashx/GetDataStructure"
-  sdmx_json_path <- "SDMX-JSON/data"
-  url_list <- list(base_url = base_url,
-                   datastr_path = datastr_path,
-                   sdmx_json_path = sdmx_json_path);
-  return(url_list);
+  list(base_url = "http://stat.data.abs.gov.au",
+       datastr_path = "restsdmx/sdmx.ashx/GetDataStructure",
+       sdmx_json_path = "SDMX-JSON/data")
 }
 
 
