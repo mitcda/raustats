@@ -4,24 +4,26 @@
 \alias{rba_stats}
 \title{Return data for a specified RBA time series}
 \usage{
-rba_stats(table_code, series_type = "statistical tables",
-  update_cache = FALSE)
+rba_stats(table_no, pattern, url, series_type = "statistical tables",
+  cache, ...)
 }
 \arguments{
-\item{table_code}{Character vector specifying one or more ABS collections or catalogue numbers to
-download.}
+\item{table_no}{Character vector specifying one or more RBA table numbers to download.}
 
-\item{series_type}{RBA series type, one of either 'statistical tables', 'historical data' or
-'discontinued data'.}
+\item{pattern}{Character string or regular expression to be matched.}
 
-\item{update_cache}{Boolean argument expressing whether to retrieve an updated list of RBA tables
-or not (Default).}
+\item{url}{Valid URL for RBA dataset (Excel format only).}
+
+\item{cache}{RBA table cache, returned by \code{rba_table_cache} function. If omitted,
+\code{rba_tablecache} is used.}
+
+\item{...}{Other arguments to \code{\link{rba_search}}}
 }
 \value{
 data frame in long format
 }
 \description{
-Function to get data from a specified RBA time series.
+Function to download and return specified RBA time series data.
 }
 \examples{
    x <- rba_stats("A1");

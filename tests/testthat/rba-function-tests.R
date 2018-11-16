@@ -6,8 +6,8 @@ test_that("rba_stats_url returns valid URL",
   skip_on_travis()
   skip_on_appveyor()
 
-  expect_type(rba_stats_url(), "character");
-  expect_s3_class(rvest::html_session(rba_stats_url()), "session");
+  expect_type(rba_urls(), "list");
+  expect_s3_class(rvest::html_session(rba_urls()$base_url), "session");
 })
 
 
@@ -17,6 +17,8 @@ test_that("rba_table_cache returns data.frame class object",
   skip_on_travis()
   skip_on_appveyor()
 
+  DEBUG
+  
   expect_s3_class(rba_table_cache(), "data.frame");
 })
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/rba-functions.R
 \name{rba_read_tss}
 \alias{rba_read_tss}
-\title{Read RBA time series spreadsheet}
+\title{Read RBA statistical time series spreadsheet}
 \usage{
 rba_read_tss(files)
 }

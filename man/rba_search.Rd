@@ -4,14 +4,19 @@
 \alias{rba_search}
 \title{Return list of data tables from RBA website}
 \usage{
-rba_search(pattern, fields = "table_name", update_cache = FALSE)
+rba_search(pattern, fields = c("table_no", "table_name"),
+  ignore.case = TRUE, cache)
 }
 \arguments{
 \item{pattern}{Character string or regular expression to be matched}
 
-\item{fields}{Character vector of column names through which to search}
+\item{fields}{Character vector of column names through which to search. By default, the function
+searches 'table_no' and 'table_name'.}
 
-\item{update_cache}{Update table cache (\code{rba_tablecache}), FALSE by default.}
+\item{ignore.case}{Case senstive pattern match or not.}
+
+\item{cache}{RBA table cache, returned by \code{rba_table_cache} function. If omitted,
+\code{rba_tablecache} is used.}
 }
 \value{
 data frame in long format
@@ -20,6 +25,6 @@ data frame in long format
 Function to return a list of all RBA data tables.
 }
 \examples{
-  x <- rba_search(pattern = "A1", fields="table_code", update_cache=TRUE);
+  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
 
 }
