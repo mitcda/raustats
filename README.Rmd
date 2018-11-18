@@ -1,36 +1,38 @@
-
 ---
-output:
-  md_document:
-    variant: markdown_github
+output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, echo = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "man/figures/README-",
+  out.width = "100%"
 )
 ```
 
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# raustats: An R package for accessing data and statistics from the ABS and RBA websites
+# raustats: An R package for accessing ABS and RBA statistics
 
-You can install:
+An R package for downloading Australian economic statistics from the Australian
+Bureau of Statistics (ABS) and Reserve Bank of Australia (RBA) websites.
 
-The latest release version from CRAN with:
-```{r, eval = FALSE}
+
+## Installation
+
+You can install the released version of raustats from [CRAN](https://CRAN.R-project.org) with:
+
+```{r eval=FALSE}
 install.packages("raustats")
 ```
+or the latest development version from github with:
 
-or
-
-The latest development version from github with:
 ```{r, eval = FALSE}
-devtools::install_github("mitcda/raustats")
+remotes::install_github("mitcda/raustats")
 ```
+
+## How to use raustats
 
 To learn more about the raustats package, start with the vignettes:
 ```{r, eval = FALSE}
@@ -64,13 +66,46 @@ relevant economic metrics. Key RBA statistics include:
   * Exchange rates
   * Inflation and inflation expectations.
 
-
 The ABS and RBA make their statistics primarily available through Excel and/or
 CSV spreadsheets. 
-
 
 This package provides functions to search and download data and statistics from
 the [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) and [Reserve
 Bank of Australia (RBA)](http://www.rba.gov.au/) websites, as well as draft
-access to the [ABS.Stat](http://stat.data.abs.gov.au/) - Beta data catalogue API.
+access to the [ABS.Stat](http://stat.data.abs.gov.au/) - Beta data catalogue
+API.
 
+
+## Examples
+
+### Downloading ABS Catalogue Statistics
+
+ABS catalogue statistics may be downloaded, by catalogue number, using the
+`abs_cat_stats()` function. The following example downloads all Consumer Price Index
+(CPI) data series (ABS Catalogue no. 6401.0).
+
+```{r eval=FALSE}
+cpi_all <- abs_cat_stats("6401.0")
+```
+
+To download only the latest statistics reported in Table 1 (ABS groups Tables 1 and
+2), simply provide a regular expression to the `tables` argument:
+
+```{r eval=FALSE}
+cpi <- abs_cat_stats("6401.0", tables="Table.+1")
+```
+
+The package also provides functions to ABS statistics via the
+[ABS.Stat](http://stat.data.abs.gov.au/) Beta API. See the package help and
+vignettes for examples. 
+
+
+### Downloading RBA data
+
+RBA data series may be downloaded by table number, using the `rba_stats()`
+function. The following example downloads Table A1 - Liabilities and Assets of
+the RBA.
+
+```{r eval=FALSE}
+rba_bs <- rba_stats("A1")
+```

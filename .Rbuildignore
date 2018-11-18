@@ -1,3 +1,4 @@
+README.Rmd
 ^Meta$
 ^doc$
 # Rbuildignore
@@ -15,4 +16,3 @@ read-abs-discards.R
 ^TODO$
 ^R-example-code/$
 data-raw
-README.Rmd
