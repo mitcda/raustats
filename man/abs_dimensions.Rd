@@ -20,16 +20,13 @@ a data frame with available dataset dimensions.
 \description{
 This function returns the available dimeninsions for a specified ABS API dataset.
 }
-\note{
-@export
-}
 \examples{
-  # CPI - Consumer Price Index
-  x <- abs_dimensions("CPI");
-  str(x)
-  # LF - Labour Force
-  x <- abs_dimensions("LF");
-  str(x)
+ ## CPI - Consumer Price Index
+ x <- abs_dimensions("CPI");
+ str(x)
+ ## LF - Labour Force
+ x <- abs_dimensions("LF");
+ str(x)
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

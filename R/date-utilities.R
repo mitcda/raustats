@@ -5,7 +5,7 @@
 ## @param x Excel-based date numeric object
 ## @return Date object
 ## @examples
-## xDate <- excel2Date(x);
+##  xDate <- excel2Date(x);
 excel2Date <-
   function(x) as.Date(x, origin="1899-12-30");
 
@@ -20,18 +20,18 @@ excel2Date <-
 ## @return This function returns a Date format object.
 ## @export
 ## @examples
-## x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
-## quarter2Date(x);
-## quarter2Date(x, base.month="Jan");
-## @export
+##  x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
+##  quarter2Date(x);
+##  quarter2Date(x, base.month="Jan");
 quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 {
   ## Check format
   if (!grepl("%Y", format) & !grepl("%q", format))
     stop("Format should contain year (%Y) and quarter (%q) regular expressions.")
-  format %<>% sub("(%Y)", "(\\\\d{4})", .) %>% sub("(%q)", "(\\\\d)", .);
-  Year <- sub(format,"\\1", x) %>% as.integer;
-  Qtr <- sub(format,"\\2", x) %>% as.integer;
+  format  <- sub("(%q)", "(\\\\d)",
+                 sub("(%Y)", "(\\\\d{4})", format));
+  Year <- as.integer(sub(format,"\\1", x));
+  Qtr <- as.integer(sub(format,"\\2", x));
   ## Re-encode month
   Mth <- if (base.month == 1 | base.month == "Jan") {
            Qtr * 3 - 2;
@@ -42,7 +42,7 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
          } else {
            stop("base.month should be either a scalar = 1,2 or 3 or a character object = \"Jan\", \"Feb\" or \"Mar\".");
          }
-  z <- paste(Year, month.abb[Mth], "01", sep="-") %>% as.Date(format="%Y-%b-%d");
+  z <- as.Date(paste(Year, month.abb[Mth], "01", sep="-"), format="%Y-%b-%d");
   return(z);
 }
 
@@ -51,13 +51,13 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 ## @name last_day
 ## @title Set Date object to the last day of the month
 ## @description Function to change the date of a Date object to the last day of the month
-## @importFrom lubridate ceiling_date days
+#' @importFrom lubridate ceiling_date days
 ## @param date date object
 ## @return Date object
 ## @export
 ## @examples
-## Date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-## last_day(Date)
+##  Date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
+##  last_day(Date)
 last_day <- function(date)
   ceiling_date(date, "month") - days(1);
 
@@ -71,8 +71,8 @@ last_day <- function(date)
 ## @return Date object 
 ## @export
 ## @examples
-## x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-## fin_year(x)
+##  x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
+##  fin_year(x)
 fin_year <- function(date, ending="Jun")
 {
   if (is.character(ending)) {
@@ -84,9 +84,9 @@ fin_year <- function(date, ending="Jun")
       stop(sprintf("Invalid month supplied: %d - should be in 1:12", ending));
   }
 
-  Year <- format(date, "%Y") %>% as.integer
-  Month <- format(date, "%m") %>% as.integer
-  Year %<>% ifelse(Month > ending, . + 1, .);
-  z <- paste(Year, month.abb[ending], "01", sep="-") %>% as.Date(format="%Y-%b-%d");
+  Year <- as.integer(format(date, "%Y"));
+  Month <- as.integer(format(date, "%m"));
+  Year <- ifelse(Month > ending, Year + 1, Year);
+  z <- as.Date(paste(Year, month.abb[ending], "01", sep="-"), format="%Y-%b-%d");
   return(z);
 }

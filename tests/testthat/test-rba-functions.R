@@ -35,8 +35,7 @@ test_that("rba_search fails well",
         library(magrittr); library(dplyr); library(purrr); library(rvest); library(urltools);
         table_code = "A1";
     }
-
-}
+})
 
 test_that("rba_search returns valid results",
 {
@@ -44,7 +43,7 @@ test_that("rba_search returns valid results",
   skip_on_travis()
   skip_on_appveyor()
 
-}
+})
 
 
 test_that("rba_read_tss_ returns valid data.frame",
@@ -53,7 +52,7 @@ test_that("rba_read_tss_ returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(readxl); library(tidyr); 
+  ## library(readxl); library(tidyr); 
   
   expect_s3_class(rba_read_tss_(file.path("data-raw", "5206001_key_aggregates.xls")),
                   "data.frame");
@@ -66,7 +65,7 @@ test_that("rba_read_tss returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(readxl); library(tidyr); 
+  ## library(readxl); library(tidyr); 
   
   expect_s3_class(rba_read_tss(file.path("data-raw", "5206001_key_aggregates.xls")),
                   "data.frame");
@@ -83,7 +82,7 @@ test_that("rba_data returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(rvest); library(readxl); library(tidyr); library(dplyr);
+  ## library(rvest); library(readxl); library(tidyr); library(dplyr);
 
   ##     table_code = "A1";
   ##     series_type="statistical tables";
@@ -94,4 +93,4 @@ test_that("rba_data returns valid data.frame",
   expect_s3_class(rba_data("5206.0", tables="all"), "data.frame");
   expect_s3_class(rba_data("5206.0", tables="Table 1", release="Dec 2017"), "data.frame");
   expect_s3_class(rba_data("5206.0", tables="all", release="Dec 2016"), "data.frame");
-}
+})

@@ -27,7 +27,7 @@ This function converts an \code{abs_cachelist} to an \code{abs_cachetable} suita
 This is an internal library function and is not exported.
 }
 \examples{
- \\donotrun{
+ \dontrun{
    abs_ct <- abs_cachelist2table(raustats::abs_cachelist)
  }
 }

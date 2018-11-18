@@ -4,8 +4,7 @@
 \alias{rba_stats}
 \title{Return data for a specified RBA time series}
 \usage{
-rba_stats(table_no, pattern, url, series_type = "statistical tables",
-  cache, ...)
+rba_stats(table_no, pattern, url, cache, ...)
 }
 \arguments{
 \item{table_no}{Character vector specifying one or more RBA table numbers to download.}
@@ -26,8 +25,8 @@ data frame in long format
 Function to download and return specified RBA time series data.
 }
 \examples{
-   x <- rba_stats("A1");
-   y <- rba_stats("A1", update_cache=TRUE);
+ x <- rba_stats("A1");
+ y <- rba_stats("A1", update_cache=TRUE);
    
 }
 \author{

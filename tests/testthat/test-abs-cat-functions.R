@@ -17,8 +17,7 @@ test_that("abs_read_tss_ returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(readxl); library(tidyr); 
-  
+  ## library(readxl); library(tidyr); 
   expect_s3_class(abs_read_tss_(file.path("data-raw", "5206001_key_aggregates.xls")),
                   "data.frame");
 })
@@ -30,7 +29,7 @@ test_that("abs_read_tss returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(readxl); library(tidyr);
+  ## library(readxl); library(tidyr);
   
   expect_s3_class(abs_read_tss(file.path("data-raw", "5206001_key_aggregates.xls")),
                   "data.frame");
@@ -91,7 +90,7 @@ test_that("abs_cat_stats tss call returns valid data frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  library(rvest); library(readxl);
+  ## library(rvest); library(readxl);
 
   expect_s3_class(abs_cat_stats("5206.0", tables="Table 1\\W+"), "data.frame");
   expect_s3_class(abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+")), "data.frame");

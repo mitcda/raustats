@@ -48,7 +48,7 @@ Saving the results of this function and using it as the cache parameter in \code
   }
 }
 \examples{
- \\donotrun{
+ \dontrun{
    z <- abs_cache(lang='en', progress=5)
  }
 }

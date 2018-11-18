@@ -13,9 +13,11 @@ rba_urls <- function()
 #' @return data frame in long format
 #' @export
 #' @examples
-#'   rba_tablecache <- rba_table_cache();
+#'  rba_tablecache <- rba_table_cache();
 rba_table_cache <- function()
 {
+  ## Avoid 'No visible binding for global variables' note
+  { table_name <- NULL }
   ## Create RBA URL and open session 
   url <- file.path(rba_urls()$base_url, rba_urls()$stats_path);
   s <- html_session(url);
@@ -81,7 +83,6 @@ rba_table_cache <- function()
 #' @name rba_search
 #' @title Return list of data tables from RBA website
 #' @description Function to return a list of all RBA data tables.
-#' @export
 #' @param pattern Character string or regular expression to be matched
 #' @param fields Character vector of column names through which to search. By default, the function
 #'   searches 'table_no' and 'table_name'.
@@ -91,25 +92,24 @@ rba_table_cache <- function()
 #' @return data frame in long format
 #' @export
 #' @examples
-#'   rba_datasets <- rba_search(pattern = "Liabilities and Assets");
-#'
+#'  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
 rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=TRUE, cache)
 {
-    if (missing(pattern))
-        stop("No pattern supplied")
-    if (missing(cache)) {
-        rba_cache <- rba_tablecache;
-    } else {
-        rba_cache <- rba_table_cache();
-    }
-    if (any(!fields %in% names(rba_cache)))
-      stop(sprintf("Field names: %s not in cache", fields[!fields %in% names(rba_cache)]))
-    ## Return list of matching ABS.Stat datasets
-    match_index <- sapply(fields,
-                          function(field) grep(pattern, rba_cache[, field], ignore.case=ignore.case));
-    match_index <- sort(unique(unlist(match_index)));
-    z <- rba_cache[match_index,];
-    return(z);
+  if (missing(pattern))
+    stop("No pattern supplied")
+  if (missing(cache)) {
+    rba_cache <- raustats::rba_tablecache;
+  } else {
+    rba_cache <- rba_table_cache();
+  }
+  if (any(!fields %in% names(rba_cache)))
+    stop(sprintf("Field names: %s not in cache", fields[!fields %in% names(rba_cache)]))
+  ## Return list of matching ABS.Stat datasets
+  match_index <- sapply(fields,
+                        function(field) grep(pattern, rba_cache[, field], ignore.case=ignore.case));
+  match_index <- sort(unique(unlist(match_index)));
+  z <- rba_cache[match_index,];
+  return(z);
 }
 
 
@@ -129,17 +129,12 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'    x <- rba_stats("A1");
-#'    y <- rba_stats("A1", update_cache=TRUE);
+#'  x <- rba_stats("A1");
+#'  y <- rba_stats("A1", update_cache=TRUE);
 #'    
-rba_stats <- function(table_no, pattern, url, series_type="statistical tables", cache, ...)
+rba_stats <- function(table_no, pattern, url, cache, ...)
+  ## series_type="statistical tables", 
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   table_no <- "A1"
-  ##   pattern <- "Liabilities and Assets"
-  ##   url <- rba_tablecache[1,"url"]
-  ## }
   ## Deprecate: series_type
   if (missing(table_no) & missing(pattern) & missing(url))
     stop("One of either table_no, pattern or url must be specified.")
@@ -153,7 +148,7 @@ rba_stats <- function(table_no, pattern, url, series_type="statistical tables", 
   if (missing(cache)) {
     rba_cache <- rba_table_cache();
   } else {
-    rba_cache <- rba_tablecache;
+    rba_cache <- raustats::rba_tablecache;
   }
 
   ## TO DO: Add table_type attribute to vector 'urls'
@@ -205,11 +200,6 @@ rba_stats <- function(table_no, pattern, url, series_type="statistical tables", 
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 rba_file_download <- function(url, exdir=tempdir()) {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   url <- "http://www.rba.gov.au/statistics/tables/xls/a01whist-summary.xls"
-  ##   exdir <- tempdir()
-  ## }
   if(!dir.exists(exdir))
     dir.create(exdir)
   local_filename <- basename(as.character(url));
@@ -230,12 +220,16 @@ rba_file_download <- function(url, exdir=tempdir()) {
 #' @importFrom readxl read_excel excel_sheets
 #' @importFrom dplyr left_join
 #' @importFrom tidyr gather
+#' @importFrom stats complete.cases
 #' @param files Names of one or more ABS data file
 #' @return data frame in long format
 #' @export
 #' @examples
-#'   file <- file.path("data-raw", "a01whist-summary.xls");
-#'   rba_a1_summ <- rba_read_tss(file);
+#'  \donttest{
+#'    rba_urls <- rba_search(pattern = "Liabilities and Assets")$url
+#'    rba_files <- rba_file_download(rba_urls)
+#'    data <- rba_read_tss(rba_files);
+#'  }
 rba_read_tss <- function(files)
 {
   x <- lapply(files,
@@ -249,11 +243,8 @@ rba_read_tss <- function(files)
 
 rba_read_tss_ <- function(file)
 {
-  DEBUG <- FALSE
-  if (DEBUG) {
-    library(readxl)
-    file <- file.path(tempdir(), "a01whist-summary.xls");
-  }
+  ## Avoid 'No visible binding for global variables' note
+  { series_id <- value <- NULL }
   ## Only process sheets not named: 'Data' or 'Series breaks'
   sheet_names <- excel_sheets(file)[grepl("data|series breaks", excel_sheets(file), ignore.case=TRUE)];
   ## TO DO
@@ -307,54 +298,6 @@ rba_read_tss_ <- function(file)
                    names(data) <- tolower(names(data));
                    return(data)
                  });
-  ## ## Read metadata
-  ## .meta <- read_excel(file,
-  ##                     sheet=excel_sheets(file)[grepl("data|series breaks", excel_sheets(file), ignore.case=TRUE),
-  ##                     col_names=FALSE, col_types="text");
-  ## Return pre-header information from RBA files 
-  ## header_row <- which(sapply(1:nrow(.meta),
-  ##                            function(i)
-  ##                                grepl("series\\s*id", paste(.meta[i,], collapse=" "), ignore.case=TRUE)));
-  ## metadata <- .meta[1:header_row,];
-  ## metadata <- metadata[complete.cases(metadata),];            ## Drop NA rows
-  ## metadata <- as.data.frame(t(metadata), stringsAsFactors=FALSE);
-  ## rownames(metadata) <- seq_len(nrow(metadata));
-  ## names(metadata) <- tolower(gsub("\\s","_",
-  ##                                 gsub("\\.", "",
-  ##                                      metadata[1,])));       ## Rename variables
-  ## metadata <- metadata[-1,];
-  ## metadata$Publication_date  <- excel2Date(as.integer(metadata$Publication_date));
-  ## ## -- Extract table name --
-  ## ## Note use of 'word' character    /here                /here for 13a, 6b, etc.
-  ## regex_table_name <- "^(\\w+\\d+)\\s*Reserve Bank of Australia(\\s*-*\\s*)(.+)$";
-  ## ## Return table name/number details
-  ## tableno_name <- gsub("\\sNA", "", paste(.meta[1,], collapse=" "));
-  ## table_code <- sub(regex_table_name, "\\1", tableno_name, ignore.case=TRUE);
-  ## table_name <- sub(regex_table_name, "\\3", tableno_name, ignore.case=TRUE);
-  ## ## Append to metadata table
-  ## metadata <- transform(metadata,
-  ##                       Table_Code = table_code,
-  ##                       Table_Name = table_name);
-  ## ## Read data tables
-  ## data <- lapply(grep("data", sheet_names, ignore.case=TRUE, value=TRUE),
-  ##                function(sheet_name) {
-  ##                      z <- read_excel(file, sheet=sheet_name);
-  ##                      ## Return pre-header information from RBA files 
-  ##                      header_row <- which(sapply(1:nrow(z),
-  ##                                                 function(i)
-  ##                                                     grepl("series\\s*id", paste(z[i,], collapse=" "), 
-  ##                                                           ignore.case=TRUE)));
-  ##                      names(z) <- tolower(gsub("\\s","_",
-  ##                                               gsub("\\.","", z[header_row,]))); ## Rename variables
-  ##                      names(z) <- sub("series_id", "date",
-  ##                                      names(z), ignore.case=TRUE);           ## Rename Series_ID field
-  ##                      z <- z[-(1:header_row), !is.na(names(z))];             ## Drop empty columns
-  ##                      z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform to key:value pairs
-  ##                      z <- transform(z,
-  ##                                     date = excel2Date(as.integer(date)),
-  ##                                     value = as.numeric(value));
-  ##                      return(z);
-  ##                });
   data <- do.call(rbind, data);
   return(data);
 }

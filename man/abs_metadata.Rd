@@ -18,12 +18,12 @@ data frame in long format
 TBC
 }
 \examples{
-  datasets <- abs_datasets();
-  x <- abs_metadata("CPI");
-  x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
-  names(x)
-  y <- abs_metadata(datasets$id[1]);
-  names(y)
+ datasets <- abs_datasets();
+ x <- abs_metadata("CPI");
+ x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
+ names(x)
+ y <- abs_metadata(datasets$id[1]);
+ names(y)
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

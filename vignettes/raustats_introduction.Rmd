@@ -45,16 +45,18 @@ functions in this package automate translation the downloading and formatting of
 ABS and RBA data into long-format (tidy) tables.
 
 The ABS also has a Beta API access portal:
-[ABS.Stat](http://stat.data.abs.gov.au/), which provides access to a subset of
-all ABS statistics. This package also provides a reasonably comprehensive range
-of functions to search and download data from the [ABS.Stat](http://stat.data.abs.gov.au/) API. Please note that
-as the API is currently in development, changes in the API backend may break the
-functions provided in this package.
+[ABS.Stat](http://stat.data.abs.gov.au/), which provides access to a
+subset of all ABS statistics. This package also provides a reasonably
+comprehensive range of functions to search and download data from the
+[ABS.Stat](http://stat.data.abs.gov.au/) API. Please note that as the
+API is currently in development, changes in the API backend may break
+the functions provided in this package.
 
-The `raustats` package allows researchers to quickly search and download ABS and
-RBA data of interest in a programmatic and reproducible fashion. This
-facilitates seamless integration into projects and enables analysis to be more
-seamlessly re-run using the latest available data.
+The `raustats` package allows researchers to quickly search and
+download ABS and RBA data of interest in a programmatic and
+reproducible fashion. This facilitates seamless integration into
+projects and enables analysis to be more seamlessly re-run using the
+latest available data.
 
 
 ### Main features of the `raustats` package: 
@@ -71,10 +73,11 @@ seamlessly re-run using the latest available data.
     descriptions and names.
 
 
+
 # Quick-start guide
 
-This section provides a quick-start guide on how to download ABS
-and RBA statistics. First, load the library:
+This section provides a quick-start guide on how to download ABS and
+RBA statistics. First, load the library:
 
 ```{r eval=FALSE}
 library(raustats)
@@ -496,6 +499,8 @@ The default value for the `country` parameter is a special value of `all` which
 as you might expect, returns data on the selected `indicator` for every
 available country or region.
 
+<!-- UP TO HERE -->
+
 ```{r eval=FALSE}
 library(raustats)
 
@@ -505,145 +510,6 @@ pop_data <- abs_(indicator = "SP.POP.TOTL", startdate = 2000, enddate = 2002)
 head(pop_data)
 ```
 
-If you are interested in only some subset of countries or regions you can pass
-along the specific codes to the `country` parameter. The country and region
-codes that can be passed to the `country` parameter correspond to the coded
-values from the `iso2c`, `iso3c`, `regionID`, `adminID`, and `incomeID` from the
-`countries` data frame in `abs__cachelist` or the return of `abs_cache()`. Any
-values from the above columns can mixed together and passed to the same call
-
-```{r eval=FALSE}
-library(raustats)
-
-# Population, total
-# country values: iso3c, iso2c, regionID, adminID, incomeID
-pop_data <- abs_stats(country = c("ABW","AF", "SSF", "ECA", "NOC"),
-                      indicator = "SP.POP.TOTL", startdate = 2012, enddate = 2012)
-
-head(pop_data)
-```
-
-Queries with multiple indicators return the data in a long data format by
-default.
-
-```{r eval=FALSE}
-library(raustats)
-
-pop_gdp_long <- abs_stats(country = c("US", "NO"), indicator = c("SP.POP.TOTL", "NY.GDP.MKTP.CD"),
-                     startdate = 1971, enddate = 1971)
-
-head(pop_gdp_long)
-```
-
-or a wide format if parameter `return_wide = TRUE`. Note that to necessitate
-this transformation the `indicator` column is dropped.
-
-```{r eval=FALSE}
-library(raustats)
-
-pop_gdp_wide <- abs_stats(country = c("US", "NO"), indicator = c("SP.POP.TOTL", "NY.GDP.MKTP.CD"),
-                          startdate = 1971, enddate = 1971, return_wide = TRUE)
-
-head(pop_gdp_wide)
-```
-
-### Using `mrv`
-
-If you do not know the latest date an indicator you are interested in is
-available for you country you can use the `mrv` instead of `startdate` and
-`enddate`. `mrv` stands for most recent value and takes a `integer`
-corresponding to the number of most recent values you wish to return
-
-```{r eval=FALSE}
-library(raustats)
-
-eg_data <- abs_(country = c("IN"), indicator = 'EG.ELC.ACCS.ZS', mrv = 1)
-
-eg_data
-```
-
-You can increase this value and it will return no more than the `mrv`
-value. However, if `mrv` is greater than the number of available data it will
-return less
-
-```{r eval=FALSE}
-library(raustats)
-
-eg_data <- abs_(country = c("IN"), indicator = 'EG.ELC.ACCS.ZS', mrv = 10)
-
-eg_data
-```
-
-### Using `gapfill = TRUE`
-
-An additional parameter that can be used along with `mrv` is
-`gapfill`. `gapfill` allows you to "fill-in" the values between actual
-observations. The "filled-in" value for an otherwise missing date is
-the last observed value carried forward.The only difference in the
-data call below from the one directly above is `gapfill = TRUE` (the
-default is `FALSE`). Note the very important difference
-
-```{r eval=FALSE}
-library(raustats)
-
-eg_data <- abs_(country = c("IN"), indicator = 'EG.ELC.ACCS.ZS', mrv = 10, gapfill = TRUE)
-
-eg_data
-```
-
-Because `gapfill` returns data that does reflect actual observed
-values, use this option with care.
-
-### Using `POSIXct = TRUE`
-
-The default format for the `date` column is not conducive to sorting
-or plotting, especially when downloading sub annual data, such as
-monthly or quarterly data. To address this, if `TRUE`, the `POSIXct`
-parameter adds the additional columns `date_ct` and
-`granularity`. `date_ct` converts the default date into a
-`POSIXct`. `granularity` denotes the time resolution that the date
-represents. This option requires the use of the package `lubridate (>=
-1.5.0)`. If `POSIXct = TRUE` and `lubridate (>= 1.5.0)` is not
-available, a `warning` is produced and the option is ignored
-
-```{r eval=FALSE}
-library(raustats)
-
-oil_data <- abs_(indicator = "CRUDE_BRENT", mrv = 10, freq = "M", POSIXct = TRUE)
-
-head(oil_data)
-```
-
-The `POSIXct = TRUE` option makes plotting and sorting dates much easier.
-
-```{r vig-ex-posixct-1, fig.height = 4, fig.width = 7.5, fig.path = "figures/"}
-library(raustats)
-library(ggplot2)
-
-oil_data <- abs_(indicator = c("CRUDE_DUBAI", "CRUDE_BRENT", "CRUDE_WTI", "CRUDE_PETRO"),
-               startdate = "2012M01", enddate = "2014M12", freq = "M", POSIXct = TRUE)
-
-ggplot(oil_data, aes(x = date_ct, y = value, colour = indicator)) + geom_line(size = 1) +
-  labs(title = "Crude Oil Price Comparisons", x = "Date", y = "US Dollars")
-```
-
-
-The `POSIXct = TRUE` option also makes plotting time series with
-different time coverage seamless.
-
-```{r vig-ex-posixct-2, fig.height = 4, fig.width = 7.5, fig.path = "figures/"}
-library(raustats)
-library(ggplot2)
-
-# querying seperate for differing time coverage example
-gold_data <- abs_(indicator = "GOLD", mrv = 120, freq = "M", POSIXct = TRUE)
-plat_data <- abs_(indicator = "PLATINUM", mrv = 60, freq = "M", POSIXct = TRUE)
-
-metal_data <- rbind(gold_data, plat_data)
-
-ggplot(metal_data, aes(x = date_ct, y = value, colour = indicator)) + geom_line(size = 1) +
-  labs(title = "Precious Metal Prices", x = "Date", y = "US Dollars")
-```
 
 
 # RBA statistics access functions
@@ -823,6 +689,28 @@ above functions may be used with the above packages.
 
 <!-- TO BE COMPLETED -->
 
+
+```{r eval=FALSE}
+library(raustats)
+
+oil_data <- abs_(indicator = "CRUDE_BRENT", mrv = 10, freq = "M", POSIXct = TRUE)
+
+head(oil_data)
+```
+
+The `POSIXct = TRUE` option makes plotting and sorting dates much easier.
+
+```{r eval=FALSE}
+## vig-ex-posixct-1, fig.height = 4, fig.width = 7.5, fig.path = "figures/"}
+library(raustats)
+library(ggplot2)
+
+oil_data <- abs_(indicator = c("CRUDE_DUBAI", "CRUDE_BRENT", "CRUDE_WTI", "CRUDE_PETRO"),
+               startdate = "2012M01", enddate = "2014M12", freq = "M", POSIXct = TRUE)
+
+ggplot(oil_data, aes(x = date_ct, y = value, colour = indicator)) + geom_line(size = 1) +
+  labs(title = "Crude Oil Price Comparisons", x = "Date", y = "US Dollars")
+```
 
 
 

@@ -16,6 +16,9 @@ data frame in long format
 Functions to extract data from a specified RBA time series spreadsheet.
 }
 \examples{
-  file <- file.path("data-raw", "a01whist-summary.xls");
-  rba_a1_summ <- rba_read_tss(file);
+ \donttest{
+   rba_urls <- rba_search(pattern = "Liabilities and Assets")$url
+   rba_files <- rba_file_download(rba_urls)
+   data <- rba_read_tss(rba_files);
+ }
 }

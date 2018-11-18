@@ -16,7 +16,6 @@ abs_api_urls <- function()
 ## @name abs_api_call
 ## @title Download updated indicator information from the ABS API
 ## @description TBC
-## @importFrom xml2 read_xml read_html as_list
 ## @param path Character vector specifying one or more ABS collections or catalogue numbers to
 ##   download.
 ## @param args Named list of arguments to supply to call.
@@ -55,15 +54,15 @@ abs_call_api <- function(url)
 #' @name abs_datasets
 #' @title Download updated data series information from the ABS API
 #' @description TBC
-#' @importFrom xml2 read_xml read_html
+#' @importFrom xml2 as_list read_xml read_html xml_name xml_find_all
 #' @param lang Preferred language (default 'en' - English).
 #' @param include_notes Include ABS annotation information for each series.
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   datasets <- abs_datasets()
-#'   datasets <- abs_datasets(include_notes=TRUE)
+#'  datasets <- abs_datasets()
+#'  datasets <- abs_datasets(include_notes=TRUE)
 abs_datasets <- function(lang="en", include_notes=FALSE)
 {
   ## Return xml document of ABS indicators
@@ -75,12 +74,12 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
   ## Extract Series ID information
   xpath_str <- sprintf("//*[name() = '%s']", series_node_name);
   name_fld <- "Name"
-  #' The following code extracts the relevant ABS series information from the returned
-  #' XML document by first saving the relevant part of the XML document to an R list and
-  #' then explicitly extracting the relevant information from specific nodes by name.
-  #' A more general recursive process, impervious to name changes would be preferred,
-  #' however, it is more complex than simply revising the following code in response to
-  #' potential future server-side changes.
+  ## The following code extracts the relevant ABS series information from the returned
+  ## XML document by first saving the relevant part of the XML document to an R list and
+  ## then explicitly extracting the relevant information from specific nodes by name.
+  ## A more general recursive process, impervious to name changes would be preferred,
+  ## however, it is more complex than simply revising the following code in response to
+  ## potential future server-side changes.
   y <- as_list(xml_find_all(x, xpath_str));
   z <- lapply(y,
               function(m)
@@ -106,19 +105,19 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @name abs_metadata
 #' @title Download updated data series information from the ABS API
 #' @description TBC
-#' @importFrom xml2 xml_name xml_children xml_child xml_length xml_attrs xml_ns_strip xml_text xml_find_all xml_parent
+#' @importFrom xml2 xml_name xml_children xml_child xml_length xml_attrs xml_attr xml_ns_strip xml_text xml_find_all xml_parent
 #' @param id ABS dataset ID.
 #' @param lang Preferred language (default 'en' - English).
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   datasets <- abs_datasets();
-#'   x <- abs_metadata("CPI");
-#'   x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
-#'   names(x)
-#'   y <- abs_metadata(datasets$id[1]);
-#'   names(y)
+#'  datasets <- abs_datasets();
+#'  x <- abs_metadata("CPI");
+#'  x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
+#'  names(x)
+#'  y <- abs_metadata(datasets$id[1]);
+#'  names(y)
 abs_metadata <- function(id, lang="en")
 {
   ## Return xml document of ABS indicators
@@ -215,7 +214,7 @@ abs_metadata <- function(id, lang="en")
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'  \donotrun{
+#'  \dontrun{
 #'    z <- abs_cache(lang='en', progress=5)
 #'  }
 abs_cache <- function(lang="en", progress=10)
@@ -261,6 +260,7 @@ abs_cache <- function(lang="en", progress=10)
 #' @title Converts an abs_cachelist to abs_cachetable
 #' @description This function converts an \code{abs_cachelist} to an \code{abs_cachetable} suitable
 #'   for use with \code{\link{abs_search}}.
+#' @importFrom stats setNames
 #' @param cache An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
 #'   \code{NULL}, uses the stored package cachelist.
 #'
@@ -275,7 +275,7 @@ abs_cache <- function(lang="en", progress=10)
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @note This is an internal library function and is not exported.
 #' @examples
-#'  \donotrun{
+#'  \dontrun{
 #'    abs_ct <- abs_cachelist2table(raustats::abs_cachelist)
 #'  }
 abs_cachelist2table <- function(cache)
@@ -315,15 +315,15 @@ abs_cachelist2table <- function(cache)
 #' @param cache An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
 #'   \code{NULL}, uses the stored package cachelist.
 #' @return a data frame with available dataset dimensions.
-#' @note @export
+#' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   # CPI - Consumer Price Index
-#'   x <- abs_dimensions("CPI");
-#'   str(x)
-#'   # LF - Labour Force
-#'   x <- abs_dimensions("LF");
-#'   str(x)
+#'  ## CPI - Consumer Price Index
+#'  x <- abs_dimensions("CPI");
+#'  str(x)
+#'  ## LF - Labour Force
+#'  x <- abs_dimensions("LF");
+#'  str(x)
 abs_dimensions <- function(dataset, cache)
 {
   ## DEBUG <- FALSE
@@ -373,14 +373,14 @@ abs_dimensions <- function(dataset, cache)
 #' @note With acknowledgements to \code{wb_search} function.
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   ## ABS dataset search
-#'   x <- abs_search(pattern="consumer price index")
-#'   x <- abs_search(pattern="census")
-#'   x <- abs_search(pattern="labour force")
+#'  ## ABS dataset search
+#'  x <- abs_search(pattern="consumer price index")
+#'  x <- abs_search(pattern="census")
+#'  x <- abs_search(pattern="labour force")
 #'
-#'   ## ABS indicator search
-#'   x <- abs_search(pattern="all groups", dataset="CPI")
-#'   x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
+#'  ## ABS indicator search
+#'  x <- abs_search(pattern="all groups", dataset="CPI")
+#'  x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
 #' 
 abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE, cache)
 {
@@ -448,6 +448,7 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #' @description This function downloads the specified ABS data series from the ABS API.
 #' @importFrom xml2 read_xml read_html
 #' @importFrom jsonlite fromJSON
+#' @importFrom stats setNames
 #' @param dataset Character vector of ABS.Stat dataset codes. These codes correspond to the
 #'   \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 #'   \code{abs_cachelist}, or the result of \code{abs_indicators}.
@@ -508,11 +509,14 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   x <- abs_stats("CPI");
-#'   x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
-#'   x <- abs_stats(dataset="CPI", filter = list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
-#'   x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"))
-#'   x <- abs_stats(dataset="CPI", filter = list(MEASURE="all", REGION=50, INDEX=10001, TSEST=10, FREQUENCY="Q"), return_url=TRUE)
+#'    x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
+#'    x <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+#'                                              INDEX=10001, TSEST=10, FREQUENCY="Q"));
+#'    x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50,
+#'                                              INDEX=10001, TSEST=10, FREQUENCY="Q"));
+#'    x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50, INDEX=10001,
+#'                                              TSEST=10, FREQUENCY="Q"), return_url=TRUE);
+#'  
 abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
@@ -540,9 +544,12 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   if (!dataset %in% abs_datasets()$id)
     stop(sprintf("%s not a valid ABS dataset.", dataset));
   ## Check if filter provided
-  if (missing(filter))
-    stop(sprintf("No filter argument. Should be either 'all' or valid list with following dimensions:\n %s",
-                 paste(metadata_dims, collapse=", ")));
+  if (missing(filter)) {
+    dataset_dim <- abs_dimensions(dataset)
+    stop(sprintf("No filter argument. Should be either 'all' or valid list with dataset dimensions:\n %s",
+                 paste(dataset_dim[grepl("^dimension$", dataset_dim$type,
+                                         ignore.case=TRUE), "name"], collapse=", ")));
+  }
   ## Check if start_date > end_date
   if (!missing(start_date) && !missing(end_date) && start_date > end_date)
     stop("start_date later than end_date, request not submitted.")
@@ -628,10 +635,10 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                                length(grep("^\\d{4}-M\\d+$", time_filter)),
                                NA_integer_)),
                       na.rm = TRUE);
-      if (n_filter * time_filter > 10^6)
+      if (n_filter * n_time > 10^6)
         stop(sprintf(paste("Estimated number of records (%i) exceeds ABS.Stat limit (1 million).",
                            "Filter query in one or more dimensions."),
-                     n_filter * time_filter));
+                     n_filter * n_time));
     }
     ## Download data
     x_json <- fromJSON(url)

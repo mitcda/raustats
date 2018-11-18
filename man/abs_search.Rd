@@ -35,14 +35,14 @@ This function finds datasets or dimensions within a specific that match a specif
 With acknowledgements to \code{wb_search} function.
 }
 \examples{
-  ## ABS dataset search
-  x <- abs_search(pattern="consumer price index")
-  x <- abs_search(pattern="census")
-  x <- abs_search(pattern="labour force")
+ ## ABS dataset search
+ x <- abs_search(pattern="consumer price index")
+ x <- abs_search(pattern="census")
+ x <- abs_search(pattern="labour force")
 
-  ## ABS indicator search
-  x <- abs_search(pattern="all groups", dataset="CPI")
-  x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
+ ## ABS indicator search
+ x <- abs_search(pattern="all groups", dataset="CPI")
+ x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
 
 }
 \author{

@@ -6,16 +6,6 @@ abs_urls <- function()
        releases_regex = "Past.*Future.*Releases");
 }
 
-## abs_domain = "http://www.abs.gov.au/",
-## abs_ausstats_path = "ausstats/abs@.nsf/mf",
-## abs_downloads_regex = "Downloads",
-## abs_releases_regex = "Past.*Future.*Releases"
-                       
-
-## abs_ausstats_url <- function()
-##   paste0(options()$raustats["abs_domain"],
-##          options()$raustats["abs_ausstats_path"]);
-
 
 #' @name abs_cat_stats
 #' @title Get ABS catalogue series data
@@ -36,11 +26,11 @@ abs_urls <- function()
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   ## Download quarterly Australian National Accounts, Tables 1 & 2 
-#'   ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
+#'  ## Download quarterly Australian National Accounts, Tables 1 & 2 
+#'  ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
 #'
-#'   ## Download December 2017 Australian National Accounts, Table 1
-#'   ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\W+", release="Dec 2017");
+#'  ## Download December 2017 Australian National Accounts, Table 1
+#'  ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\W+", release="Dec 2017");
 #' 
 abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 {
@@ -119,20 +109,21 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   ## List latest available quarterly National Accounts tables
-#'   ana_tables <- abs_cat_tables("5206.0", releases="Latest");
-#'   ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+#'  ## List latest available quarterly National Accounts tables
+#'  ana_tables <- abs_cat_tables("5206.0", releases="Latest");
+#'  ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 #'
-#'   ## List latest available CPI Time Series Spreadsheet tables only
-#'   cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
-#'   cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
+#'  ## List latest available CPI Time Series Spreadsheet tables only
+#'  cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
+#'  cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
 #'
-#'   ## List latest available ASGS Volume 3 Data Cubes
-#'   asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
-#'   asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css", include_urls=TRUE);
+#'  ## List latest available ASGS Volume 3 Data Cubes
+#'  asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
+#'  asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest",
+#'                                         types="css", include_urls=TRUE);
 #'
-#'   ## List latest available ASGS ANZSIC publications (PDF) files
-#'   anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
+#'  ## List latest available ASGS ANZSIC publications (PDF) files
+#'  anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
 #' 
 abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), include_urls=FALSE)
 {
@@ -286,7 +277,6 @@ abs_cat_download <- function(data_urls, exdir=tempdir()) {
 ## @param url Character vector specifying one or more ABS data URLs.
 ## @return Returns a local file names (character vector) in which downloaded files will be saved.
 ## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
-## @examples
 ##
 abs_local_filename <- function(url)
 {
@@ -343,6 +333,7 @@ abs_cat_unzip <- function(files, exdir) {
 #' @importFrom readxl read_excel excel_sheets
 #' @importFrom dplyr left_join
 #' @importFrom tidyr gather
+#' @importFrom stats complete.cases
 #' @param files Names of one or more ABS data files
 #' @param type One of either 'tss' -- ABS Time Series Spreadsheet (the Default)
 #'     or 'css' -- Data Cube.
@@ -350,8 +341,13 @@ abs_cat_unzip <- function(files, exdir) {
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
-#'   x <- abs_read_tss(file.path("data-raw", "5206001_Key_Aggregates.xls"));
-#'   y <- abs_read_tss(file.path("data-raw", c("5206001_Key_Aggregates.xls","5206002_expenditure_volume_measures.xls")));
+#'   \dontrun{
+#'     ## Read specified ABS Excel Time Seriefiles
+#'     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+#'     downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
+#'     extracted_files <- abs_cat_unzip(downloaded_tables)
+#'     x <- abs_read_tss(extracted_files);
+#'   }
 abs_read_tss <- function(files, type="tss") {
   x <- lapply(files,
               function(file)
@@ -363,6 +359,9 @@ abs_read_tss <- function(files, type="tss") {
 
 
 abs_read_tss_ <- function(file, type="tss") {
+  ## Avoid 'No visible binding for global variables' note
+  { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
+  
   sheet_names <- tolower(excel_sheets(file));
   if (!all(c("index", "data1")  %in% sheet_names))
     stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));

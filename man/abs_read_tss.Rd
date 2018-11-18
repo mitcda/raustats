@@ -20,8 +20,13 @@ data frame in long format
 This function extracts time series data from ABS data files.
 }
 \examples{
-  x <- abs_read_tss(file.path("data-raw", "5206001_Key_Aggregates.xls"));
-  y <- abs_read_tss(file.path("data-raw", c("5206001_Key_Aggregates.xls","5206002_expenditure_volume_measures.xls")));
+  \dontrun{
+    ## Read specified ABS Excel Time Seriefiles
+    tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+    downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
+    extracted_files <- abs_cat_unzip(downloaded_tables)
+    x <- abs_read_tss(extracted_files);
+  }
 }
 \author{
 David Mitchell <david.mitchell@infrastructure.gov.au>

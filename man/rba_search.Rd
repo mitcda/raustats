@@ -25,6 +25,5 @@ data frame in long format
 Function to return a list of all RBA data tables.
 }
 \examples{
-  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
-
+ rba_datasets <- rba_search(pattern = "Liabilities and Assets");
 }
