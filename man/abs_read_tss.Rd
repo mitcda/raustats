@@ -2,7 +2,6 @@
 % Please edit documentation in R/abs-cat-functions.R
 \name{abs_read_tss}
 \alias{abs_read_tss}
-\alias{abs_read_tss_}
 \title{Read ABS time series data file(s)}
 \usage{
 abs_read_tss(files, type = "tss")
@@ -10,8 +9,8 @@ abs_read_tss(files, type = "tss")
 \arguments{
 \item{files}{Names of one or more ABS data files}
 
-\item{type}{One of either 'tss' -- ABS Time Series Spreadsheet (the Default)
-or 'css' -- Data Cube.}
+\item{type}{One of either 'tss'  -- ABS Time Series  Spreadsheet (the Default) or  'css' -- Data
+Cube.R}
 }
 \value{
 data frame in long format

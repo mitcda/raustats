@@ -296,6 +296,7 @@ abs_local_filename <- function(url)
 #'   exist. If missing, creates a new subdirectory in \code{tempdir()} using the respective zip
 #'   files (specified in \code{files}.
 #' @return Returns a character vector listing the names of all files extracted.
+#' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 abs_cat_unzip <- function(files, exdir) {
   if (any(!file.exists(files)))
@@ -327,7 +328,6 @@ abs_cat_unzip <- function(files, exdir) {
 
 ### Function: abs_read_tss
 #' @name abs_read_tss
-#' @aliases abs_read_tss abs_read_tss_
 #' @title Read ABS time series data file(s)
 #' @description This function extracts time series data from ABS data files.
 #' @importFrom readxl read_excel excel_sheets
@@ -335,8 +335,8 @@ abs_cat_unzip <- function(files, exdir) {
 #' @importFrom tidyr gather
 #' @importFrom stats complete.cases
 #' @param files Names of one or more ABS data files
-#' @param type One of either 'tss' -- ABS Time Series Spreadsheet (the Default)
-#'     or 'css' -- Data Cube.
+#' @param type  One of either 'tss'  -- ABS Time Series  Spreadsheet (the Default) or  'css' -- Data
+#'   Cube.R
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
@@ -358,6 +358,10 @@ abs_read_tss <- function(files, type="tss") {
 }
 
 
+### Function: abs_read_tss_
+## @name abs_read_tss
+## @title Read ABS time series data file(s)
+## @description This function extracts time series data from ABS data files.
 abs_read_tss_ <- function(file, type="tss") {
   ## Avoid 'No visible binding for global variables' note
   { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
