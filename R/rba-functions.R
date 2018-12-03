@@ -165,20 +165,11 @@ rba_stats <- function(table_no, pattern, url, cache, ...)
     if (any(!url %in% rba_cache$url))
       stop(sprintf("Following urls invalid: %s",
                    paste(rba_cache$url[!url %in% rba_cache$url], collapse="|")));
-    urls <- url
+    urls <- as.character(url)
   }
   
-  ## Select the relevant tables
-  ## paths <- rba_table_list[grepl(series_type, rba_table_list$table_type, ignore.case=TRUE) &
-  ##                         grepl(paste(table_code, collapse="|"), rba_table_list$table_code,
-  ##                               ignore.case=TRUE),];
   ## Download RBA statistical data ..
   z <- lapply(urls, rba_file_download);
-  ## ## Download files
-  ## local_files <- file.path(tempdir(), basename(as.character(rba_cach$url)));
-  ## ## cat("Downloading data\n");
-  ## mapply(function(x, y) download.file(x, y, mode="wb"),
-  ##        as.character(urls), local_files);
   ## Read data
   data <- lapply(z, rba_read_tss);
   data <- do.call(rbind, data);
@@ -206,7 +197,7 @@ rba_file_download <- function(url, exdir=tempdir()) {
   ## local_filenames <- abs_local_filename(url);
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, mode="wb"),
-         url, file.path(exdir, local_filename));
+         as.character(url), file.path(exdir, local_filename));
   ## Return results
   return(file.path(exdir, local_filename));
 }
