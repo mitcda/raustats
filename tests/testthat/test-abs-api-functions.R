@@ -134,7 +134,16 @@ test_that("abs_stats returns valid data frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  expect_s3_class(abs_stats("CPI"), "data.frame");
+  ## expect_s3_class(abs_stats("CPI"), "data.frame");
   ## expect_named(abs_cpi, c("name","type"), ignore.order=TRUE, ignore.case=TRUE);
-  
+
+  ## Test specific filter and start/end dates
+  expect_s3_class(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                         start_date="2008-Q3", end_date="2018-Q2"), "data.frame");
+  ## Test incomplete filter set
+  expect_s3_class(abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                            start_date="2008-Q3", end_date="2018-Q2"), "data.frame");
+  ## Test function returns character string
+  expect_type(abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                        start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE), "character");
 })
