@@ -12,6 +12,16 @@ vignette: >
 
 # Introduction
 
+The `raustats` package allows researchers to quickly search and download
+selected [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) and
+[Reserve Bank of Australia (RBA)](http://www.rba.gov.au/) data in a programmatic
+and reproducible fashion. This facilitates seamless integration of ABS and/or
+RBA data into analysis projects, and enables automatic update to the latest
+available data.
+
+
+## Australian Bureau of Statistics
+
 The [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) is
 Australia’s national statistical agency, providing trusted official
 statistics on a wide range of economic, social, population and
@@ -24,6 +34,8 @@ collections include:
   * Labour Force
   * Population trends
 
+
+## Reserve Bank of Australia
 
 The [Reserve Bank of Australia (RBA)](http://www.rba.gov.au/) is
 Australia's central bank. In addition to its legislative
@@ -39,27 +51,21 @@ metrics. Key RBA statistics include:
   * Inflation and inflation expectations.
 
 The ABS and RBA currently make most, or all, of their statistics primarily
-available through Excel and/or CSV-format spreadsheets. The former typically
-require some additional re-formatting to produce well-formed (tidy) data. The
-functions in this package automate translation the downloading and formatting of
-ABS and RBA data into long-format (tidy) tables.
+available through Excel- and/or CSV-format spreadsheets. The former typically
+require some additional re-formatting to produce well-formatted (tidy) data. 
 
-The ABS also has a Beta API access portal:
-[ABS.Stat](http://stat.data.abs.gov.au/), which provides access to a
-subset of all ABS statistics. This package also provides a reasonably
-comprehensive range of functions to search and download data from the
-[ABS.Stat](http://stat.data.abs.gov.au/) API. Please note that as the
-API is currently in development, changes in the API backend may break
-the functions provided in this package.
+The functions in this package help facilitate the download and transformation of
+ABS and RBA statistical datasets into long-format (tidy) tables.
 
-The `raustats` package allows researchers to quickly search and
-download ABS and RBA data of interest in a programmatic and
-reproducible fashion. This facilitates seamless integration into
-projects and enables analysis to be more seamlessly re-run using the
-latest available data.
+The ABS is also developing a data access API:
+[ABS.Stat](http://stat.data.abs.gov.au/), which is currently in Beta release and
+provides access to a subset of ABS statistics. This package include functions to
+search and download data via the [ABS.Stat](http://stat.data.abs.gov.au/)
+API. Please note that as the API is still in development, changes in the API
+back-end may break the functions provided in this package.
 
 
-### Main features of the `raustats` package: 
+# Main features of the `raustats` package: 
 
   * Access to all time series and cross-section statistics in the ABS
     statistical catalogue and on the RBA website
@@ -77,17 +83,19 @@ latest available data.
 # Quick-start guide
 
 This section provides a quick-start guide on how to download ABS and
-RBA statistics. First, load the library:
+RBA statistics.
 
-```{r eval=FALSE}
+First, load the library:
+```{r}
 library(raustats)
 ```
 
 ## Downloading ABS Catalogue Statistics
 
-The `abs_cat_stats()` function is the workhorse for downloading ABS statistics
-by ABS Catalogue Number. Downloading the latest  Consumer Price Index (CPI) data
-series (ABS Catalogue no. 6401.0) can be simply done with the following call:
+The `abs_cat_stats` function is the workhorse for downloading ABS statistics by
+ABS Catalogue Number. For example, the latest Consumer Price Index (CPI) data
+series (ABS Catalogue no. 6401.0) can be downloaded simply with the following
+call:
 
 ```{r eval=FALSE}
 cpi_all <- abs_cat_stats("6401.0")
@@ -97,23 +105,32 @@ To download the latest statistics reported in Table 1 (ABS groups Tables 1 and
 2), simply provide a regular expression to the `tables` argument:
 
 ```{r eval=FALSE}
-cpi <- abs_cat_stats("6401.0", tables="Table.+1")
+cpi <- abs_cat_stats("6401.0", tables="Table.+1\\D")
+```
+
+Alternatively, you can provide a regular expression to `tables` that matches the
+table name as specified on the ABS data access page, as follows:
+
+```{r eval=FALSE}
+cpi <- abs_cat_stats("6401.0", tables="CPI: All Groups, Index Numbers and Percentage Change")
 ```
 
 Statistics from previous releases can be accessed via the `releases` argument. A
-more detailed explanation of the `abs_cat_stats()` function is provided below.
+more detailed explanation of the `abs_cat_stats` function and further examples
+are provided below.
 
 
 ## Downloading ABS data via [ABS.Stat](https://stat.data.abs.gov.au/)
 
-The `abs_stats()` function is used to download ABS statistics via the ABS.Stat
-API. As at the time of writing, the [ABS.Stat](http://stat.data.abs.gov.au/) API had a limit on query string
-length and number of records returned.  In order to download the latest CPI data
-series for All Group changes in prices across Australia and each of the eight
-capital cities, simply call:
+The `abs_stats` function is used to download ABS statistics via the ABS.Stat
+API.^[Note that, as at the time of writing, the ABS.Stat API had a limit on
+query string length and number of records returned.]  In order to download the
+latest CPI data series for All Group changes in prices across Australia and each
+of the eight capital cities, simply call:
 
 ```{r eval=FALSE}
-cpi_api <- abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"))
+cpi_api <- abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                        INDEX=10001, TSEST=10, FREQUENCY="Q"))
 ```
 
 The package includes additional functions to search for datasets and data series
@@ -122,121 +139,148 @@ available on ABS.Stat. These are documented further below.
 
 ## Downloading RBA data
 
-The `rba_stats()` function is the workhorse for downloading statistics available
-on the RBA website.  Downloading the latest statistics covering the RBA's assets
-and liabilities (RBA Statistical Table A1), can be simply done with the
-following call:
+The `rba_stats` function downloads statistics available on the RBA website.  For
+example, the latest statistics covering the RBA's assets and liabilities (RBA
+Statistical Table A1), can be downloaded with the following call:
 
 ```{r eval=FALSE}
 rba_bs <- rba_stats("A1")
 ```
 
+A more detailed explanation of the `rba_stats` and other RBA data access
+functions are provided below.
+
+
 
 # ABS statistics access functions
+
 ##  ABS Catalogue statistics functions
 
 The ABS Catalogue statistics functions are split into core functions:
+
   * `abs_cat_stats`
   * `abs_cat_tables`
   
-and helper functions:
+and several helper functions:
+
   * `abs_read_tss`
   * `abs_download_data`
   * `abs_unzip_files`
 
-Helper functions are called by the core functions and should not need to be
-accessed directly by users.
+
+The helper functions are called by the core functions and should generally not
+need to be called directly by users---though there are some cases where these
+functions may be useful.
 
 
 ### Finding available ABS Catalogue statistics
 
-The ABS does not provide a single consolidated list of former and current
+The ABS does not provide a consolidated searchable list of all current
 statistical collections available through the ABS Catalogue. A text search
 facility is available on the ABS website:
-[www.abs.gov.au](http://www.abs.gov.au), but this package does not provide any
-functionality to access this. Instead, the `abs_tablecache` data set contained
-in this package lists the more common ABS Catalogue statistics.
+[www.abs.gov.au](http://www.abs.gov.au), but this package does not currently
+provide any functionality to access this facility. Instead, the `abs_tablecache`
+data set contained in this package lists the more common ABS Catalogue
+statistics.
 
 
-### Accessing ABS Catalogue statistics with `abs_cat_stats()`
+### Accessing ABS Catalogue statistics with `abs_cat_stats`
 
-As previously outlined in the Quick Start section, the
-`abs_cat_stats()` function provides easy access to ABS statistics by
-Catalogue Number.  The following examples demonstrate typical uses of
-the function and the various function arguments.
+As shown in the Quick Start section, the `abs_cat_stats` function provides easy
+access to ABS statistics by ABS Catalogue Number.  The following examples
+demonstrate typical uses of the function and the various function arguments.
 
-The simplest use of the `abs_cat_stats()` function is to download all
-tables available in the specified catalogue number series. The Quick
-Start illustrated how to download all CPI tables. The following
-example downloads the latest quarterly national accounts statistics
-(ABS Catalogue no. 5206.0):
+The simplest use of the `abs_cat_stats` function is to download all tables
+available in a specified ABS Catalogue series. The Quick Start illustrated how
+to download all CPI tables. The following example downloads the latest quarterly
+national accounts statistics (ABS Catalogue no. 5206.0):
 
-```{r eval=FALSE}
-# Latest quarterly national accounts
-ana_q <- abs_cat_stats(series = "5206.0")
-head(ana_q)
+```{r}
+ana_q <- abs_cat_stats(cat_no = "5206.0")
 ```
 
 The function returns a long-format (tidy) table with the following
 columns:
-  * series_id -- ABS series identifier
-  * date -- Date-format date
-  * value -- series value
-  * data_item_description -- data item name and description
-  * series_type -- series type, one of Original, Trend, Seasonally Adjusted
-  * series_start -- series start date
-  * series_end -- series end data
-  * no_obs -- number of series observations
-  * unit -- unit type (e.g. Percent, $ Millions, Index Numbers, Proportion)
-  * data_type -- data type (e.g. Derived)
-  * freq (frequency) -- Frequency (e.g. Annual, Quarterly, Monthly)
-  * collection_month -- collection month (integer)
-  * catalogue_no -- catalogue number (e.g. 5206.0, 6401.0)
-  * publication_title -- ABS publication title
-  * table_no -- ABS publication table number (integer)
-  * table_title -- ABS publication table title.
 
+  * *series_id* -- ABS series identifier
+  * *date* -- Date-format date
+  * *value* -- series value
+  * *data_item_description* -- data item name and description
+  * *series_type* -- series type, one of Original, Trend, Seasonally Adjusted
+  * *series_start* -- series start date
+  * *series_end* -- series end data
+  * *no_obs* -- number of series observations
+  * *unit* -- unit type (e.g. Percent, $ Millions, Index Numbers, Proportion)
+  * *data_type* -- data type (e.g. Derived)
+  * *freq* (frequency) -- Frequency (e.g. Annual, Quarterly, Monthly)
+  * *collection_month* -- collection month (integer)
+  * *catalogue_no* -- catalogue number (e.g. 5206.0, 6401.0)
+  * *publication_title* -- ABS publication title
+  * *table_no* -- ABS publication table number (integer)
+  * *table_title* -- ABS publication table title.
 
-The `tables` argument allows users to select the set of catalogue
-tables to be downloaded by specifying a regular expression to pattern
-match the ABS table names, as specified on the ABS web page for the
-specified Catalogue number. By default
-`tables = "All"`, which automatically downloads all available tables from the
-specified catalogue number. For example, the following code downloads
+```{r echo=FALSE, results=TRUE}
+## Latest quarterly national accounts
+head(ana_q)
+```
+
+The `tables` argument allows users to select the set of catalogue tables to be
+downloaded by specifying a regular expression to pattern match the ABS table
+names, as specified on the ABS web page for the specified Catalogue number---by
+default (`tables = "all"`) the function automatically downloads all available
+tables from the specified catalogue number. The following sample code downloads
 Tables 1 and 2 from Catalogue no. 5206.0.
 
 ```{r eval=FALSE}
 # Latest quarterly national accounts
-ana_q <- abs_cat_stats(series = "5206.0", tables=c("^Table 1\\.", "^Table 2\\."))
-head(ana_q)
+ana_q <- abs_cat_stats(cat_no = "5206.0", tables=c("^Table 1\\.", "^Table 2\\."))
 ```
 
-<!-- The same result may be achieved by specifying the website table -->
-<!-- names, e.g.: -->
+The same result may be achieved by specifying one or more regular expressions
+matching one or more table names. For example:
 
 ```{r eval=FALSE, echo=FALSE}
-# Latest quarterly national accounts
-ana_q <- abs_cat_stats(series = "5206.0",
+## Latest quarterly national accounts
+ana_q <- abs_cat_stats(cat_no = "5206.0",
                        tables=c(".*Key National Accounts Aggregates",
                                 ".*Expenditure on Gross Domestic Product (GDP), Chain volume measures"))
-head(ana_q)
 ```
 
-The function `releases` argument enables users to download data from
-the specified release. By default, the function downloads the latest
-available data (i.e. `releases="Latest"`). The format is a date object
-or character string specifying the month and year of release. 
-For example, the following sample code downloads Table 1 from the
-December 2017 release of the quarterly national accounts. The
-`releases` argument accepts multiple 
+The `releases` argument enables users to download data from a specified
+release. By default, the function downloads the latest available data
+(i.e. `releases="Latest"`). The format is a date object or character string
+specifying the month and year of release.  For example, the following sample
+code downloads Table 1 from the December 2017 release of the quarterly national
+accounts. 
 
 ```{r eval=FALSE}
 ## December 2017 quarter national accounts - Table 1
-ana_2017Q4 <- abs_cat_stats("5206.0", tables="Table 1", releases="Dec 2017");
+ana_2017Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases="Dec 2017");
 ## or
-ana_2017Q4 <- abs_cat_stats("5206.0", tables="Table 1", releases=as.Date("2017-12-01"));
-head(ana_2017Q4)
+ana_2017Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases=as.Date("2017-12-01"));
 ```
+
+The `releases` argument accepts multiple elements, as per the following example:
+```{r eval=FALSE}
+## December 2017 and 2016 quarter national accounts - Table 1
+ana_Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases=c("Dec 2017","Dec 2016"));
+```
+
+The `abs_cat_stats` function is designed to download both ABS
+time series spreadsheets (`types="tss"`) and cross-section spreadsheets
+(`types="css"`)---'Data Cubes' in ABS terminology.  ABS time series
+spreadsheets generally have a standard format, with a single column for each
+series, several headers rows containing series metadata and a single row with
+the unique series identifier.  ABS cross-section spreadsheet formats vary,
+depending on the number of dimensions (categories) available in the data
+set. These tables typically have multiple uniquely-identifying header rows.
+
+Presently, the `abs_cat_stats` only includes functionality to download and
+process time series spreadsheets---functionality to handle ABS Data Cubes
+(cross-section spreadsheets, `types="css"`) is planned to be added in the near
+future.
+
+<!-- Text when abs_read_css function added
 
 The `abs_cat_stats` can download both time series (`types="tss"`) and
 cross-section (`types="css"`) data series.  ABS time series
@@ -253,175 +297,189 @@ information starts in row 4) and the number of header rows
 example shows the use of the function to import cross-section data on
 regional household incomes (ABS Catalogue no. xxxx.0).
 
-```{r eval=FALSE}
-## -- TO BE ADDED --
-head(reg_inc)
-```
+-- Include examples of downloading css files
+
+-->
+
 
 
 ### Finding available ABS Catalogue tables with `abs_cat_tables`
 
 The `abs_cat_tables` function returns a list of all tables for one or more
-specified ABS Catalogue numbers.  It can be used to identify the relevant table
-to download. For example, the following code returns all tables available for
-the latest quarterly national accounts (5206.0) and CPI (6401.0).
+specified ABS Catalogue numbers.  It can be used to identify the relevant
+table(s) to download. The following two examples return all available tables for the
+latest quarterly national accounts (5206.0) and CPI (6401.0), respectively.
 
-
-```{r eval=FALSE}
-# Latest quarterly national accounts
+```{r}
+## Latest quarterly national accounts
 ana_tables <- abs_cat_tables(cat_no="5206.0")
-head(ana_tables)
+```
 
+```{r echo=FALSE}
+head(ana_tables)
+```
+
+```{r}
+## CPI
 cpi_tables <- abs_cat_tables(cat_no="6401.0")
+```
+
+```{r echo=FALSE}
 head(cpi_tables)
 ```
 
-The `abs_cat_tables` also has three additional arguments: `releases`,
-`types` and `include_urls`.  The `releases` argument returns the list
-of downloadable tables from the specified release. Setting
-`releases="Latest"` (the default) returns the latest available tables.
-Earlier release tables can be returned by specifying the month and
-year of release, e.g.`releases = "Jun 2017"`.  The `types` argument enables users to specify which file types to
-include. Options are 'tss' -- ABS Time Series Spreadsheets, 'css' -
-ABS Data Cubes and 'pub' -- ABS Publications. The default is`types = c('tss', 'css')`.  The `include_urls` argument specifies whether or not to include the
-URLs of available data tables in the returned results. The default is
-`include_urls=FALSE`.
+
+The `abs_cat_tables` also has three additional arguments: `releases`, `types`
+and `include_urls`.  The `releases` argument returns the list of downloadable
+tables from the specified release---by default `releases="Latest"`.  Lists of
+available tables from earlier releases can be obtained by specifying the month
+and year of release, e.g.`releases = "Jun 2017"`.  The `types` argument enables
+users to specify which file types to include. Options are 'tss' -- ABS Time
+Series Spreadsheets, 'css' -- ABS Data Cubes, and 'pub' -- ABS Publications. The
+default is `types = c('tss', 'css')`.  The `include_urls` argument specifies
+whether or not to include the URLs of available data tables in the returned
+results. The default is `include_urls=FALSE`.
 
 The following example, returns all quarterly national accounts tables in the
-September and December 2017 quarter releases, and includes the file paths.
+September and December 2017 quarter releases, and includes the table URLs.
 
-```{r eval=FALSE}
-# Specified quarterly national accounts tables
+```{r}
+## Specified quarterly national accounts tables
 ana_tables <- abs_cat_tables(cat_no="5206.0", releases=c("Sep 2017", "Dec 2017"), include_urls=TRUE)
+```
+
+```{r echo=FALSE}
 head(ana_tables)
 ```
 
-And the following example illustrates use of the `abs_cat_tables` to get all
-available downloadable Data Cubes for a non-time series collection, the
+And the following example illustrates use of the `abs_cat_tables` to return all
+available downloadable Data Cubes for a non-time series collection---the
 Australian Statistical Geography Standard (ASGS) main structure classification
 and digital boundaries (Catalogue no. 1270.0.55.001).
 
-```{r eval=FALSE}
-# Specified ASGS files
+```{r}
 asgs_files <- abs_cat_tables(cat_no="1270.0.55.001", types="css", include_urls=TRUE)
+```
+
+```{r echo=FALSE}
 head(asgs_files)
 ```
 
 
 ### Other ABS Catalogue helper functions
 
-There are several ABS Catalogue helper functions that are called by
-`abs_cat_stats` and `abs_cat_tables` ---that download and parse the
-ABS Catalogue table files. These additional functions should not
-ordinarily need to be called directly, but there may be some
-situations in which users wish to access these functions. The main
-ones are:
+As already noted, there are several ABS Catalogue helper functions that are called by
+`abs_cat_stats` and `abs_cat_tables`---that download and parse the ABS
+Catalogue table files. The main ones are:
 
   * `abs_cat_download`
   * `abs_cat_unzip`
   * `abs_read_tss`
-  * `abs_read_css`
+<!--  * `abs_read_css` -->
 
 The following examples illustrate the use of these functions.
 
-The `abs_cat_download` function downloads and saves ABS Catalogue
-tables from a supplied URL. It is called inside the `abs_cat_stats`
-and can be used to directly download one or more ABS Catalogue table
-files. It is most usefully used in conjunction with the
-`abs_cat_tables` function, as follows:
+The `abs_cat_download` function downloads and saves ABS Catalogue tables from a
+supplied URL. It is called inside the `abs_cat_stats` and can be used directly
+to download one or more ABS Catalogue table files. It is most usefully used in
+conjunction with the `abs_cat_tables` function, as follows:
 
-```{r eval=FALSE}
-# Read specified ABS Excel Time Seriefiles
+```{r}
+## Read specified ABS Excel Time Seriefiles
 tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
+```
 
+```{r echo=FALSE}
 print(downloaded_tables)
 ```
 
-The `abs_cat_unzip` function extracts Excel files from compressed ABS zip
-archives, it uses the `utils::unzip` function, but wraps around some standard
-file locations. There are two arguments: `files` and `exdir` which have a
-similar meaning to the `utils::unzip` equivalent arguments. By default
-`exdir = tempdir()`.
+The `abs_cat_unzip` function extracts Excel files from compressed ABS
+zip archives, it uses the `utils::unzip` function (using some standard
+file locations). There are two arguments: `files` and `exdir` which
+have a similar meaning to the `utils::unzip` equivalent arguments. By
+default `exdir = tempdir()`.
 
-```{r eval=FALSE}
-# Extracted ABS Excel Time Series Spreadsheet
+```{r}
+## Extracted ABS Excel Time Series Spreadsheet
 extracted_files <- abs_cat_unzip(downloaded_tables)
+```
 
+```{r echo=FALSE}
 print(extracted_files)
 ```
 
-The `abs_read_tss`, and companion `abs_read_tss_`, functions are among the more
-important functions in the package. It extracts data from standard-formatted ABS
-Catalogue time series spreadsheets and returns it as a long-format (tidy) data
-frame.  The simple example below shows use of the function to read Catalogue
-5206.0, Table 1.
+
+
+The `abs_read_tss` function extracts data from standard-formatted ABS Catalogue
+time series spreadsheets and returns it as a long-format (tidy) data frame.  The
+simple example below shows use of the function to read Table 1 from the national
+accounts (Catalogue 5206.0).
 
 ```{r eval=FALSE}
 # Read specified ABS Excel Time Series Spreadsheets
-x <- abs_read_tss(extracted_files);
-head(x)
+ana_q <- abs_read_tss(extracted_files);
 ```
 
 
-##  ABS.Stat statistics access functions - Beta 
+##  ABS.Stat statistics access functions 
 
-[ABS.Stat](http://stat.data.abs.gov.au/) statistics access functions
-available in `raustats` include functions to list and search for
-available data sets and statistics, and functions to download selected
-statistics.
+The `raustats` package also includes a range of functions to list, search and
+download data sets and statistics available through
+[ABS.Stat](http://stat.data.abs.gov.au/) API. The following subsections outline
+the key functions.
 
 
 ### Finding available data with `abs_datasets`
 
-The `abs_datasets` function returns a list of all datasets available
-through ABS.Stat. The function has two arguments: `lang` (default is
-English: `lang="en"`) and `include_notes` (default:
-`include_notes=FALSE`). The following example shows the results with
-notes included.
+The `abs_datasets` function returns a list of all datasets available through
+[ABS.Stat](http://stat.data.abs.gov.au/). The function has two arguments: `lang`
+(default is English: `lang="en"`) and `include_notes` (default:
+`include_notes=FALSE`). The following example shows the results with notes
+included.
 
-```{r eval=FALSE}
-datasets <- abs_datasets(include_notes=TRUE);
+```{r}
+datasets <- abs_datasets();
+```
 
+```{r echo=FALSE}
 head(datasets)
 ```
 
+
+
 ### Cached list of available datasets `abs_cachelist`
 
-For performance, a cached list of datasets available through the [ABS.Stat](http://stat.data.abs.gov.au/) API is
-provided in the `abs_cachelist` data set included in `raustats`.
-`abs_cachelist` is the default source used in `abs_search()` and `abs_stats()`
-to find matching dataset information. The structure of `abs_cachelist` is shown
-next.
-```{r eval=FALSE}
-str(abs_cachelist, max.level = 1)
-```
+For performance, a cached list of datasets available through the
+[ABS.Stat](http://stat.data.abs.gov.au/) API is provided in the `abs_cachelist`
+data set included with `raustats`.  `abs_cachelist` is the default source used
+in `abs_search()` and `abs_stats()` to find matching ABS datasets. 
 
-The default cached data in `abs_cachelist` is in English. To search indicators
-in a different language, you can download an updated copy of `abs_cachelist`
-using `abs_cache()` (see next).
+By default, `abs_cachelist` is in English. To search indicators in a different
+language, you can download an updated copy of `abs_cachelist` using
+`abs_cache()` (next).
 
 
 ### Accessing updated available data with `abs_cache()`
 
-Current information about datasets available from the [ABS.Stat](http://stat.data.abs.gov.au/) API can be
-obtained by calling `abs_cache`.  It downloads an updated version of the
-information stored in `abs_cachelist`---`abs_cachelist` is simply a saved return
-of `abs_cache(lang = "en")`.  Updated cache information can be used in the
-`abs_search` and `abs_stats` functions by setting the `cache` parameter to the
-saved results returned from `abs_cache`. It is advisable to use the updated
-cache information to ensure that you have access to the latest available
-datasets. Note, however, `abs_cache` can take a long time to download all
-datasets, so use sparingly. For this reason, `abs_cache` includes the
-`progress=n` argument, which provides an update on progress every `n` datasets.
-The second example downloads a new cache in French.^[Note, the [ABS.Stat](http://stat.data.abs.gov.au/) API
-currently has limited support for other languages, so data may not be available
-in languages other than English.]
+Current information about datasets available from the
+[ABS.Stat](http://stat.data.abs.gov.au/) API can be obtained by calling
+`abs_cache`.^[`abs_cachelist` is simply a saved return of `abs_cache(lang =
+"en")`.]  Updated cache information can be used in the `abs_search` and
+`abs_stats` functions by setting the `cache` argument equal to the saved results
+returned by `abs_cache`. While using updated cache information will ensure you
+identify all available datasets, the `abs_cache` function can take a long time
+to download all datasets, so use judiciously. Because of this, `abs_cache`
+includes functionality to report progress back to the console. The frequency of
+reporting can be set with the `progress` argument (by default `progress=10`).
+The second example downloads a new cache in French.^[Note, the
+[ABS.Stat](http://stat.data.abs.gov.au/) API currently has limited support for
+other languages, so data may not be available in languages other than English.]
 
 ```{r eval=FALSE}
-# default language is english
+## The default language is English
 new_cache <- abs_cache(progress=10);
-
+## French language version
 new_cache_fr <- abs_cache(lang="fr", progress=10);
 ```
 
@@ -434,25 +492,43 @@ the respective dimension type. Typical dimension types are: 'Dimension',
 argument of `abs_stats` function. The following example lists the data
 dimensions of the 'CPI' dataset.
 
-```{r eval=FALSE}
+```{r}
 cpi_dim <- abs_dimensions('CPI');
-print(cpi_dim);
+```
+
+```{r echo=FALSE}
+cpi_dim
+```
+
+
+A list of all available dimension codes and descriptions for a particular
+dataset can be viewed by selecting the relevant dataset from `abs_cachelist` or
+an updated cache list returned by `abs_cache`.
+
+```{r}
+cpi_attr <- abs_cachelist[["CPI"]];
+```
+
+```{r echo=FALSE}
+str(cpi_attr);
 ```
 
 
 ### Search available data with `abs_search()`
 
-The `abs_search` function essentially has two modes of operation: i) 'dataset
-search' mode, and ii) 'indicator search' mode.
+The `abs_search` function essentially has two modes of operation: 
 
-In dataset search mode, the function searches and returns datasets matching a
-provided regular expression. The following examples demonstrates use of the
+  i) 'dataset search' mode, and
+  ii) 'indicator search' mode.
+
+In dataset search mode, the function searches and returns datasets matching the
+specified regular expression. The following examples demonstrates use of the
 function to find ABS datasets relating to the CPI and labour force. The
 `code_only` argument specifies whether the function returns all information or
 just the matching dataset identifiers.
 
 
-```{r eval=FALSE}
+```{r}
 ## Find ABS CPI datasets
 abs_search("CPI|consumer price index");
 abs_search("CPI|consumer price index", code_only=TRUE);
@@ -460,56 +536,146 @@ abs_search("CPI|consumer price index", code_only=TRUE);
 ## Find ABS labour force datasets
 abs_search("labour force");
 abs_search("^labour force$");
-abs_search("^labour force$", code_only=TRUE);
 ```
 
 In indicator search mode, the function searches through all dimensions of a
 specific dataset and returns a list of dimensions and dimension contents
-matching all the provided regular expressions. The following example
+matching all the provided regular expressions. The following examples
 demonstrates use of the function to find indicators within the CPI data set.
 
-```{r eval=FALSE}
+```{r eval=FALSE, echo=FALSE}
 ## Find all dimensions in the CPI dataset matching the expression 'All groups'
 abs_search("All groups", dataset="CPI");
+```
 
-## Find all dimensions in the CPI dataset matching the expressions 'All groups' and 'Sydney'
-abs_search(c("All groups","Sydney"), dataset="CPI");
+```{r}
+## Find all dimensions in the CPI dataset matching the expressions 'All groups CPI' and 'Sydney'
+abs_search(c("All groups CPI","Sydney"), dataset="CPI");
 ```
 
 If `code_only=TRUE`, the indicator search function returns only codes for each
-matching dimension. This result can be used directly as input to the `filter`
-argument of the `abs_stats` function.
+matching dimension. This, in turn, can be used directly as input to the `filter`
+argument of the `abs_stats` function. The following example returns dimension
+codes for datasets matching both the regular expressions "All groups CPI" and
+"Sydney".
 
-```{r eval=FALSE}
+```{r echo=FALSE, eval=FALSE}
 ## Find all dimensions in the CPI dataset matching the expression 'All groups'
-abs_search("All groups", dataset="CPI", code_only=TRUE);
+abs_search("All groups CPI", dataset="CPI", code_only=TRUE);
+```
 
+```{r}
 ## Find all dimensions in the CPI dataset matching the expressions 'All groups' and 'Sydney'
-abs_search(c("All groups","Sydney"), dataset="CPI", code_only=TRUE);
+abs_search(c("All groups CPI","Sydney"), dataset="CPI", code_only=TRUE);
 ```
 
 
 ### Downloading data with `abs_stats()`
 
-The `abs_stats()` function downloads and returns data from the [ABS.Stat](http://stat.data.abs.gov.au/) API. The
-following examples highlight the different ways in which
-`abs_stats()` can be used and demonstrate the major optional parameters.
+The `abs_stats()` function returns data from specified datasets available via
+the [ABS.Stat](http://stat.data.abs.gov.au/) API. The following section outlines
+typical use of the `abs_stats()` function, and also describes each of the core
+function arguments.
 
-The default value for the `country` parameter is a special value of `all` which
-as you might expect, returns data on the selected `indicator` for every
-available country or region.
+The following example downloads original  All groups CPI index numbers for each
+of the eight Australian state and territory capital cities and also the average
+for all capital cities.
 
-<!-- UP TO HERE -->
-
-```{r eval=FALSE}
-library(raustats)
-
-# Population, total
-pop_data <- abs_(indicator = "SP.POP.TOTL", startdate = 2000, enddate = 2002)
-
-head(pop_data)
+```{r}
+cpi <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                          INDEX=10001, TSEST=10, FREQUENCY="Q"));
 ```
 
+The filter conditions are:
+
+  * `MEASURE=1` -- 'Index Numbers'
+  * `REGION=c(1:8,50)` -- Each of the eight capital cities (1--8) and all eight
+    capital cities (50)
+  * `INDEX=10001` -- 'All groups CPI'
+  * `TSEST=10` -- 'Original' observations
+  * `FREQUENCY=Q` -- Quarterly observations
+
+```{r echo=FALSE}
+head(cpi)
+```
+
+The `filter` argument can also be set equal to "all", in which case the function
+will attempt to download all observations available for the specified
+dataset. However, if the dataset is large it may breach the
+[ABS.Stat](http://stat.data.abs.gov.au/) API query length, record and/or session
+time constraints.^[[ABS.Stat](http://stat.data.abs.gov.au/) has a query string
+length limit (maximum of 1000 characters) on URL queries, a record return limit
+(1 million records) and session time limits (maximum 10-minute session time
+limit). (See the [ABS.Stat Web Services User Guide
+FAQ](http://www.abs.gov.au/ausstats/abs@.nsf/Lookup/by%20Subject/1407.0.55.002~User%20Guide~Main%20Features~Frequently%20Asked%20Questions~9)
+for further details.)] Queries that breach these limits will need to be
+re-specified as multiple separate calls to obtain the required data.
+
+For example, the following `abs_stats` function call, attempts to download all
+series available for the CPI dataset, but the specified query length (1191
+characters) exceeds maximum request URL character limit.
+
+```{r eval=FALSE}
+cpi <- abs_stats(dataset="CPI", filter="all");
+```
+
+By default, `abs_stats` checks whether the query string length and the estimated
+number of records to be returned and will halt execution if the query breaches
+any of these conditions. Setting the `enforce_api_limits = FALSE` (default:
+`TRUE`) will ignore these checks and submit the query to the
+[ABS.Stat](http://stat.data.abs.gov.au/) API anyway. If the query fails it will
+return an error. For example, the following function call will return an
+error.
+
+```{r eval=FALSE}
+cpi <- abs_stats(dataset="CPI", filter="all", enforce_api_limits=FALSE);
+```
+
+    lexical error: invalid char in json text.
+                                           http://stat.data.abs.gov.au/SDM
+                         (right here) ------^
+
+
+Setting the `return_url = TRUE` (default: `FALSE`) will return the RESTful URL
+query string, but does not submit the query to the
+[ABS.Stat](http://stat.data.abs.gov.au/) API, see the following example function
+call and output.
+
+```{r echo=TRUE}
+abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                     INDEX=10001, TSEST=10, FREQUENCY="Q"),
+          return_url=TRUE);
+```
+
+The `abs_search` function can be used to specify the filter. For example, the
+following code block produces the same filter list, specified in the previous
+example, and can subsequently be supplied to the `abs_stats` `filter` argument.
+
+
+```{r}
+filter_lst <- abs_search(c("Index numbers", "All groups",
+                           "Sydney|Melbourne|Brisbane|Adelaide|Perth|Hobart|Darwin|Canberra|capital cities",
+                           "Original", "Quarterly"),
+                         dataset="CPI", code_only=TRUE);
+cpi <- abs_stats("CPI", filter = filter_lst);
+```
+
+Users can also limit the date range to return by specifying one or
+both`start_date` and `end_date` arguments. These accept either a numeric or
+character arguments---if numeric it must be a four-digit year. If a character
+string it can be either a monthly, quarterly, half-year or financial year as
+formatted as follows: month -- '2016-M01', quarter -- '2016-Q1', half-year --
+'2016-B2', financial year -- '2016-17'.  The following example returns all CPI
+observations between September 2015 and June 2018.
+
+```{r}
+cpi <- abs_stats(dataset="CPI", filter=filter_lst,
+                 start_date = "2015-Q3", end_date = "2018-Q2");
+```
+
+The other arguments `dimensionAtObservation` and `detail` provide refinements to
+the URL query. These need not be modified by the user---the defaults are:
+`dimensionAtObservation='AllDimensions` and `detail='Full'`.
 
 
 # RBA statistics access functions
@@ -521,8 +687,12 @@ statistical tables. The function scans the RBA website and returns a list of all
 [Statistical tables](https://www.rba.gov.au/statistics/tables/), [Historical
 data tables](https://www.rba.gov.au/statistics/historical-data.html) and
 [Discontinued data
-tables](https://www.rba.gov.au/statistics/discontinued-data.html). The dataset
-has four columns:
+tables](https://www.rba.gov.au/statistics/discontinued-data.html). (The
+`rba_tablecache` data set included in this package contains a pre-saved list of
+all available RBA statistical tables.)
+
+The dataset has four columns:
+
   * table_code
   * table_name
   * table_type -- one of either statistical table, historical data or
@@ -532,221 +702,246 @@ has four columns:
 The `rba_table_cache` function has no arguments. The following example shows use
 of the function and the returned output.
 
-```{r eval=FALSE}
+```{r}
 rba_cache <- rba_table_cache()
+```
 
+```{r echo=FALSE}
 head(rba_cache)
 ```
 
-
 ### Search available data with `rba_search()`
 
-The `rba_search` function searches the RBA table cache for statistical
-tables matching the regular expression specified in `pattern`.  The
-`fields` argument specifies the fields in the RBA table cache to
-search---by default the function searches the `table_code` and
-`table_name` fields. The `ignore.case` argument allows for case
-sensitive regular expression matching---the default is case
-insensitive matching. The `cache` argument specifies the RBA table
-cache to be used. If omitted, `rba_tablecache` is used.
+The `rba_search` function scans the RBA table cache for statistical tables
+matching a regular expression supplied to `pattern`.  The `fields` argument
+specifies the fields in the RBA table cache to search---by default the function
+searches the `table_code` and `table_name` fields only. The `ignore.case`
+argument allows for case sensitive regular expression matching---the default is
+case insensitive matching (`ignore.case=TRUE`). The `cache` argument specifies
+the RBA table cache to be used. If omitted, `rba_tablecache` is used.
 
 
-```{r eval=FALSE}
+```{r}
 ## Find RBA datasets
 rba_search(pattern = "Liabilities and Assets");
-
 ```
 
 
 ### Accessing RBA statistical tables with `rba_stats()`
 
-As previously outlined in the Quick Start section, the `rba_stats()`
-function provides easy access to RBA statistical tables.  The
-`rba_stats()` function has three mutually-exclusive table selection
-arguments: `table_no`, `pattern`, and `url`, for selecting RBA
-statistical tables.  Sepcifying `table_no` selects tables matching the
-specified RBA table number, e.g.  A1, B1, B11.1.  Specifying `pattern`
-selects all RBA tables matching the regular expression specified in
-`pattern`.  The `url` argument can be used to specify one or more
-valid RBA statistical table URLs. 
+As previously outlined in the Quick Start section, the `rba_stats()` function
+provides easy access to RBA statistical tables.  The `rba_stats()` function has
+three mutually-exclusive table selection arguments: `table_no`, `pattern`, and
+`url`, for selecting RBA statistical tables.  Specifying `table_no` selects
+tables matching the specified RBA table number, e.g.  A1, B1, B11.1.  Specifying
+`pattern` selects all RBA tables matching the regular expression specified in
+`pattern`.  The `url` argument can be used to specify one or more valid RBA
+statistical table URLs.
 
-The function returns a long-format (tidy) table with the following
-columns:
-  * series_id -- RBA series identifier
-  * date -- Date-format date
-  * value -- series value
-  * title -- data item name
-  * description -- data item description
-  * frequency -- Frequency (e.g. Annual, Quarterly, Monthly, Weekly, Daily)
-  * type -- series type, one of Original, Trend, Seasonally Adjusted
-  * units -- unit of measure (e.g. Percent, $ Millions, Index Numbers, Proportion)
-  * source -- data source organisation
-  * data_type -- data type (e.g. Original, Derived)
-  * table_no -- RBA statistics table number (if available)
-  * table_title -- RBA statistics table title.
+The function returns a long-format (tidy) table with the following columns:
+
+  * *series_id* -- RBA series identifier
+  * *date* -- Date-format date
+  * *value* -- series value
+  * *title* -- data item name
+  * *description* -- data item description
+  * *frequency* -- Frequency (e.g. Annual, Quarterly, Monthly, Weekly, Daily)
+  * *type* -- series type, one of Original, Trend, Seasonally Adjusted
+  * *units* -- unit of measure (e.g. Percent, $ Millions, Index Numbers, Proportion)
+  * *source* -- data source organisation
+  * *data_type* -- data type (e.g. Original, Derived)
+  * *table_no* -- RBA statistics table number (if available)
+  * *table_title* -- RBA statistics table title.
 
 
-The following examples demonstrate
-typical uses of the function and the various function arguments. The
-first example downloads RBA Statistical Table A1 -- Liabilities and
-Assets using `table_no`.
+The following examples demonstrate typical uses of the function and the various
+function arguments. The first example downloads RBA Statistical Table A1 --
+Liabilities and Assets using `table_no`.
 
-```{r eval=FALSE}
-# Latest quarterly national accounts
+```{r}
 rba_a1 <- rba_stats(table_no = "A1")
+```
+```{r echo=FALSE}
 head(rba_a1)
 ```
 
-The second example downloads the same tables using the `pattern`
-argument to download tables matching the regular expression:
-'Liabilities and Assets.+A1'. 
+The second example downloads the same tables using the `pattern` argument to
+download tables matching the regular expression: 'Liabilities and Assets.+A1'.
 
 ```{r eval=FALSE}
-# Latest quarterly national accounts
-rba_a1 <- rba_stats(pattern = "Liabilities and Assets.+A1")
-head(rba_a1)
+rba_a1 <- rba_stats(pattern = "Liabilities and Assets.+Summary")
 ```
 
-And the third example downloads the same tables using the relevant
-URLs. The example presented below first returns a list of all RBA
-tables matching the supplied regular expression ('Liabilities and
-Assets.+A1') and then uses the returned URLs to download each data
-set.
+And the third example downloads the same tables using the relevant URLs. The
+example presented below first returns a list of all RBA tables matching the
+supplied regular expression ('Liabilities and Assets.+A1') and then uses the
+returned URLs to download each data set.
 
-```{r eval=FALSE}
-# Latest quarterly national accounts
-a1_tables <- rba_search(pattern = "Liabilities and Assets.+A1")
-head(a1_tables)
-
+```{r}
+a1_tables <- rba_search(pattern = "Liabilities and Assets.+Summary")
 rba_a1 <- rba_stats(url = a1_tables$url)
+```
+```{r echo=FALSE}
 head(rba_a1)
 ```
 
-The `cache` argument specifies the RBA table cache to be used. If
-omitted, `rba_tablecache` is used. The `rba_stats` function also
-optionally accepts `rba_search` arguments: `fields` and `ignore.case`,
-for informing pattern matching. The `cache` argument specifies the RBA
-table cache to be used---again, `rba_tablecache` is used if `cache` is
-omitted.
+Again, the `cache` argument specifies the RBA table cache to be used---if
+omitted, `rba_tablecache` is used. The `rba_stats` function also optionally
+accepts `rba_search` arguments: `fields` and `ignore.case`, for informing
+pattern matching.
+
+At present, the `rba_stats` function only handles [Statistical
+tables](https://www.rba.gov.au/statistics/tables/), which have a consistently
+structured format comprising full metadata and observations. Functionality to
+handle [Historical data
+tables](https://www.rba.gov.au/statistics/historical-data.html) and
+[Discontinued data
+tables](https://www.rba.gov.au/statistics/discontinued-data.html) are in
+progress.
+
 
 
 ### Other RBA helper functions
 
 There are also two RBA helper functions that are called by
-`rba_stats`---that download and parse the RBA statistical tables. These additional
-functions should not ordinarily need to be called directly, but there
-may be situations in which users wish to access these
-functions directly. The functions are:
+`rba_stats`---that download and parse the RBA statistical
+tables. These additional functions should not ordinarily need to be
+called directly, but there may be situations in which users wish to
+access these functions directly. The functions are:
 
   * `rba_file_download`
   * `rba_read_tss`
 
 The following examples illustrate the use of these functions.
 
-The `rba_download` function downloads and saves RBA tables from a
-supplied URL, and returns a character vector of the saved local
-filenames. It is called inside the `rba_stats` function and can be
-used to directly download one or more RBA statistical table files. It
-is most usefully used in conjunction with the `rba_search` function
+The `rba_download` function downloads and saves RBA tables from a supplied URL,
+and returns a character vector of the saved local filenames. It is called inside
+the `rba_stats` function and can be used to directly download one or more RBA
+statistical table files. It is most usefully used in conjunction with the
+`rba_search` function.
 
 
-```{r eval=FALSE}
-# Extracted ABS Excel Time Series Spreadsheet
-a1_tables <- rba_search(pattern = "Liabilities and Assets.+A1")
+```{r}
+a1_tables <- rba_search(pattern = "Liabilities and Assets.+Summary")
 downloaded_tables <- rba_file_download(a1_tables$url, exdir=tempdir())
+```
 
+```{r echo=FALSE}
 print(downloaded_tables)
 ```
 
-The `rba_read_tss` function extracts data from standard-format RBA
-statistical tables and returns it as a long-format (tidy) data frame.
-It is also called within the `rba_stats` function.  The simple example below shows use of the function to read Catalogue
-5206.0, Table 1.
+The `rba_read_tss` function extracts data from standard-format RBA statistical
+tables and returns it as a long-format (tidy) data frame.  It is also called by
+the `rba_stats` function.  The simple example below shows use of the function to
+extract data from the previously downloaded tables.
 
-```{r eval=FALSE}
+```{r}
 # Read specified RBA statistical data spreadsheets
 a1_data <- rba_read_tss(downloaded_tables);
-head(a1_data)
 ```
 
-Note, however, that the RBA historical and discontinued data files
-formats do not fully conform with statistical tables format, so will
-not necessarily be parsed correctly when read with the `rba_read_tss`
-function. A separate function to parse these tables will be
-developed.
+```{r echo=FALSE}
+head(a1_data)
+```
 
 
 # Getting started with returned data
 
 Statistics returned by the `raustats` package functions are generally in long
 (tidy) format data frames. This provides for easy integration and transformation
-with packages like `ggplot2`, `tidyr` and `dplyr`. A few examples are provided
-here to help users get started.
+with packages like `ggplot2`, `tidyr` and `dplyr`. The following example
+illustrates how data downloaded using the `raustats` can be easily transformed
+and plotted. This example uses data from the ABS' *Private New Capital
+Expenditure and Expected Expenditure* (ABS Catalogue no. 5265.0).
 
-
-The following examples highlight how the data downloaded with the
-above functions may be used with the above packages. 
-
-<!-- TO BE COMPLETED -->
-
-
-```{r eval=FALSE}
-library(raustats)
-
-oil_data <- abs_(indicator = "CRUDE_BRENT", mrv = 10, freq = "M", POSIXct = TRUE)
-
-head(oil_data)
+First download selected tables from Catalogue no. 5265.0.
+```{r results=FALSE}
+capex_q <-
+  abs_cat_stats("5625.0",
+                tables=c("Actual Expenditure by Type of Asset and Industry - Current Prices",
+                         "Actual Expenditure, By Type of Industry - Chain Volume Measures",
+                         "Actual and Expected Capital Expenditure by Industry.+:Current Prices"));
 ```
 
-The `POSIXct = TRUE` option makes plotting and sorting dates much easier.
+Then add a new variable denoting Australian state/territory.
 
-```{r eval=FALSE}
-## vig-ex-posixct-1, fig.height = 4, fig.width = 7.5, fig.path = "figures/"}
-library(raustats)
+```{r results=FALSE, message=FALSE}
+library(dplyr)
+## Add state/territory variable
+capex_q <- capex_q %>%
+  mutate(state = sub(sprintf(".*(%s).*",
+                             paste(c("New South Wales","Victoria","Queensland","South Australia",
+                                     "Western Australia","Tasmania","Northern Territory",
+                                     "Australian Capital Territory","Total \\(State\\)"),
+                                   collapse="|")),
+                     "\\1", data_item_description, ignore.case=TRUE));
+```
+
+The following plot shows actual mining sector capital expenditure by Australian
+state and territory.
+
+```{r fig.height=4, fig.width=7, fig.path="figures/", error=TRUE, message=TRUE, verbose=TRUE}
 library(ggplot2)
+### Filter actual mining capital expenditure
+capex_q_min <- capex_q %>%
+  filter(grepl("mining", data_item_description, ignore.case=TRUE)) %>%
+  filter(grepl("actual", data_item_description, ignore.case=TRUE)) %>%
+  filter(grepl("current price", data_item_description, ignore.case=TRUE)) %>%
+  filter(grepl("Total \\(Type of Asset.+\\)", data_item_description, ignore.case=TRUE))
 
-oil_data <- abs_(indicator = c("CRUDE_DUBAI", "CRUDE_BRENT", "CRUDE_WTI", "CRUDE_PETRO"),
-               startdate = "2012M01", enddate = "2014M12", freq = "M", POSIXct = TRUE)
-
-ggplot(oil_data, aes(x = date_ct, y = value, colour = indicator)) + geom_line(size = 1) +
-  labs(title = "Crude Oil Price Comparisons", x = "Date", y = "US Dollars")
+ggplot(data=capex_q_min) +
+  geom_line(aes(x=date, y=value/10^3, colour=state)) +
+  scale_x_date(date_labels="%b\n%Y") +
+  scale_y_continuous(limits=c(0, NA)) +
+  labs(title="Australian mining capital expenditure, by state",
+       y="Capital expenditure ($ billion)", x=NULL) +
+  guides(colour = guide_legend(title=NULL)) + 
+    theme(plot.title = element_text(hjust=0.5),
+          legend.box = "horizontal",
+          legend.position = "bottom",
+          axis.text.x=element_text(angle=0, size=8));
 ```
-
-
 
 
 # Unresolved issues
 
-There are a few behaviours of the
-[ABS.Stat](http://stat.data.abs.gov.au/) API (Beta) that may help
-explain any potentially unexpected results. These results are known
-but no special actions are taken to mitigate them as they are specific
-to the API itself. Moreover, as the
-[ABS.Stat](http://stat.data.abs.gov.au/) API is, as at the time of
-writing, still in Beta and subject to change, some of these issues are
-yet to addressed in this version of the `raustats` package.
+There are a few behaviours of the [ABS.Stat](http://stat.data.abs.gov.au/) API
+that may help explain any unexpected results. As the
+[ABS.Stat](http://stat.data.abs.gov.au/) API is, as at the time of writing,
+still in Beta and subject to revision, some of these issues will be addressed as
+[ABS.Stat](http://stat.data.abs.gov.au/) transitions to a Release version in
+future versions of the `raustats` package.
 
 
 ## Searching in other languages
 
-The [ABS.Stat](http://stat.data.abs.gov.au/) API (Beta version)
-appears to include scope to cater to languages other than English. At
-the time of writing, French appears to be the only other language
-included in the data sets, however the text for all records denoted
-with French language attribute are in English. The ABS API calling
-functions included in this library allow users to specify their
-preferred language, but this functionality has been little tested to
-date.
+The [ABS.Stat](http://stat.data.abs.gov.au/) API (Beta version) appears to
+include scope to cater to languages other than English. At the time of writing,
+French appears to be the only other language included in the data sets, however
+the text for many records denoted as French appear to be in English. The ABS API
+calling functions included in this library allow users to specify their
+preferred language, but this functionality has been little tested to date.
 
 
-## Query and data limits
+## Query, data and session constraints
 
-As already noted, the [ABS.Stat](http://stat.data.abs.gov.au/) API has
-a query string length limit (1000 characters) and record return limit
-(1 million records). We have not tested how rigorously these limits
-are enforced. Accordingly, the `abs_stats` function includes the
-`enforce_api_limits` argument to catch these limits before the query
-is submitted. The argument also allows the user to override the limits
-and submit the query anyway. This argument may be deprecated in future
-versions.
+As already noted, the [ABS.Stat](http://stat.data.abs.gov.au/) API has a query
+string length limit (1000 characters) and record return limit (1 million
+records). We have not tested how rigorously these limits are
+enforced. Accordingly, the `abs_stats` function includes the
+`enforce_api_limits` argument to catch these limits before the query is
+submitted. The argument also allows the user to override the limits and submit
+the query anyway. This argument may be deprecated in future versions.
 
+The [ABS.Stat](http://stat.data.abs.gov.au/) API also has a 10-minute session
+time limit for users to download datasets via the SDMX service. The functions in
+`raustats` almost exclusively use the SDMX-JSON query interface, so it is not
+clear whether the session limit applies. If time limits are an issue, the ABS
+advises users to submit multiple smaller requests to retrieve the required data.
+
+
+# Resources
+
+  * [ABS.Stat -- http://stat.data.abs.gov.au/](http://stat.data.abs.gov.au/)
+  * [ABS.Stat FAQ](http://stat.data.abs.gov.au/)
+  
