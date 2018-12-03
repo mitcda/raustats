@@ -7,9 +7,7 @@
 abs_stats(dataset, filter, start_date, end_date, lang = c("en", "fr"),
   dimensionAtObservation = c("AllDimensions", "TimeDimension",
   "MeasureDimension"), detail = c("Full", "DataOnly", "SeriesKeysOnly",
-  "NoData"), remove_na = TRUE, include_unit = TRUE,
-  include_obsStatus = FALSE, enforce_api_limits = TRUE,
-  return_url = FALSE, cache)
+  "NoData"), enforce_api_limits = TRUE, return_url = FALSE, cache)
 }
 \arguments{
 \item{dataset}{Character vector of ABS.Stat dataset codes. These codes correspond to the
@@ -44,15 +42,6 @@ AllDimensions results in a flat list of observations without any grouping.}
     \item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
     \item NoData: returns the groups and series, including attributes and annotations, without observations (all values = NA)
   }}
-
-\item{remove_na}{If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
-values are removed from the return.}
-
-\item{include_unit}{If \code{TRUE}, the column unit is not removed from the return. If
-\code{FALSE}, this column is removed.}
-
-\item{include_obsStatus}{If \code{TRUE}, the column obsStatus is not removed from the return. If
-\code{FALSE}, this column is removed.}
 
 \item{enforce_api_limits}{If \code{TRUE} (the default), the function enforces the ABS.Stat
 RESTful API limits and will not submit the query if the URL string length exceeds 1000

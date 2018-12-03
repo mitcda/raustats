@@ -463,12 +463,12 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #' @param end_date Numeric or character (refer to \code{startdate}).
 #' @param lang Language in which to return the results. If \code{lang} is unspecified, english is
 #'   the default.
-#' @param remove_na If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
-#'   values are removed from the return.
-#' @param include_unit If \code{TRUE}, the column unit is not removed from the return. If
-#'   \code{FALSE}, this column is removed.
-#' @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from the return. If
-#'   \code{FALSE}, this column is removed.
+## @param remove_na If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
+##   values are removed from the return.
+## @param include_unit If \code{TRUE}, the column unit is not removed from the return. If
+##   \code{FALSE}, this column is removed.
+## @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from the return. If
+##   \code{FALSE}, this column is removed.
 #' @param dimensionAtObservation The identifier of the dimension to be attached at the observation
 #'   level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
 #'   AllDimensions results in a flat list of observations without any grouping.
@@ -520,7 +520,7 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
-                      remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
+                      ## remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
                       enforce_api_limits=TRUE, return_url=FALSE, cache)
 {
   ## DEBUG <- FALSE
@@ -533,6 +533,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   ##   filter <- list(MEASURE=c(1), REGION=c(1:8,50), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
   ##   filter <- list(MEASURE=c(1), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
   ##   filter <- list(MEASURE="all", INDEX=10001, REGION=c(1:8,50), FREQUENCY="Q", TSEST=10)
+  ##   ## Test incomplete set of filters
+  ##   filter <- list(REGION=c(1:8,50), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
   ##   load(file.path("data", "abs_cachelist.rda"));
   ##   cache <- abs_cachelist
   ##   dimensionAtObservation <- "AllDimensions";
@@ -564,17 +566,23 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   metadata_dims <- as.character(metadata_names[grepl("^dimension$", metadata_names$type, ignore.case=TRUE),
                                                "name"]);
   names(metadata) <- metadata_names$name;
-#### ## Return agency name
-  #### agency_name <- unlist(attr(cache[[dataset]], "agency"));
-  ## Check the  dimensions supplied in 'filter''
+  ## Return agency name
+  ## agency_name <- unlist(attr(cache[[dataset]], "agency"));
+  ## -- Check the set of dimensions supplied in 'filter' --
   if (length(filter) == 1 && filter == "all") {
+    ##  If filter='all', replace with detailed filter list including all dimensions
     .filter <- metadata;
     filter <- lapply(.filter, function(x) x$Code);
     filter <- filter[names(filter) %in% metadata_dims];
   } else if (class(filter) == "list") {
-    if (any(!metadata_dims %in% names(filter)))
-      stop(sprintf("Following dataset dimensions not listed in filter: %s",
-                   paste(metadata_dims[!metadata_dims %in% names(filter)], collapse=", ")));
+    ## If filter is a list:
+    if (any(!metadata_dims %in% names(filter))) {
+      ## Check if any filter dimensions missing, and append missing elements (set to 'all')
+      warning(sprintf("Filter dimension(s): %s not in filter, added and set to 'all'.",
+                      paste(metadata_dims[!metadata_dims %in% names(filter)], collapse=", ")));
+      for (name in metadata_dims[!metadata_dims %in% names(filter)])
+        filter[[name]] <- "all"
+    }
     filter <- filter[metadata_dims];
     for (name in names(filter))
       if( length(filter[[name]]) == 1 && grepl("all", filter[[name]], ignore.case=TRUE) )
@@ -602,9 +610,9 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                  url, detail, dimensionAtObservation);
   ## Add start/end dates, and check validity
   if (!missing(start_date))
-    url <- paste0(url, "&", start_date)
+    url <- paste0(url, "&startPeriod=", start_date)
   if (!missing(end_date))
-    url <- paste0(url, "&", end_date);
+    url <- paste0(url, "&endPeriod=", end_date);
   ## Return URL if specified
   if (return_url) {
     return(url)
