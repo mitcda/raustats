@@ -1,5 +1,5 @@
-^README\.Rmd$
 README.Rmd
+README.html
 ^Meta$
 ^doc$
 # Rbuildignore
