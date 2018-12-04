@@ -1,10 +1,10 @@
 <!-- # raustats 0.1.1
 ## Bug fixes:
+* First bug fix
 
 ## Changes:
-* Add 'aggregates' and 'countries_only' options to `wb()` per bapfeld pr
-* update cached data in `wb_cachelist`
-
+* First change
+* 
 -->
 
 # raustats 0.1.0

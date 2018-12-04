@@ -211,9 +211,9 @@ columns:
 
   * *series_id* -- ABS series identifier
   * *date* -- Date-format date
-  * *value* -- series value
+  * *value* -- observation value
   * *data_item_description* -- data item name and description
-  * *series_type* -- series type, one of Original, Trend, Seasonally Adjusted
+  * *series_type* -- series type, generally one of: Original, Trend, Seasonally Adjusted
   * *series_start* -- series start date
   * *series_end* -- series end data
   * *no_obs* -- number of series observations
@@ -718,7 +718,7 @@ The function returns a long-format (tidy) table with the following columns:
 
   * *series_id* -- RBA series identifier
   * *date* -- Date-format date
-  * *value* -- series value
+  * *value* -- observation value
   * *title* -- data item name
   * *description* -- data item description
   * *frequency* -- Frequency (e.g. Annual, Quarterly, Monthly, Weekly, Daily)
