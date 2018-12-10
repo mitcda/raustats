@@ -3,7 +3,7 @@
 This is a new package.
 
 ## Test environments
-* local Debian 4.18 install, R 3.5.1
+* local Debian 4.18, R 3.5.1
 * win-builder (devel and release)
 
 

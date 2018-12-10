@@ -29,3 +29,11 @@
 #'   specified catalogue. Use a list to specify different table sets for each specified ABS
 #'   catalogue number.
 
+* Ability to return `POSIXct` dates for easy integration into plotting and
+  time-series analysis techniques
+
+* Check warning messages issued by rba_stats(url = ...):
+#' Warning messages:
+#' 1: In eval(substitute(list(...)), `_data`, parent.frame()) :
+#' NAs introduced by coercion
+
