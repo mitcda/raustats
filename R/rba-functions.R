@@ -129,9 +129,12 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #' @export
 #' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 #' @examples
+#'  ## Example - table_no
 #'  x <- rba_stats("A1");
-#'  y <- rba_stats("A1", update_cache=TRUE);
-#'    
+#'
+#'  ## Example - pattern
+#'  x <- rba_stats(pattern="Liabilities and Assets", update_cache=TRUE);
+#'  
 rba_stats <- function(table_no, pattern, url, cache, ...)
   ## series_type="statistical tables", 
 {

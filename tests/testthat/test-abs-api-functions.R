@@ -1,4 +1,4 @@
-## context("raustats")
+context("ABS API functions")
 
 test_that("abs_api_call creates proper url",
 {
@@ -6,7 +6,6 @@ test_that("abs_api_call creates proper url",
   skip_on_travis()
   skip_on_appveyor()
 
-  ## library(rvest); library(xml2);
   expect_match(abs_api_call(path=abs_api_urls()$datastr_path, args="all"),
                "http:\\/\\/stat\\.data\\.abs\\.gov\\.au\\/.+\\/all");
 })
@@ -17,12 +16,10 @@ test_that("abs_call_api creates xml_document",
   skip_on_travis()
   skip_on_appveyor()
   
-  ## library(rvest); library(xml2);
   url <- abs_api_call(path=abs_api_urls()$datastr_path, args="all");
   expect_s3_class(abs_call_api(url), "xml_document");
   expect_s3_class(abs_call_api(url), "xml_node");
-}
-)
+})
 
 test_that("abs_datasets returns object of class data.frame with specified names",
 {
@@ -30,7 +27,6 @@ test_that("abs_datasets returns object of class data.frame with specified names"
   skip_on_travis()
   skip_on_appveyor()
   
-  ## library(rvest); library(xml2);
   x <- abs_datasets(include_notes=TRUE)
   expect_s3_class(x, "data.frame");
   expect_named(x, c("agencyID", "id", "name", "notes"), ignore.order=TRUE)
@@ -43,7 +39,6 @@ test_that("abs_metadata returns object of class list with specified names",
   skip_on_travis()
   skip_on_appveyor()
   
-  ## library(testthat);  library(rvest); library(xml2);
   x <- abs_metadata("CPI");
   expect_type(x, "list");
   expect_named(x, c("CL_CPI_MEASURE","CL_CPI_REGION","CL_CPI_INDEX","CL_CPI_TSEST",
@@ -58,6 +53,7 @@ test_that("abs_cache returns object of class list with specified names",
   skip_on_travis()
   skip_on_appveyor()
 
+  skip("abs_cache() test skipped -- takes long time to download all ABS series.")
   abs_cachelist <- abs_cache(progress=5)
   expect_type(abs_cachelist, "list");
 })
@@ -126,24 +122,22 @@ test_that("abs_stats returns valid URL",
                "^http:\\/\\/stat.data.abs.gov.au\\/SDMX-JSON\\/data\\/CPI");
 })
 
-## -- TO BE COMPLETED --
-
 test_that("abs_stats returns valid data frame",
 {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
 
-  ## expect_s3_class(abs_stats("CPI"), "data.frame");
-  ## expect_named(abs_cpi, c("name","type"), ignore.order=TRUE, ignore.case=TRUE);
-
   ## Test specific filter and start/end dates
-  expect_s3_class(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                         start_date="2008-Q3", end_date="2018-Q2"), "data.frame");
-  ## Test incomplete filter set
-  expect_s3_class(abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+  expect_s3_class(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                               INDEX=10001, TSEST=10, FREQUENCY="Q"),
                             start_date="2008-Q3", end_date="2018-Q2"), "data.frame");
+  ## Test incomplete filter set
+  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                                 start_date="2008-Q3", end_date="2018-Q2"));
+  expect_s3_class(xx, "data.frame");
   ## Test function returns character string
-  expect_type(abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                        start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE), "character");
+  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                                 start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE))
+  expect_type(xx, "character");
 })

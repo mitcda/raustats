@@ -1,4 +1,4 @@
-## context("raustats")
+context("RBA functions")
 
 test_that("rba_stats_url returns valid URL",
 {
@@ -17,12 +17,9 @@ test_that("rba_table_cache returns data.frame class object",
   skip_on_travis()
   skip_on_appveyor()
 
-  DEBUG
-  
   expect_s3_class(rba_table_cache(), "data.frame");
 })
 
-## -- UP TO HERE --
 
 test_that("rba_search fails well",
 {
@@ -30,12 +27,9 @@ test_that("rba_search fails well",
   skip_on_travis()
   skip_on_appveyor()
 
-  DEBUG <- FALSE
-    if (DEBUG) {
-        library(magrittr); library(dplyr); library(purrr); library(rvest); library(urltools);
-        table_code = "A1";
-    }
+  expect_error(rba_search())
 })
+
 
 test_that("rba_search returns valid results",
 {
@@ -43,19 +37,9 @@ test_that("rba_search returns valid results",
   skip_on_travis()
   skip_on_appveyor()
 
-})
-
-
-test_that("rba_read_tss_ returns valid data.frame",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  ## library(readxl); library(tidyr); 
-  
-  expect_s3_class(rba_read_tss_(file.path("data-raw", "5206001_key_aggregates.xls")),
-                  "data.frame");
+  expect_s3_class(rba_search(pattern = "Liabilities and Assets"), "data.frame");
+  expect_s3_class(rba_search(pattern = "Consumer Prices"), "data.frame");
+  expect_s3_class(rba_search(pattern = "Population"), "data.frame");
 })
 
 
@@ -64,15 +48,10 @@ test_that("rba_read_tss returns valid data.frame",
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
-
-  ## library(readxl); library(tidyr); 
   
-  expect_s3_class(rba_read_tss(file.path("data-raw", "5206001_key_aggregates.xls")),
-                  "data.frame");
-  expect_s3_class(rba_read_tss(file.path("data-raw",
-                                         c("5206001_key_aggregates.xls",
-                                           "5206002_expenditure_volume_measures.xls"))),
-                               "data.frame");
+  rba_urls <- rba_search(pattern = "Liabilities and Assets")$url
+  rba_files <- rba_file_download(rba_urls)
+  expect_s3_class(rba_read_tss(rba_files), "data.frame");
 })
 
 
@@ -82,15 +61,12 @@ test_that("rba_data returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  ## library(rvest); library(readxl); library(tidyr); library(dplyr);
-
-  ##     table_code = "A1";
-  ##     series_type="statistical tables";
-  ##     update_cache=FALSE;
-    
-  expect_s3_class(rba_data("A1", tables="Table 1"), "data.frame");
-  expect_s3_class(rba_data("5206.0", tables=c("Table 1", "Table 2")), "data.frame");
-  expect_s3_class(rba_data("5206.0", tables="all"), "data.frame");
-  expect_s3_class(rba_data("5206.0", tables="Table 1", release="Dec 2017"), "data.frame");
-  expect_s3_class(rba_data("5206.0", tables="all", release="Dec 2016"), "data.frame");
+  expect_s3_class(rba_stats("A1"), "data.frame");
+  expect_s3_class(rba_stats(table_no="A1"), "data.frame");
+  expect_s3_class(rba_stats(pattern="Liabilities and Assets"), "data.frame");
+  ## Note rba_stats(url = ...) call results in following Warning messages:
+  ## 1: In eval(substitute(list(...)), `_data`, parent.frame()) :
+  ## NAs introduced by coercion
+  expect_warning(xx <- rba_stats(url="http://www.rba.gov.au/statistics/tables/xls/d01hist.xls"));
+  expect_s3_class(xx, "data.frame");
 })

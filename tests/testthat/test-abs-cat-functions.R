@@ -1,4 +1,4 @@
-## context("raustats")
+context("ABS Catalogue functions")
 
 test_that("abs_ausstats_url returns valid URL",
 {
@@ -6,70 +6,11 @@ test_that("abs_ausstats_url returns valid URL",
   skip_on_travis()
   skip_on_appveyor()
 
-  expect_type(abs_ausstats_url(), "character");
-  expect_s3_class(rvest::html_session(abs_ausstats_url()), "session");
+  expect_type(abs_urls()$base_url, "character");
+  expect_type(abs_urls()$ausstats_path, "character");
+  expect_type(abs_urls()$downloads_regex, "character");
+  expect_type(abs_urls()$releases_regex, "character");
 })
-
-
-test_that("abs_read_tss_ returns valid data.frame",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  ## library(readxl); library(tidyr); 
-  expect_s3_class(abs_read_tss_(file.path("data-raw", "5206001_key_aggregates.xls")),
-                  "data.frame");
-})
-
-
-test_that("abs_read_tss returns valid data.frame",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  ## library(readxl); library(tidyr);
-  
-  expect_s3_class(abs_read_tss(file.path("data-raw", "5206001_key_aggregates.xls")),
-                  "data.frame");
-  expect_s3_class(abs_read_tss(file.path("data-raw",
-                                         c("5206001_key_aggregates.xls",
-                                           "5206002_expenditure_volume_measures.xls"))),
-                               "data.frame");
-})
-
-
-test_that("abs_cat_tables returns a valid data.frame",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  expect_s3_class(abs_cat_tables("5206.0"), "data.frame");
-  expect_s3_class(abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE), "data.frame");
-  expect_s3_class(abs_cat_tables("6401.0", releases="Latest", types="tss"), "data.frame");
-  expect_s3_class(abs_cat_tables("1270.0.55.003", releases="Latest", types="css"), "data.frame");
-  expect_s3_class(anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE),
-                  "data.frame");
-})
-
-
-test_that("abs_local_filename created valid file name",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  test_all <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&all_time_series_workbooks.zip&5206.0&Time%20Series%20Spreadsheet&23EA5772544F27BECA2582FE001507D1&0&Jun%202018&05.09.2018&Latest"
-  test_table_xls <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.xls&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
-  test_table_zip <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.zip&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
-
-  expect_match(abs_local_filename(test_all), "^\\w+\\.(zip|xlsx*)$");
-  expect_match(abs_local_filename(test_table_xls), "^\\w+\\.(zip|xlsx*)$");
-  expect_match(abs_local_filename(test_table_zip), "^\\w+\\.(zip|xlsx*)$");
-})
-
 
 
 test_that("abs_cat_tables fails well",
@@ -83,14 +24,90 @@ test_that("abs_cat_tables fails well",
 })
 
 
+test_that("abs_cat_tables returns a valid data.frame",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  ## ABS Catalogue tables - 5206.0
+  abs_tables_5206 <- abs_cat_tables("5206.0")
+  expect_s3_class(abs_tables_5206, "data.frame");
+
+  ## ABS Catalogue tables - 5206.0, with URLs
+  abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+  expect_s3_class(abs_tables_5206_url, "data.frame");
+
+  ## ABS Catalogue tables - 6401.0, types="tss"
+  abs_tables_6401 <- abs_cat_tables("6401.0", releases="Latest", types="tss");
+  expect_s3_class(abs_tables_6401, "data.frame");
+
+  ## ABS Catalogue tables - 1270.0.55.003, types="css" 
+  abs_tables_1270.0.55.003 <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
+  expect_s3_class(abs_tables_1270.0.55.003, "data.frame");
+
+  ## ABS Catalogue tables - 1292, types="pub"
+  abs_tables_1292 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
+  expect_s3_class(abs_tables_1292, "data.frame");
+})
+
+
+test_that("abs_local_filename created valid file name",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  test_all <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&all_time_series_workbooks.zip&5206.0&Time%20Series%20Spreadsheet&23EA5772544F27BECA2582FE001507D1&0&Jun%202018&05.09.2018&Latest"
+  test_table_xls <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.xls&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
+  test_table_zip <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.zip&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
+  
+  expect_match(abs_local_filename(test_all), "^\\w+\\.(zip|xlsx*)$");
+  expect_match(abs_local_filename(test_table_xls), "^\\w+\\.(zip|xlsx*)$");
+  expect_match(abs_local_filename(test_table_zip), "^\\w+\\.(zip|xlsx*)$");
+})
+
+
+test_that("abs_cat_download downloads specified table files",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+  
+  downloaded_tables <- abs_cat_download(head(abs_tables_5206_url$path_2), exdir=tempdir())
+  expect_type(downloaded_tables, "character")
+  expect_match(downloaded_tables, "\\w+\\.(zip|xlsx*)$");
+})
+
+
+test_that("abs_cat_unzip extracts from valid filenames",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  extracted_files <- abs_cat_unzip(downloaded_tables)
+  expect_type(extracted_files, "character")
+  expect_true(all(file.exists(extracted_files)))
+})
+
+
+test_that("abs_read_tss returns valid data.frame",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  expect_s3_class(abs_read_tss(extracted_files[1]), "data.frame");
+  expect_s3_class(abs_read_tss(extracted_files), "data.frame");
+})
+
 
 test_that("abs_cat_stats tss call returns valid data frame",
 {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
-
-  ## library(rvest); library(readxl);
 
   expect_s3_class(abs_cat_stats("5206.0", tables="Table 1\\W+"), "data.frame");
   expect_s3_class(abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+")), "data.frame");
