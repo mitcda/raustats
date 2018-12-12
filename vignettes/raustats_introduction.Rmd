@@ -127,7 +127,7 @@ more detailed explanation of the `abs_cat_stats` function and further examples
 are provided [below](#abs-cat-stats-functions).
 
 
-## Downloading ABS data via [ABS.Stat](https://stat.data.abs.gov.au/)
+## Downloading ABS data via [ABS.Stat](http://stat.data.abs.gov.au/)
 
 The `abs_stats` function is used to download ABS statistics via the ABS.Stat
 API. For example, to download the latest CPI data series for 'All Groups'
@@ -140,7 +140,7 @@ cpi_api <- abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
 ```
 
 The package includes additional functions to search for datasets and data series
-available on [ABS.Stat](https://stat.data.abs.gov.au/). These are documented
+available on [ABS.Stat](http://stat.data.abs.gov.au/). These are documented
 further [below](#abs-api-stats-functions).
 
 
@@ -432,7 +432,7 @@ The `abs_datasets` function returns a list of all datasets available through
 included.
 
 ```{r message=FALSE}
-datasets <- abs_datasets();
+datasets <- abs_datasets()
 head(datasets)
 ```
 
@@ -467,9 +467,9 @@ other languages, so data may not be available in languages other than English.]
 
 ```{r eval=FALSE}
 ## Default language: English
-new_cache <- abs_cache(progress=10);
+new_cache <- abs_cache(progress=10)
 ## French language version
-new_cache_fr <- abs_cache(lang="fr", progress=10);
+new_cache_fr <- abs_cache(lang="fr", progress=10)
 ```
 
 
@@ -482,7 +482,7 @@ argument of `abs_stats` function. The following example lists the data
 dimensions of the 'CPI' dataset.
 
 ```{r}
-abs_dimensions('CPI');
+abs_dimensions('CPI')
 ```
 
 
@@ -491,7 +491,7 @@ dataset can be viewed by selecting the relevant dataset from `abs_cachelist` or
 an updated cache list returned by `abs_cache`.
 
 ```{r}
-str(abs_cachelist[["CPI"]]);
+str(abs_cachelist[["CPI"]])
 ```
 
 
@@ -510,15 +510,15 @@ just the matching dataset identifiers.
 
 
 ```{r}
-abs_search("CPI|consumer price index");
+abs_search("CPI|consumer price index")
 
-abs_search("CPI|consumer price index", code_only=TRUE);
+abs_search("CPI|consumer price index", code_only=TRUE)
 ```
 
 ```{r}
-abs_search("labour force");
+abs_search("labour force")
 
-abs_search("^labour force$");
+abs_search("^labour force$")
 ```
 
 In indicator search mode, the function searches through all dimensions of a
@@ -527,11 +527,11 @@ matching all the provided regular expressions. The following examples
 demonstrates use of the function to find indicators within the CPI data set.
 
 ```{r eval=FALSE, echo=FALSE}
-abs_search("All groups", dataset="CPI");
+abs_search("All groups", dataset="CPI")
 ```
 
 ```{r message=FALSE}
-abs_search(c("All groups CPI","Sydney"), dataset="CPI");
+abs_search(c("All groups CPI","Sydney"), dataset="CPI")
 ```
 
 If `code_only=TRUE`, the indicator search function returns only codes for each
@@ -541,11 +541,11 @@ codes for datasets matching both the regular expressions "All groups CPI" and
 "Sydney".
 
 ```{r echo=FALSE, eval=FALSE}
-abs_search("All groups CPI", dataset="CPI", code_only=TRUE);
+abs_search("All groups CPI", dataset="CPI", code_only=TRUE)
 ```
 
 ```{r message=FALSE}
-abs_search(c("All groups CPI","Sydney"), dataset="CPI", code_only=TRUE);
+abs_search(c("All groups CPI","Sydney"), dataset="CPI", code_only=TRUE)
 ```
 
 
@@ -562,7 +562,7 @@ for all capital cities.
 
 ```{r}
 cpi <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
-                                            INDEX=10001, TSEST=10, FREQUENCY="Q"));
+                                            INDEX=10001, TSEST=10, FREQUENCY="Q"))
 ```
 
 The filter conditions are:
@@ -595,7 +595,7 @@ series available for the CPI dataset, but the specified query length (1191
 characters) exceeds maximum request URL character limit.
 
 ```{r eval=FALSE}
-cpi <- abs_stats(dataset="CPI", filter="all");
+cpi <- abs_stats(dataset="CPI", filter="all")
 ```
 
 By default, `abs_stats` checks whether the query string length and the estimated
@@ -607,7 +607,7 @@ return an error. For example, the following function call will return an
 error.
 
 ```{r eval=FALSE}
-cpi <- abs_stats(dataset="CPI", filter="all", enforce_api_limits=FALSE);
+cpi <- abs_stats(dataset="CPI", filter="all", enforce_api_limits=FALSE)
 #> lexical error: invalid char in json text.
 #>                                        http://stat.data.abs.gov.au/SDM
 #>                      (right here) ------^
@@ -621,7 +621,7 @@ call and output.
 ```{r echo=TRUE}
 abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
                                      INDEX=10001, TSEST=10, FREQUENCY="Q"),
-          return_url=TRUE);
+          return_url=TRUE)
 ```
 
 The `abs_search` function can be used to specify the filter. For example, the
@@ -633,8 +633,8 @@ example, and can subsequently be supplied to the `abs_stats` `filter` argument.
 filter_lst <- abs_search(c("Index numbers", "All groups",
                            "Sydney|Melbourne|Brisbane|Adelaide|Perth|Hobart|Darwin|Canberra|capital cities",
                            "Original", "Quarterly"),
-                         dataset="CPI", code_only=TRUE);
-cpi <- abs_stats("CPI", filter = filter_lst);
+                         dataset="CPI", code_only=TRUE)
+cpi <- abs_stats("CPI", filter = filter_lst)
 ```
 
 Users can also limit the date range to return by specifying one or
@@ -647,7 +647,7 @@ observations between September 2015 and June 2018.
 
 ```{r}
 cpi <- abs_stats(dataset="CPI", filter=filter_lst,
-                 start_date = "2015-Q3", end_date = "2018-Q2");
+                 start_date = "2015-Q3", end_date = "2018-Q2")
 ```
 
 The other arguments `dimensionAtObservation` and `detail` provide refinements to
@@ -699,7 +699,7 @@ the RBA table cache to be used. If omitted, `rba_tablecache` is used.
 
 
 ```{r}
-rba_search(pattern = "Liabilities and Assets");
+rba_search(pattern = "Liabilities and Assets")
 ```
 
 
@@ -809,7 +809,7 @@ the `rba_stats` function.  The simple example below shows use of the function to
 extract data from the previously downloaded tables.
 
 ```{r}
-a1_data <- rba_read_tss(downloaded_tables);
+a1_data <- rba_read_tss(downloaded_tables)
 ```
 
 ```{r echo=FALSE}
@@ -832,7 +832,7 @@ capex_q <-
   abs_cat_stats("5625.0",
                 tables=c("Actual Expenditure by Type of Asset and Industry - Current Prices",
                          "Actual Expenditure, By Type of Industry - Chain Volume Measures",
-                         "Actual and Expected Capital Expenditure by Industry.+:Current Prices"));
+                         "Actual and Expected Capital Expenditure by Industry.+:Current Prices"))
 ```
 
 Then add a new variable denoting Australian state/territory.
@@ -846,7 +846,7 @@ capex_q <- capex_q %>%
                                      "Western Australia","Tasmania","Northern Territory",
                                      "Australian Capital Territory","Total \\(State\\)"),
                                    collapse="|")),
-                     "\\1", data_item_description, ignore.case=TRUE));
+                     "\\1", data_item_description, ignore.case=TRUE))
 ```
 
 Finally, plot quarterly time series mining sector capital expenditure (at
@@ -871,7 +871,7 @@ ggplot(data=capex_q_min) +
   theme(plot.title = element_text(hjust=0.5),
         legend.box = "horizontal",
         legend.position = "bottom",
-        axis.text.x=element_text(angle=0, size=8));
+        axis.text.x=element_text(angle=0, size=8))
 ```
 
 

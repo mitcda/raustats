@@ -1,9 +1,7 @@
-## Submission
-
-This is a new package.
+# New submission
 
 ## Test environments
-* local Debian 4.18, R 3.5.1
+* local Debian 4.18, R 3.5.1 and R-devel
 * win-builder (devel and release)
 
 

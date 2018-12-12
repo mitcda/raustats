@@ -1,15 +1,15 @@
 Package: raustats
 Type: Package
-Title: Access data and statistics from the ABS and RBA websites
+Title: Access Data and Statistics from the ABS and RBA Websites
 Description: An R package for downloading Australian economic statistics
   from the Australian Bureau of Statistics (ABS) and Reserve Bank of Australia
   (RBA) websites.
-Version: 0.0.0.9020
-Date: 2018-09-03
+Version: 0.1.0
+Date: 2018-12-10
 Authors@R: c(
-  person("David", "Mitchell", email = "david.mitchell@infrastructure.gov.au", role = c("aut", "cre"))
+  person("David", "Mitchell", email = "mitcda@iinet.net.au", role = c("aut", "cre"))
   )
-Maintainer: David Mitchell <david.mitchell@infrastructure.gov.au>
+Maintainer: David Mitchell <mitcda@iinet.net.au>
 URL: https://github.com/mitcda/raustats
 License: GPL-2 | GPL-3
 Depends: R (>= 3.0.0), readxl
