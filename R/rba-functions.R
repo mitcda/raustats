@@ -12,6 +12,7 @@ rba_urls <- function()
 #' @importFrom rvest html_session jump_to html_attr html_text html_nodes
 #' @return data frame in long format
 #' @export
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'  rba_tablecache <- rba_table_cache();
 rba_table_cache <- function()
@@ -90,6 +91,7 @@ rba_table_cache <- function()
 #' @param cache RBA table cache, returned by \code{rba_table_cache} function. If omitted,
 #'   \code{rba_tablecache} is used.
 #' @return data frame in long format
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
 #' @examples
 #'  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
@@ -116,7 +118,6 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #' @name rba_stats
 #' @title Return data for a specified RBA time series
 #' @description Function to download and return specified RBA time series data.
-#' @importFrom utils download.file unzip
 #' @param table_no Character vector specifying one or more RBA table numbers to download.
 ## @param series_type RBA series type, one of either 'statistical tables', 'historical data' or
 ##   'discontinued data'.
@@ -127,13 +128,13 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #' @param ... Other arguments to \code{\link{rba_search}}
 #' @return data frame in long format
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'  ## Example - table_no
 #'  x <- rba_stats("A1");
 #'
 #'  ## Example - pattern
-#'  x <- rba_stats(pattern="Liabilities and Assets", update_cache=TRUE);
+#'  x <- rba_stats(pattern="Liabilities and Assets");
 #'  
 rba_stats <- function(table_no, pattern, url, cache, ...)
   ## series_type="statistical tables", 
@@ -185,14 +186,14 @@ rba_stats <- function(table_no, pattern, url, cache, ...)
 #' @title Function to download statistics files from the RBA website and store locally
 #' @description This function downloads one or more RBA data files at the specified by URLs and
 #'   saves a local copy.
-#' @importFrom utils download.file unzip
+#' @importFrom utils download.file
 #' @param url Character vector specifying one or more RBA data set URLs.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
 #' @return Downloads data from the ABS website and returns a character vector listing the location
 #'   where files are saved.
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
 rba_file_download <- function(url, exdir=tempdir()) {
   if(!dir.exists(exdir))
     dir.create(exdir)
@@ -217,6 +218,7 @@ rba_file_download <- function(url, exdir=tempdir()) {
 #' @importFrom stats complete.cases
 #' @param files Names of one or more ABS data file
 #' @return data frame in long format
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
 #' @examples
 #'  \donttest{
@@ -249,7 +251,8 @@ rba_read_tss_ <- function(file)
   data <- lapply(sheet_names,
                  function(sheet_name) {
                    ## Read metadata
-                   .data <- read_excel(file, sheet=sheet_name, col_names=FALSE, col_types="text");
+                   .data <- read_excel(file, sheet=sheet_name, col_names=FALSE, col_types="text",
+                                       .name_repair = "minimal");
                    ## Return pre-header information from RBA files 
                    header_row <- which(sapply(1:nrow(.data),
                                               function(i)

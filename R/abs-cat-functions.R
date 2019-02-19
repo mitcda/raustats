@@ -24,14 +24,15 @@ abs_urls <- function()
 #'   data cube (cross-section spreadsheet).
 #' @return data frame in long format
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  ## Download quarterly Australian National Accounts, Tables 1 & 2 
-#'  ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
+#'   \dontrun{
+#'     ## Download quarterly Australian National Accounts, Tables 1 & 2 
+#'     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
 #'
-#'  ## Download December 2017 Australian National Accounts, Table 1
-#'  ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\W+", release="Dec 2017");
-#' 
+#'     ## Download December 2017 Australian National Accounts, Table 1
+#'     ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\W+", release="Dec 2017");
+#'   }
 abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 {
   ## DEBUG <- FALSE
@@ -39,12 +40,13 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
   ##   library(rvest);
   ##   cat_no <- "5206.0";
   ##   cat_no <- "6401.0";
+  ##   cat_no <- "3401.0";
   ##   cat_no <- "1270.0.55.001"
   ##   cat_no <- "1270.0.55.003"
-  ##   tables <- "Table 1"
   ##   releases <- "Latest";
   ##   releases <- c("Dec 2017", "Sep 2017");
-  ##   types <- c("tss")
+  ##   types <- c("tss", "css")
+  ##   types <- c("pub")
   ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
@@ -107,38 +109,27 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 #'   include data file URLs.
 #' @return Returns a data frame listing the data collection tables and links.
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  ## List latest available quarterly National Accounts tables
-#'  ana_tables <- abs_cat_tables("5206.0", releases="Latest");
-#'  ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-#'
-#'  ## List latest available CPI Time Series Spreadsheet tables only
-#'  cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
-#'  cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
-#'
-#'  ## List latest available ASGS Volume 3 Data Cubes
-#'  asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
-#'  asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest",
-#'                                         types="css", include_urls=TRUE);
-#'
-#'  ## List latest available ASGS ANZSIC publications (PDF) files
-#'  anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
-#' 
+#'   \dontrun{
+#'     ## List latest available quarterly National Accounts tables
+#'     ana_tables <- abs_cat_tables("5206.0", releases="Latest");
+#'     ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+#'   
+#'     ## List latest available CPI Time Series Spreadsheet tables only
+#'     cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
+#'     cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
+#'   
+#'     ## List latest available ASGS Volume 3 Data Cubes
+#'     asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
+#'     asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest",
+#'                                            types="css", include_urls=TRUE);
+#'   
+#'     ## List latest available ASGS ANZSIC publications (PDF) files
+#'     anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
+#'   }
 abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), include_urls=FALSE)
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   library(rvest);
-  ##   cat_no <- "5206.0";
-  ##   cat_no <- "6401.0";
-  ##   cat_no <- "1270.0.55.001"
-  ##   cat_no <- "1270.0.55.003"
-  ##   releases <- "Latest";
-  ##   releases <- c("Dec 2017", "Sep 2017");
-  ##   types <- c("tss", "css")
-  ##   types <- c("pub")
-  ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
@@ -257,7 +248,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 #' @return Downloads data from the ABS website and returns a character vector listing the location
 #'   where files are saved.
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_cat_download <- function(data_urls, exdir=tempdir()) {
   if(!dir.exists(exdir))
     dir.create(exdir)
@@ -276,28 +267,31 @@ abs_cat_download <- function(data_urls, exdir=tempdir()) {
 ## @description Function to create local filename from web-based file name
 ## @param url Character vector specifying one or more ABS data URLs.
 ## @return Returns a local file names (character vector) in which downloaded files will be saved.
-## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 ##
 abs_local_filename <- function(url)
 {
   sprintf("%s_%s.%s",
-          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", url),
+          sub("^.+&(.+)\\.(zip|xlsx*)&.+$", "\\1", url),
           sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", url),
-          sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", url));
+          sub("^.+&(.+)\\.(zip|xlsx*)&.+$", "\\2", url));
+          ## sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", url),
+          ## sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", url),
+          ## sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", url));
 }
 
 
 #' @name abs_cat_unzip
 #' @title Uncompress locally-stored ABS Catalogue data file archives
 #' @description Function to uncompress locally-stored ABS Catalogue data file archives
-#' @importFrom utils download.file unzip
+#' @importFrom utils download.file unzip zip
 #' @param files One or more local zip files.
 #' @param exdir Target directory for extracted archive files. Directory is created if it doesn't
 #'   exist. If missing, creates a new subdirectory in \code{tempdir()} using the respective zip
 #'   files (specified in \code{files}.
 #' @return Returns a character vector listing the names of all files extracted.
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_cat_unzip <- function(files, exdir) {
   if (any(!file.exists(files)))
     stop(sprintf("Files %s do not exist",
@@ -317,8 +311,8 @@ abs_cat_unzip <- function(files, exdir) {
                            if (!dir.exists(exdir))
                              dir.create(exdir)
                          }
-                         unzip(x, exdir=exdir);
-                         file.path(exdir, unzip(x, list=TRUE)$Name);
+                           unzip(x, exdir=exdir);
+                           file.path(exdir, unzip(x, list=TRUE)$Name);
                        } else {
                          x;
                        });
@@ -339,10 +333,10 @@ abs_cat_unzip <- function(files, exdir) {
 #'   Cube.R
 #' @return data frame in long format
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \dontrun{
-#'     ## Read specified ABS Excel Time Seriefiles
+#'     ## Read specified ABS Excel time series files
 #'     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 #'     downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
 #'     extracted_files <- abs_cat_unzip(downloaded_tables)
@@ -363,6 +357,9 @@ abs_read_tss <- function(files, type="tss") {
 ## @title Read ABS time series data file(s)
 ## @description This function extracts time series data from ABS data files.
 abs_read_tss_ <- function(file, type="tss") {
+  if (FALSE) {
+    file <- "/tmp/340101.xls"
+  }
   ## Avoid 'No visible binding for global variables' note
   { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
   
@@ -371,11 +368,13 @@ abs_read_tss_ <- function(file, type="tss") {
     stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
   ## -- Read metadata --
   .meta <- read_excel(file,
-                      sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE));
+                      sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE),
+                      .name_repair = "minimal");
   ## Return pre-header information from ABS files 
   header_row <- which(sapply(1:nrow(.meta),
                              function(i)
-                               grepl("series\\s*id", paste(.meta[i,], collapse=" "), ignore.case=TRUE)));
+                               grepl("series\\s*id", paste(.meta[i,], collapse=" "),
+                                     ignore.case=TRUE)));
   metadata <- .meta;
   names(metadata) <- tolower(gsub("\\s","_",
                                   gsub("\\.", "",
@@ -396,19 +395,21 @@ abs_read_tss_ <- function(file, type="tss") {
                        function(i)
                          grep(regex_catno_name, paste(.meta[i,], collapse=" "),
                               ignore.case=TRUE, value=TRUE));
-  catno_name <- gsub("(\\s*NA)+", "", sub(regex_catno_name, "\\1|\\3", unlist(catno_name), ignore.case=TRUE));
+  catno_name <- gsub("(\\s*NA)+", "",
+                     sub(regex_catno_name, "\\1|\\3", unlist(catno_name), ignore.case=TRUE));
   catno_name <- trimws(unlist(strsplit(catno_name, split="\\|")));
   ##
   ## -- Table number & name --
-  regex_table_name <- "^.*Tables*\\s+(\\w+(\\s+\\w+\\s+\\w+)*)\\.*\\s+(.+)$";
-  ## Note use of 'word' character    ^here                ^here for 13a, 6b, etc.
+  ## Note use of 'word' character    \/here               \/here for 13a, 6b, etc.
+  regex_table_name <- "^.*Tables*\\s+(\\w+(\\s+\\w+\\s+\\w+)*)(\\.|:)*\\s+(.+)$";
+  ## Note use of alternative separators: .|:                      ^here
   tableno_name <- sapply(1:header_row,
                          function(i)
                            grep(regex_table_name,
                                 paste(.meta[i,], collapse=" "),
                                 ignore.case=TRUE, value=TRUE));
   tableno_name <- gsub("(\\s*NA)+", "",
-                       sub(regex_table_name, "\\1|\\3", unlist(tableno_name), ignore.case=TRUE));
+                       sub(regex_table_name, "\\1|\\4", unlist(tableno_name), ignore.case=TRUE));
   tableno_name <- trimws(unlist(strsplit(tableno_name, split="\\|")));
   ##
   ## Add publication details to metadata table
@@ -420,17 +421,18 @@ abs_read_tss_ <- function(file, type="tss") {
   ## Extract data
   data <- lapply(grep("data", excel_sheets(file), ignore.case=TRUE, value=TRUE),
                  function(sheet_name) {
-                   z <- read_excel(file, sheet=sheet_name);
+                   z <- read_excel(file, sheet=sheet_name, .name_repair = "minimal");
                    ## Return pre-header information from ABS files 
                    header_row <- which(sapply(1:nrow(z),
                                               function(i)
                                                 grepl("series\\s*id", paste(z[i,], collapse=" "), 
                                                       ignore.case=TRUE)));
                    names(z) <- gsub("\\s","_",
-                                    gsub("\\.","", z[header_row,]));       ## Rename variables
-                   names(z) <- sub("series_id", "date", names(z), ignore.case=TRUE); ## Rename Series_ID field
-                   z <- z[-(1:header_row), !is.na(names(z))];              ## Drop empty columns
-                   z <- gather(z, series_id, value, -date, convert=TRUE);  ## Transform data to key:value pairs
+                                    gsub("\\.","", z[header_row,]));      ## Rename variables
+                   names(z) <- sub("series_id", "date", names(z),         ## Rename Series_ID field
+                                   ignore.case=TRUE); 
+                   z <- z[-(1:header_row), !is.na(names(z))];             ## Drop empty columns
+                   z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform data to key:value pairs
                    z <- transform(z,
                                   date = excel2Date(as.integer(date)),
                                   value = as.numeric(value));
