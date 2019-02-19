@@ -59,11 +59,12 @@ test_that("abs_local_filename created valid file name",
   skip_on_appveyor()
 
   test_all <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&all_time_series_workbooks.zip&5206.0&Time%20Series%20Spreadsheet&23EA5772544F27BECA2582FE001507D1&0&Jun%202018&05.09.2018&Latest"
-  test_table_xls <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.xls&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
-  test_table_zip <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.zip&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
-  
   expect_match(abs_local_filename(test_all), "^\\w+\\.(zip|xlsx*)$");
+
+  test_table_xls <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.xls&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
   expect_match(abs_local_filename(test_table_xls), "^\\w+\\.(zip|xlsx*)$");
+
+  test_table_zip <- "http://www.abs.gov.au/ausstats/meisubs.NSF/log?openagent&5206001_key_aggregates.zip&5206.0&Time%20Series%20Spreadsheet&C1145211D5AF80E5CA2582FE0014F063&0&Jun%202018&05.09.2018&Latest"
   expect_match(abs_local_filename(test_table_zip), "^\\w+\\.(zip|xlsx*)$");
 })
 
@@ -98,8 +99,8 @@ test_that("abs_read_tss returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  expect_s3_class(abs_read_tss(extracted_files[1]), "data.frame");
-  expect_s3_class(abs_read_tss(extracted_files), "data.frame");
+  expect_s3_class(abs_read_tss(extracted_files[1]), "data.frame"); ## Extract one file
+  expect_s3_class(abs_read_tss(extracted_files), "data.frame");    ## Extract multiple files
 })
 
 

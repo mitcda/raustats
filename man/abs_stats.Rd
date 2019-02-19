@@ -77,15 +77,16 @@ The data query submitted by this function uses the ABS RESTful API based on the 
   }
 }
 \examples{
-   x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
-   x <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
-                                             INDEX=10001, TSEST=10, FREQUENCY="Q"));
-   x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50,
-                                             INDEX=10001, TSEST=10, FREQUENCY="Q"));
-   x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50, INDEX=10001,
-                                             TSEST=10, FREQUENCY="Q"), return_url=TRUE);
- 
+  \dontrun{
+    x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
+    x <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                              INDEX=10001, TSEST=10, FREQUENCY="Q"));
+    x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50,
+                                              INDEX=10001, TSEST=10, FREQUENCY="Q"));
+    x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50, INDEX=10001,
+                                              TSEST=10, FREQUENCY="Q"), return_url=TRUE);
+ }
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

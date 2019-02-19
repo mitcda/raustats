@@ -18,9 +18,11 @@ data frame in long format
 TBC
 }
 \examples{
- datasets <- abs_datasets()
- datasets <- abs_datasets(include_notes=TRUE)
+  \dontrun{
+    datasets <- abs_datasets()
+    datasets <- abs_datasets(include_notes=TRUE)
+  }
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

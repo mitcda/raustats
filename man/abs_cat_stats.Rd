@@ -29,13 +29,14 @@ data frame in long format
 TBC
 }
 \examples{
- ## Download quarterly Australian National Accounts, Tables 1 & 2 
- ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
+  \dontrun{
+    ## Download quarterly Australian National Accounts, Tables 1 & 2 
+    ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
 
- ## Download December 2017 Australian National Accounts, Table 1
- ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\\\W+", release="Dec 2017");
-
+    ## Download December 2017 Australian National Accounts, Table 1
+    ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\\\W+", release="Dec 2017");
+  }
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

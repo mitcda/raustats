@@ -130,12 +130,13 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  ## Example - table_no
-#'  x <- rba_stats("A1");
+#'   \dontrun{
+#'     ## Example - selecting by table_no
+#'     x <- rba_stats("A1");
 #'
-#'  ## Example - pattern
-#'  x <- rba_stats(pattern="Liabilities and Assets");
-#'  
+#'     ## Example - selecting by pattern
+#'     x <- rba_stats(pattern="Liabilities and Assets");
+#'   }
 rba_stats <- function(table_no, pattern, url, cache, ...)
   ## series_type="statistical tables", 
 {

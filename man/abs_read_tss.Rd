@@ -20,7 +20,7 @@ This function extracts time series data from ABS data files.
 }
 \examples{
   \dontrun{
-    ## Read specified ABS Excel Time Seriefiles
+    ## Read specified ABS Excel time series files
     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
     downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
     extracted_files <- abs_cat_unzip(downloaded_tables)
@@ -28,5 +28,5 @@ This function extracts time series data from ABS data files.
   }
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

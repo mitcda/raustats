@@ -37,3 +37,24 @@
 #' 1: In eval(substitute(list(...)), `_data`, parent.frame()) :
 #' NAs introduced by coercion
 
+
+NOTES
+* New submission
+* Installed package size
+* Examples
+
+Examples with CPU or elapsed time > 5s
+                 user system elapsed
+abs_stats      10.518  0.072  28.486
+abs_cat_stats   3.146  0.079   8.350
+abs_dimensions  3.002  0.032   7.016
+rba_stats       2.823  0.067  11.897
+abs_datasets    2.396  0.025   7.116
+abs_cat_tables  2.270  0.048   6.052
+abs_metadata    2.143  0.024   5.407
+
+devtools::build("~/projects/R/myPackages/raustats")
+
+
+xx <- abs_read_tss("/tmp/340101.xls")
+yy <- abs_read_tss("/tmp/5206001_key_aggregates.xls")

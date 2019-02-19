@@ -35,19 +35,6 @@ abs_urls <- function()
 #'   }
 abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   library(rvest);
-  ##   cat_no <- "5206.0";
-  ##   cat_no <- "6401.0";
-  ##   cat_no <- "3401.0";
-  ##   cat_no <- "1270.0.55.001"
-  ##   cat_no <- "1270.0.55.003"
-  ##   releases <- "Latest";
-  ##   releases <- c("Dec 2017", "Sep 2017");
-  ##   types <- c("tss", "css")
-  ##   types <- c("pub")
-  ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||

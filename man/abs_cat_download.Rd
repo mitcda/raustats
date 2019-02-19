@@ -20,5 +20,5 @@ Downloads data from the ABS website and returns a character vector listing the l
 This function downloads the
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

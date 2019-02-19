@@ -4,7 +4,7 @@
 ## @title URL chunks to be used in API calls
 ## @description This function is called inside other functions in this package.
 ## @return a list with a base url and a url section for formatting the JSON API calls
-## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_api_urls <- function()
 {
   list(base_url = "http://stat.data.abs.gov.au",
@@ -20,7 +20,7 @@ abs_api_urls <- function()
 ##   download.
 ## @param args Named list of arguments to supply to call.
 ## @return data frame in long format
-## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_api_call <- function(path, args)
 {
     if (missing(path))
@@ -43,7 +43,7 @@ abs_api_call <- function(path, args)
 ##   download.
 ## @param args Named list of arguments to supply to call.
 ## @return data frame in long format
-## @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_call_api <- function(url)
 {
   x <- xml2::read_xml(url);
@@ -59,10 +59,12 @@ abs_call_api <- function(url)
 #' @param include_notes Include ABS annotation information for each series.
 #' @return data frame in long format
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  datasets <- abs_datasets()
-#'  datasets <- abs_datasets(include_notes=TRUE)
+#'   \dontrun{
+#'     datasets <- abs_datasets()
+#'     datasets <- abs_datasets(include_notes=TRUE)
+#'   }
 abs_datasets <- function(lang="en", include_notes=FALSE)
 {
   ## Return xml document of ABS indicators
@@ -110,14 +112,16 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @param lang Preferred language (default 'en' - English).
 #' @return data frame in long format
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  datasets <- abs_datasets();
-#'  x <- abs_metadata("CPI");
-#'  x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
-#'  names(x)
-#'  y <- abs_metadata(datasets$id[1]);
-#'  names(y)
+#'   \dontrun{
+#'     datasets <- abs_datasets();
+#'     x <- abs_metadata("CPI");
+#'     x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
+#'     names(x)
+#'     y <- abs_metadata(datasets$id[1]);
+#'     names(y)
+#'   }
 abs_metadata <- function(id, lang="en")
 {
   ## Return xml document of ABS indicators
@@ -212,11 +216,11 @@ abs_metadata <- function(id, lang="en")
 #'   }
 #' 
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  \dontrun{
-#'    z <- abs_cache(lang='en', progress=5)
-#'  }
+#'   \dontrun{
+#'     z <- abs_cache(lang='en', progress=5)
+#'   }
 abs_cache <- function(lang="en", progress=10)
 {
   ## DEBUG <- FALSE
@@ -272,7 +276,7 @@ abs_cache <- function(lang="en", progress=10)
 #'     \item \code{measure_description}: ABS API dataset measure description
 #'   }
 #' 
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @note This is an internal library function and is not exported.
 #' @examples
 #'  \dontrun{
@@ -316,14 +320,16 @@ abs_cachelist2table <- function(cache)
 #'   \code{NULL}, uses the stored package cachelist.
 #' @return a data frame with available dataset dimensions.
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  ## CPI - Consumer Price Index
-#'  x <- abs_dimensions("CPI");
-#'  str(x)
-#'  ## LF - Labour Force
-#'  x <- abs_dimensions("LF");
-#'  str(x)
+#'   \dontrun{
+#'     ## CPI - Consumer Price Index
+#'     x <- abs_dimensions("CPI");
+#'     str(x)
+#'     ## LF - Labour Force
+#'     x <- abs_dimensions("LF");
+#'     str(x)
+#'   }
 abs_dimensions <- function(dataset, cache)
 {
   ## DEBUG <- FALSE
@@ -371,16 +377,16 @@ abs_dimensions <- function(dataset, cache)
 #' @return A data frame with datasets and data items that match the search pattern.
 #' @export
 #' @note With acknowledgements to \code{wb_search} function.
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'  ## ABS dataset search
-#'  x <- abs_search(pattern="consumer price index")
-#'  x <- abs_search(pattern="census")
-#'  x <- abs_search(pattern="labour force")
+#'  x <- abs_search(pattern = "consumer price index")
+#'  x <- abs_search(pattern = "census")
+#'  x <- abs_search(pattern = "labour force")
 #'
 #'  ## ABS indicator search
-#'  x <- abs_search(pattern="all groups", dataset="CPI")
-#'  x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
+#'  x <- abs_search(pattern = "all groups", dataset="CPI")
+#'  x <- abs_search(pattern = c("all groups", "capital cities"), dataset="CPI")
 #' 
 abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE, cache)
 {
@@ -507,16 +513,17 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #'   }
 #' 
 #' @export
-#' @author David Mitchell <david.mitchell@@infrastructure.gov.au>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'    x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
-#'    x <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
-#'                                              INDEX=10001, TSEST=10, FREQUENCY="Q"));
-#'    x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50,
-#'                                              INDEX=10001, TSEST=10, FREQUENCY="Q"));
-#'    x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50, INDEX=10001,
-#'                                              TSEST=10, FREQUENCY="Q"), return_url=TRUE);
-#'  
+#'   \dontrun{
+#'     x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
+#'     x <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+#'                                               INDEX=10001, TSEST=10, FREQUENCY="Q"));
+#'     x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50,
+#'                                               INDEX=10001, TSEST=10, FREQUENCY="Q"));
+#'     x <- abs_stats(dataset="CPI", filter=list(MEASURE="all", REGION=50, INDEX=10001,
+#'                                               TSEST=10, FREQUENCY="Q"), return_url=TRUE);
+#'  }
 abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),

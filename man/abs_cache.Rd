@@ -48,10 +48,10 @@ Saving the results of this function and using it as the cache parameter in \code
   }
 }
 \examples{
- \dontrun{
-   z <- abs_cache(lang='en', progress=5)
- }
+  \dontrun{
+    z <- abs_cache(lang='en', progress=5)
+  }
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

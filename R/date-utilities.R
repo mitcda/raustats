@@ -18,6 +18,7 @@ excel2Date <-
 ## @param base.month Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.
 ## @param format The input date format. Default is "\%Y-Q\%q".
 ## @return This function returns a Date format object.
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 ## @export
 ## @examples
 ##  x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
@@ -54,6 +55,7 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 #' @importFrom lubridate ceiling_date days
 ## @param date date object
 ## @return Date object
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 ## @export
 ## @examples
 ##  Date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
@@ -69,6 +71,7 @@ last_day <- function(date)
 ## @param date date object
 ## @param ending character string abbreviation or number denoting ending month of the financial year
 ## @return Date object 
+## @author David Mitchell <david.pk.mitchell@@gmail.com>
 ## @export
 ## @examples
 ##  x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");

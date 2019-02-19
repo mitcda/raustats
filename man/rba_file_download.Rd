@@ -21,5 +21,5 @@ This function downloads one or more RBA data files at the specified by URLs and
   saves a local copy.
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

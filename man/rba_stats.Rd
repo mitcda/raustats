@@ -25,10 +25,13 @@ data frame in long format
 Function to download and return specified RBA time series data.
 }
 \examples{
+ ## Example - table_no
  x <- rba_stats("A1");
- y <- rba_stats("A1", update_cache=TRUE);
-   
+
+ ## Example - pattern
+ x <- rba_stats(pattern="Liabilities and Assets");
+ 
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

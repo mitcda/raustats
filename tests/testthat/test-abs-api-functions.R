@@ -108,7 +108,8 @@ test_that("abs_stats fails well",
   expect_error(abs_stats("INVALID_ID"));  ## Non-existent dataset
   expect_error(abs_stats("CPI"));         ## No filter supplied
   expect_error(abs_stats("CPI", filter="invalid_filter"));  ## Invalid filter value
-  expect_error(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+  expect_error(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                            INDEX=10001, TSEST=10, FREQUENCY="Q"),
                          start_date=2008, end_date=2006));  ## start_date > end_date
 })
 
@@ -133,11 +134,13 @@ test_that("abs_stats returns valid data frame",
                                                INDEX=10001, TSEST=10, FREQUENCY="Q"),
                             start_date="2008-Q3", end_date="2018-Q2"), "data.frame");
   ## Test incomplete filter set
-  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
+  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50),
+                                                    INDEX=10001, TSEST=10, FREQUENCY="Q"),
                                  start_date="2008-Q3", end_date="2018-Q2"));
   expect_s3_class(xx, "data.frame");
   ## Test function returns character string
-  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                                 start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE))
+  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50),
+                                                    INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                                 start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE));
   expect_type(xx, "character");
 })

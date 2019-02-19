@@ -27,3 +27,6 @@ Function to return a list of all RBA data tables.
 \examples{
  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
 }
+\author{
+David Mitchell <david.pk.mitchell@gmail.com>
+}

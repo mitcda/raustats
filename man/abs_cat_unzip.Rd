@@ -20,5 +20,5 @@ Returns a character vector listing the names of all files extracted.
 Function to uncompress locally-stored ABS Catalogue data file archives
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

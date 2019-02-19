@@ -44,7 +44,7 @@ collections include:
   - Labour Force
   - Population trends
 
-The [Reserve Bank of Australia (RBA)](http://www.rba.gov.au/) is
+The [Reserve Bank of Australia (RBA)](https://www.rba.gov.au/) is
 Australia’s central bank. In addition to its legislative
 responsibilities, it collects and publishes statistics on money, credit,
 the Australian banking systems and other relevant economic metrics. Key
@@ -63,7 +63,7 @@ and/or CSV spreadsheets.
 This package provides functions to search and download data and
 statistics from the [Australian Bureau of Statistics
 (ABS)](http://www.abs.gov.au/) and [Reserve Bank of Australia
-(RBA)](http://www.rba.gov.au/) websites, as well as draft access to the
+(RBA)](https://www.rba.gov.au/) websites, as well as draft access to the
 [ABS.Stat](http://stat.data.abs.gov.au/) - Beta data catalogue API.
 
 ## Examples

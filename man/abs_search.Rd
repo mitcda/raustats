@@ -36,15 +36,15 @@ With acknowledgements to \code{wb_search} function.
 }
 \examples{
  ## ABS dataset search
- x <- abs_search(pattern="consumer price index")
- x <- abs_search(pattern="census")
- x <- abs_search(pattern="labour force")
+ x <- abs_search(pattern = "consumer price index")
+ x <- abs_search(pattern = "census")
+ x <- abs_search(pattern = "labour force")
 
  ## ABS indicator search
- x <- abs_search(pattern="all groups", dataset="CPI")
- x <- abs_search(pattern <- c("all groups", "capital cities"), dataset="CPI")
+ x <- abs_search(pattern = "all groups", dataset="CPI")
+ x <- abs_search(pattern = c("all groups", "capital cities"), dataset="CPI")
 
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

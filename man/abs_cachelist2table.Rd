@@ -32,5 +32,5 @@ This is an internal library function and is not exported.
  }
 }
 \author{
-David Mitchell <david.mitchell@infrastructure.gov.au>
+David Mitchell <david.pk.mitchell@gmail.com>
 }

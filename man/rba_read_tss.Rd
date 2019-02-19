@@ -22,3 +22,6 @@ Functions to extract data from a specified RBA time series spreadsheet.
    data <- rba_read_tss(rba_files);
  }
 }
+\author{
+David Mitchell <david.pk.mitchell@gmail.com>
+}
