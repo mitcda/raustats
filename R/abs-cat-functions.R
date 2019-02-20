@@ -58,6 +58,9 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
     ## Else, return only selected tables
     sel_tables <- cat_tables[grepl(sprintf("(%s)", paste(tables, collapse="|")),
                                    cat_tables$item_name, ignore.case=TRUE),]
+    ## Stop if regular expression does not return any tables
+    if (nrow(sel_tables) == 0)
+      stop(paste("Specified table regular expressions do not match any table names, re-specify."))
   }
   ## Select only the user specified tables ('sel_tables')
   sel_urls <- apply(sel_tables, 1,

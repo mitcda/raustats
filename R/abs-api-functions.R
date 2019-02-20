@@ -223,18 +223,6 @@ abs_metadata <- function(id, lang="en")
 #'   }
 abs_cache <- function(lang="en", progress=10)
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   library(xml2); library(rvest);
-  ##   lang="en"
-  ##   progress <- 5
-  ##   limit <- 15
-  ##   x <-  abs_datasets(lang=lang)[21:25,];
-  ## }
-  ## TEST <- FALSE
-  ## if (TEST) {
-  ##   abs_cachelist <- abs_cache(progress=5)
-  ## }
   x <- abs_datasets(lang=lang)
   if ( !is.null(progress) ) {
     t0 <- proc.time();
@@ -332,14 +320,6 @@ abs_cachelist2table <- function(cache)
 #'   }
 abs_dimensions <- function(dataset, cache)
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   library(xml2); library(rvest);
-  ##   dataset <- "CPI";
-  ##   lang <- "en";
-  ##   metadata <- abs_metadata("CPI")
-  ##   metadata <- abs_metadata("ABS_ERP_LGA2017")
-  ## }
   ## Check dataset present and valid 
   if (missing(dataset))
     stop("No dataset supplied.");
@@ -390,14 +370,6 @@ abs_dimensions <- function(dataset, cache)
 #' 
 abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE, cache)
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   pattern <- "consumer price index"
-  ##   dataset <- NULL
-  ##   code_only <- FALSE
-  ##   load(file.path("data", "abs_cachelist.rda"))
-  ##   cache <- abs_cachelist
-  ## }
   if (missing(pattern))
     stop("No regular expression provided.")
   if (missing(cache)) 
@@ -419,16 +391,6 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
       match_df <- as.character(match_df[,"dataset"]);
     return(match_df);
   } else {
-    ## DEBUG  <- FALSE
-    ## if (DEBUG) {
-    ##   dataset <- "CPI"
-    ##   ignore.case <- TRUE
-    ##   pattern <- "all groups"
-    ##   pattern <- c("all groups", "capital cities")
-
-    ##   load(file.path("data", "abs_cachelist.rda"))
-    ##   cache <- abs_cachelist
-    ## }
     if (!dataset %in% names(cache))
       stop(sprintf("Dataset %s not available on ABS.Stat", dataset))
     .cachelist <- cache[[dataset]]
@@ -530,23 +492,6 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       ## remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
                       enforce_api_limits=TRUE, return_url=FALSE, cache)
 {
-  ## DEBUG <- FALSE
-  ## if (DEBUG) {
-  ##   library(xml2); library(rvest); library(jsonlite);
-  ##   dataset <- "CPI";
-  ##   lang <- "en";
-  ##   metadata <- abs_metadata("CPI")
-  ##   filter <- "all"
-  ##   filter <- list(MEASURE=c(1), REGION=c(1:8,50), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
-  ##   filter <- list(MEASURE=c(1), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
-  ##   filter <- list(MEASURE="all", INDEX=10001, REGION=c(1:8,50), FREQUENCY="Q", TSEST=10)
-  ##   ## Test incomplete set of filters
-  ##   filter <- list(REGION=c(1:8,50), INDEX=c(10001), TSEST=10, FREQUENCY="Q")
-  ##   load(file.path("data", "abs_cachelist.rda"));
-  ##   cache <- abs_cachelist
-  ##   dimensionAtObservation <- "AllDimensions";
-  ##   detail <- "Full"; ## detail <- "SeriesKeysOnly"; ## detail <- "DataOnly"; ## detail <- "NoData";
-  ## }
   ## Check dataset present and valid 
   if (missing(dataset))
     stop("No dataset supplied.");

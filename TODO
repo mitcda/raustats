@@ -1,7 +1,7 @@
 ### TO DO
 
 * The ABS Engineering Construction tables seem to require that the
-  sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [Completed 15/09/2018]
+  sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [DONE 15/09/2018]
 
 * Test all ABS API call functions
 
@@ -10,12 +10,13 @@
 * abs_cat_stats
   - Insert code to handle Date class `releases` arguments, e.g. releases=as.Date("2017-12-01").
   - Add `header_start` and `header_rows` argument to `abs_cat_stats` function.
-  - Add `return_urls` functionality to `abs_cat_stats` function - [Completed 01/11/2018]
+  - Add `return_urls` functionality to `abs_cat_stats` function - [DONE 2018-11-01]
 
 * abs_cat_tables
+  - Add code to handle varying number of paths returned by `abs_cat_tables`
+  - Remove Released 'dd/mm/yyyy' columns from final results.
   - Modify `abs_cat_tables` function to list tables for specified catalogue numbers. [DONE 2018-11-05]
   - Generalise `abs_cat_tables` function to handle non-time series results with only one column of URLs. [DONE 2018-11-06]
-  - Remove Released 'dd/mm/yyyy' columns from final results.
 
 * abs_cat_unzip
   - Added exdir argument - [DONE 2018-11-01]
@@ -43,18 +44,4 @@ NOTES
 * Installed package size
 * Examples
 
-Examples with CPU or elapsed time > 5s
-                 user system elapsed
-abs_stats      10.518  0.072  28.486
-abs_cat_stats   3.146  0.079   8.350
-abs_dimensions  3.002  0.032   7.016
-rba_stats       2.823  0.067  11.897
-abs_datasets    2.396  0.025   7.116
-abs_cat_tables  2.270  0.048   6.052
-abs_metadata    2.143  0.024   5.407
 
-devtools::build("~/projects/R/myPackages/raustats")
-
-
-xx <- abs_read_tss("/tmp/340101.xls")
-yy <- abs_read_tss("/tmp/5206001_key_aggregates.xls")
