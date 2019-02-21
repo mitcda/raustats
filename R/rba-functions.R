@@ -203,7 +203,7 @@ rba_file_download <- function(url, exdir=tempdir()) {
   local_filename <- basename(as.character(url));
   ## local_filenames <- abs_local_filename(url);
   ## -- Download files --
-  mapply(function(x, y) download.file(x, y, mode="wb"),
+  mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
          as.character(url), file.path(exdir, local_filename));
   ## Return results
   return(file.path(exdir, local_filename));

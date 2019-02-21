@@ -244,7 +244,7 @@ abs_cat_download <- function(data_urls, exdir=tempdir()) {
     dir.create(exdir)
   local_filenames <- abs_local_filename(data_urls);
   ## -- Download files --
-  mapply(function(x, y) download.file(x, y, mode="wb"),
+  mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
          data_urls,
          file.path(exdir, local_filenames));
   ## Return results
