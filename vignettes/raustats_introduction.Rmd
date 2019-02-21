@@ -27,10 +27,9 @@ available data.
 ## Australian Bureau of Statistics
 
 The [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) is
-Australia’s national statistical agency, providing trusted official
-statistics on a wide range of economic, social, population and
-environmental matters of importance to Australia. Key ABS statistical
-collections include:
+Australia’s national statistical agency, providing trusted official statistics
+on a wide range of economic, social, population and environmental matters of
+importance to Australia. Key ABS statistical collections include:
  
   * Australian National Accounts
   * International Trade
@@ -41,11 +40,10 @@ collections include:
 
 ## Reserve Bank of Australia
 
-The [Reserve Bank of Australia (RBA)](http://www.rba.gov.au/) is
-Australia's central bank. In addition to its legislative
-responsibilities, it collects and publishes statistics on money,
-credit, the Australian banking systems and other relevant economic
-metrics. Key RBA statistics include:
+The [Reserve Bank of Australia (RBA)](http://www.rba.gov.au/) is Australia's
+central bank. In addition to its legislative responsibilities, it collects and
+publishes statistics on money, credit, the Australian banking systems and other
+relevant economic metrics. Key RBA statistics include:
 
   * Banking system assets and liabilities
   * Money and credit statistics
@@ -59,7 +57,7 @@ metrics. Key RBA statistics include:
 
 The ABS and RBA currently make most, or all, of their statistics primarily
 available through Excel- and/or CSV-format spreadsheets. The former typically
-require some additional re-formatting to produce well-formatted (tidy) data. 
+require some additional re-formatting to produce well-formatted (tidy) data.
 
 The functions in this package help facilitate access to ABS and RBA statistics
 through R, returning data in long-format (tidy-like) tables.

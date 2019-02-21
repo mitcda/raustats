@@ -13,7 +13,9 @@ data frame in long format
 Function to return an updated list of data tables available from the RBA website.
 }
 \examples{
- rba_tablecache <- rba_table_cache();
+  \dontrun{
+    rba_tablecache <- rba_table_cache();
+  }
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

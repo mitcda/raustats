@@ -1,4 +1,4 @@
-### TO DO
+#' # TO DO
 
 * The ABS Engineering Construction tables seem to require that the
   sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [DONE 15/09/2018]
@@ -30,18 +30,10 @@
 #'   specified catalogue. Use a list to specify different table sets for each specified ABS
 #'   catalogue number.
 
-* Ability to return `POSIXct` dates for easy integration into plotting and
-  time-series analysis techniques
 
 * Check warning messages issued by rba_stats(url = ...):
 #' Warning messages:
 #' 1: In eval(substitute(list(...)), `_data`, parent.frame()) :
 #' NAs introduced by coercion
-
-
-NOTES
-* New submission
-* Installed package size
-* Examples
 
 

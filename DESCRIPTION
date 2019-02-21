@@ -11,7 +11,7 @@ Authors@R: c(
   )
 Maintainer: David Mitchell <david.pk.mitchell@gmail.com>
 URL: https://github.com/mitcda/raustats
-License: GPL-2 | GPL-3
+License: GPL-3
 Depends: R (>= 3.0.0), readxl
 Imports: stats, dplyr, httr, jsonlite, rvest, tidyr, xml2, lubridate
 Suggests: repo, knitr, rmarkdown, testthat, ggplot2

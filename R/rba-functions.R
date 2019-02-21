@@ -14,7 +14,9 @@ rba_urls <- function()
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  rba_tablecache <- rba_table_cache();
+#'   \dontrun{
+#'     rba_tablecache <- rba_table_cache();
+#'   }
 rba_table_cache <- function()
 {
   ## Avoid 'No visible binding for global variables' note

@@ -1,7 +1,7 @@
 ### =========================================================================
 ### Filename:     build-data.R
 ### Created:      2017-08-10
-### Updated:      <2018-11-16 17:01:26 david at grover>
+### Updated:      <2019-02-21 20:44:23 david at grover>
 ### Author:       David Mitchell <david.p.mitchell@homemail.com.au>
 ### Description:  Builds package data sets
 ### =========================================================================
@@ -10,10 +10,10 @@
 ## Nil
 
 ######  Section 1 - Import exports and imports table structure
-devtools::load_all("./");
+devtools::load_all(".");
 rba_tablecache <- rba_table_cache();
-abs_tablecache <- read.csv(file.path("../data-raw", "ABS-TSS-Catalogue-Numbers.csv"));
-aus_state_codes <- read.csv(file.path("../data-raw", "Australian-States-Territories.csv"));
+abs_tablecache <- read.csv(file.path("data-raw", "ABS-TSS-Catalogue-Numbers.csv"));
+aus_state_codes <- read.csv(file.path("data-raw", "Australian-States-Territories.csv"));
 abs_cachelist <- abs_cache(lang="en", progress=5);
 
 ## Write data sets files

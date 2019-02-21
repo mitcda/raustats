@@ -21,7 +21,7 @@ Bureau of Statistics (ABS) and Reserve Bank of Australia (RBA) websites.
 
 ## Installation
 
-You can install the released version of raustats from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of `raustats` from [CRAN](https://CRAN.R-project.org) with:
 
 ```{r eval=FALSE}
 install.packages("raustats")
