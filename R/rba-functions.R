@@ -1,6 +1,6 @@
 rba_urls <- function()
 {
-  list(base_url = "http://www.rba.gov.au",
+  list(base_url = "https://www.rba.gov.au",
        stats_path = "statistics",
        tables_path = "tables");
 }
@@ -201,7 +201,6 @@ rba_file_download <- function(url, exdir=tempdir()) {
   if(!dir.exists(exdir))
     dir.create(exdir)
   local_filename <- basename(as.character(url));
-  ## local_filenames <- abs_local_filename(url);
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
          as.character(url), file.path(exdir, local_filename));

@@ -279,8 +279,23 @@ have multiple uniquely-identifying header rows.
 
 Presently, the `abs_cat_stats` only includes functionality to download and
 process time series spreadsheets---functionality to handle ABS Data Cubes
-(cross-section spreadsheets, `types="css"`) is planned to be added in the near
-future.
+(cross-section spreadsheets, `types="css"`) is planned to be added in future
+versions.
+
+In the meantime, it is possible to download data cubes using a sequence of
+`abs_cat_tables`--`abs_cat_download`--`abs_cat_unzip` and piping the result into
+a `read_excel` function call. The following example downloads ABS labour force
+table: *LM1 - Labour force status by Age, Greater Capital City and Rest of State
+(ASGS), Marital status and Sex*:
+
+```{r eval=FALSE}
+lf_age <- abs_cat_tables("6291.0.55.001", include_urls=TRUE) %>%
+  filter(grepl("LM1.+", item_name)) %>%
+  .$path_1 %>%
+  abs_cat_download %>%
+  abs_cat_unzip %>%
+  read_excel(sheet="Data 1", skip=3)
+```
 
 <!-- Text when abs_read_css function added
 
