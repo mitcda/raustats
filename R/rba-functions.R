@@ -283,7 +283,6 @@ rba_read_tss_ <- function(file)
                                          table_no = table_no,
                                          table_name = table_name);
 
-                   ## UP TO HERE 
                    z <- .data[-(1:header_row),];
                    ## Rename variables, including renaming `Series ID`
                    names(z) <- sub("series.*id", "date", .data[header_row,], ignore.case=TRUE);

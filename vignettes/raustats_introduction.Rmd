@@ -818,14 +818,14 @@ print(downloaded_tables)
 
 The `rba_read_tss` function extracts data from standard-format RBA statistical
 tables and returns it as a long-format (tidy) data frame.  It is also called by
-the `rba_stats` function.  The simple example below shows use of the function to
-extract data from the previously downloaded tables.
+the `rba_stats` function.  The following call will extract data from the
+previously downloaded tables.
 
-```{r}
+```{r eval=FALSE}
 a1_data <- rba_read_tss(downloaded_tables)
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, eval=FALSE}
 head(a1_data)
 ```
 
