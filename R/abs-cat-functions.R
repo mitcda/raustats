@@ -244,10 +244,18 @@ abs_cat_download <- function(data_urls, exdir=tempdir()) {
   if(!dir.exists(exdir))
     dir.create(exdir)
   local_filenames <- abs_local_filename(data_urls);
-  ## Check if any ABS data_urls are invalid
+  ## Check if any data_urls are not ABS data URLs
+  bool_abs_urls <- sapply(data_urls,
+                          function(x) grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/austats/abs@\\.nsf.+",
+                                            x, ignore.case=TRUE))
+  if (any(!bool_abs_urls))
+    stop(sprintf("Following url(s) are not valid ABS urls: %s",
+                 paste(data_urls[!bool_abs_urls], collapse=", ")));
+  ## Check if any data_urls are not accessible
   if (any(sapply(data_urls, http_error)))
     stop(sprintf("One or more url(s) not accessible: %s",
                  paste(data_urls[sapply(data_urls, http_error)], collapse=", ")));
+  
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
          data_urls,

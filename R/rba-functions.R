@@ -204,6 +204,10 @@ rba_file_download <- function(url, exdir=tempdir()) {
   url <- as.character(url)
   local_filename <- basename(url);
   
+  ## Check if any url are not ABS data URLs
+  if (!url %in% rba_cache$url)
+    stop(sprintf("Invalid RBA url: %s", url));
+  ## Check if url accessible
   if (http_error(url))
     stop(sprintf("url: %s not accessible", url));
   ## -- Download files --
