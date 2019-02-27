@@ -4,15 +4,15 @@
 \alias{abs_dimensions}
 \title{Return available dimensions of ABS series}
 \usage{
-abs_dimensions(dataset, cache)
+abs_dimensions(dataset, update_cache = FALSE)
 }
 \arguments{
 \item{dataset}{Character vector of dataset codes. These codes correspond to the
 \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 \code{abs_cachelist}, or the result of \code{abs_indicators}.}
 
-\item{cache}{An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
-\code{NULL}, uses the stored package cachelist.}
+\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+ABS.Stat datasets, if TRUE, update the list of available datasets.}
 }
 \value{
 a data frame with available dataset dimensions.

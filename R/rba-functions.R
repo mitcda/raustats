@@ -125,8 +125,8 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 ##   'discontinued data'.
 #' @param pattern Character string or regular expression to be matched.
 #' @param url Valid URL for RBA dataset (Excel format only).
-#' @param cache RBA table cache, returned by \code{rba_table_cache} function. If omitted,
-#'   \code{rba_tablecache} is used.
+#' @param update_cache Logical expression, if FALSE (default), use the cached list of available
+#'   RBA datasets, if TRUE, update the list of available datasets.
 #' @param ... Other arguments to \code{\link{rba_search}}
 #' @return data frame in long format
 #' @export
@@ -139,7 +139,7 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #'     ## Example - selecting by pattern
 #'     x <- rba_stats(pattern="Liabilities and Assets");
 #'   }
-rba_stats <- function(table_no, pattern, url, cache, ...)
+rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
   ## series_type="statistical tables", 
 {
   ## Deprecate: series_type
@@ -152,7 +152,7 @@ rba_stats <- function(table_no, pattern, url, cache, ...)
   if (!missing(pattern) & !missing(url))
     warning("Both pattern and url supplied, using pattern.")
   ## Update RBA table list
-  if (missing(cache)) {
+  if (update_cache) {
     rba_cache <- rba_table_cache();
   } else {
     rba_cache <- raustats::rba_tablecache;
@@ -169,9 +169,9 @@ rba_stats <- function(table_no, pattern, url, cache, ...)
     urls <- as.character(rba_search(pattern, cache=rba_cache, ...)$url)
   
   if (!missing(url)) {
-    if (any(!url %in% rba_cache$url))
+    if (!any(url %in% rba_cache$url))
       stop(sprintf("Following urls invalid: %s",
-                   paste(rba_cache$url[!url %in% rba_cache$url], collapse="|")));
+                   paste(rba_cache$url[!url %in% rba_cache$url], collapse=", ")));
     urls <- as.character(url)
   }
   
@@ -190,6 +190,7 @@ rba_stats <- function(table_no, pattern, url, cache, ...)
 #' @description This function downloads one or more RBA data files at the specified by URLs and
 #'   saves a local copy.
 #' @importFrom utils download.file
+#' @importFrom httr http_error
 #' @param url Character vector specifying one or more RBA data set URLs.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
@@ -200,14 +201,17 @@ rba_stats <- function(table_no, pattern, url, cache, ...)
 rba_file_download <- function(url, exdir=tempdir()) {
   if(!dir.exists(exdir))
     dir.create(exdir)
-  local_filename <- basename(as.character(url));
+  url <- as.character(url)
+  local_filename <- basename(url);
+  
+  if (http_error(url))
+    stop(sprintf("url: %s not accessible", url));
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
-         as.character(url), file.path(exdir, local_filename));
+         url, file.path(exdir, local_filename));
   ## Return results
   return(file.path(exdir, local_filename));
 }
-
 
 
 ### Function: rba_read_tss
@@ -225,7 +229,7 @@ rba_file_download <- function(url, exdir=tempdir()) {
 #' @examples
 #'  \donttest{
 #'    rba_urls <- rba_search(pattern = "Liabilities and Assets")$url
-#'    rba_files <- rba_file_download(rba_urls)
+#'    rba_files <- sapply(rba_urls, rba_file_download)
 #'    data <- rba_read_tss(rba_files);
 #'  }
 rba_read_tss <- function(files)
@@ -254,7 +258,7 @@ rba_read_tss_ <- function(file)
                  function(sheet_name) {
                    ## Read metadata
                    .data <- read_excel(file, sheet=sheet_name, col_names=FALSE, col_types="text",
-                                       .name_repair = "minimal");
+                                       na=c("","--"), .name_repair="minimal");
                    ## Return pre-header information from RBA files 
                    header_row <- which(sapply(1:nrow(.data),
                                               function(i)

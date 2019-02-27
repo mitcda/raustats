@@ -5,7 +5,7 @@
 \title{Search dataset information from the ABS.Stat API}
 \usage{
 abs_search(pattern, dataset = NULL, ignore.case = TRUE,
-  code_only = FALSE, cache)
+  code_only = FALSE, update_cache = FALSE)
 }
 \arguments{
 \item{pattern}{Character string or regular expression to be matched.}
@@ -21,8 +21,8 @@ dataset.}
 \item{code_only}{If FALSE (default), all column/fields are returned. If TRUE, only the dataset
 identifier or indicator code are returned.}
 
-\item{cache}{List of data frames returned from \code{abs_cache}. If omitted, \code{abs_cachelist}
-is used.}
+\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+ABS.Stat datasets, if TRUE, update the list of available datasets.}
 }
 \value{
 A data frame with datasets and data items that match the search pattern.

@@ -3,7 +3,14 @@
 * The ABS Engineering Construction tables seem to require that the
   sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [DONE 15/09/2018]
 
-* Test all ABS API call functions
+## ABS API functions
+
+* Simplify abs_cachetable to include only a list of datasets and call
+  abs_metadata each time detailed dataset information is required.
+
+* Wrap all url calls inside a `try`/`catch`
+  - Packages which use Internet resources should fail gracefully with an informative message
+    if the resource is not available
 
 * Test all ABS catalogue functions
 

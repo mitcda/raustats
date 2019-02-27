@@ -18,7 +18,7 @@ Functions to extract data from a specified RBA time series spreadsheet.
 \examples{
  \donttest{
    rba_urls <- rba_search(pattern = "Liabilities and Assets")$url
-   rba_files <- rba_file_download(rba_urls)
+   rba_files <- sapply(rba_urls, rba_file_download)
    data <- rba_read_tss(rba_files);
  }
 }

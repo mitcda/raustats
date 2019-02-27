@@ -4,7 +4,7 @@
 \alias{rba_stats}
 \title{Return data for a specified RBA time series}
 \usage{
-rba_stats(table_no, pattern, url, cache, ...)
+rba_stats(table_no, pattern, url, update_cache = FALSE, ...)
 }
 \arguments{
 \item{table_no}{Character vector specifying one or more RBA table numbers to download.}
@@ -13,8 +13,8 @@ rba_stats(table_no, pattern, url, cache, ...)
 
 \item{url}{Valid URL for RBA dataset (Excel format only).}
 
-\item{cache}{RBA table cache, returned by \code{rba_table_cache} function. If omitted,
-\code{rba_tablecache} is used.}
+\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+RBA datasets, if TRUE, update the list of available datasets.}
 
 \item{...}{Other arguments to \code{\link{rba_search}}}
 }

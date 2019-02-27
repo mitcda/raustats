@@ -75,9 +75,11 @@ test_that("abs_cat_download downloads specified table files",
   skip_on_travis()
   skip_on_appveyor()
   
+  abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
   downloaded_tables <- abs_cat_download(head(abs_tables_5206_url$path_2), exdir=tempdir())
-  expect_type(downloaded_tables, "character")
+  expect_type(downloaded_tables, "character");
   expect_match(downloaded_tables, "\\w+\\.(zip|xlsx*)$");
+  expect_true(all(file.exists(downloaded_tables)))
 })
 
 
@@ -87,8 +89,11 @@ test_that("abs_cat_unzip extracts from valid filenames",
   skip_on_travis()
   skip_on_appveyor()
 
+  abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+  downloaded_tables <- abs_cat_download(head(abs_tables_5206_url$path_2), exdir=tempdir())
   extracted_files <- abs_cat_unzip(downloaded_tables)
   expect_type(extracted_files, "character")
+  expect_match(extracted_files, "\\w+\\.xlsx*$");
   expect_true(all(file.exists(extracted_files)))
 })
 
@@ -99,6 +104,9 @@ test_that("abs_read_tss returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
+  abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+  downloaded_tables <- abs_cat_download(head(abs_tables_5206_url$path_2), exdir=tempdir())
+  extracted_files <- abs_cat_unzip(downloaded_tables)
   expect_s3_class(abs_read_tss(extracted_files[1]), "data.frame"); ## Extract one file
   expect_s3_class(abs_read_tss(extracted_files), "data.frame");    ## Extract multiple files
 })

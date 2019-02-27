@@ -87,7 +87,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 #' @title Return ABS catalogue tables
 #' @description Return list of tables from specified ABS catalogue number
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
-#' @importFrom httr http_status
+#' @importFrom httr http_error 
 #' @param cat_no ABS catalogue numbers.
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
@@ -137,11 +137,11 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                         "pub" = "Publication"));
   ## Create ABS URL and open session 
   url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, cat_no);
-  suppressWarnings(s <- html_session(url));
   ## Check for HTTP errors
-  if (tolower(http_status(s)$category) != "success")
-    stop(sprintf("File cannot be downloaded: %s", http_status(s)$message))
-    
+  if (http_error(url))
+    stop(sprintf("File cannot be downloaded: %s", url))
+  suppressWarnings(s <- html_session(url));
+  
   releases <- unique(releases);
   if (length(releases) == 1 && tolower(releases) == "latest") {
     .paths <- "";
@@ -232,6 +232,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 #' @title Function to download files from the ABS website and store locally
 #' @description This function downloads the 
 #' @importFrom utils download.file unzip
+#' @importFrom httr http_error
 #' @param data_urls Character vector specifying one or more ABS data URLs.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
@@ -243,6 +244,10 @@ abs_cat_download <- function(data_urls, exdir=tempdir()) {
   if(!dir.exists(exdir))
     dir.create(exdir)
   local_filenames <- abs_local_filename(data_urls);
+  ## Check if any ABS data_urls are invalid
+  if (any(sapply(data_urls, http_error)))
+    stop(sprintf("One or more url(s) not accessible: %s",
+                 paste(data_urls[sapply(data_urls, http_error)], collapse=", ")));
   ## -- Download files --
   mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
          data_urls,

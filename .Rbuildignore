@@ -1,6 +1,9 @@
 cran-comments.md
 README.Rmd
 README.html
+z-deprecated-functions.R
+z-release-questions.R
+read-abs-discards.R
 ^Meta$
 ^doc$
 # Rbuildignore
@@ -14,7 +17,6 @@ README.html
 ^Setup.R$
 ^SQL.R$
 ^misc.R$
-read-abs-discards.R
 ^TODO$
 ^R-example-code/$
 data-raw

@@ -449,8 +449,7 @@ datasets <- abs_datasets()
 head(datasets)
 ```
 
-
-### Cached list of available datasets `abs_cachelist`
+#### Cached list of available ABS.Stat datasets `abs_cachelist`
 
 For performance, a cached list of datasets available through the
 [ABS.Stat](http://stat.data.abs.gov.au/) API is provided in the `abs_cachelist`
@@ -459,31 +458,31 @@ in `abs_search()` and `abs_stats()` to find matching ABS datasets.
 
 By default, `abs_cachelist` is in English. To search indicators in a different
 language, you can download an updated copy of `abs_cachelist` using
-`abs_cache()` (next).
+`abs_datasets()` ans specifying a different language.
 
 
-### Accessing updated available data with `abs_cache()`
+<!-- ### Accessing updated available data with `abs_cache()` -->
 
-Current information about datasets available from the
-[ABS.Stat](http://stat.data.abs.gov.au/) API can be obtained by calling
-`abs_cache`.^[`abs_cachelist` is simply a saved return of `abs_cache(lang =
-"en")`.]  Updated cache information can be used in the `abs_search` and
-`abs_stats` functions by setting the `cache` argument equal to the saved results
-returned by `abs_cache`. While using updated cache information will ensure you
-identify all available datasets, the `abs_cache` function can take a long time
-to download all datasets, so use judiciously. Because of this, `abs_cache`
-includes functionality to report progress back to the console. The frequency of
-reporting can be set with the `progress` argument (by default `progress=10`).
-The second example downloads a new cache in French.^[Note, the
-[ABS.Stat](http://stat.data.abs.gov.au/) API currently has limited support for
-other languages, so data may not be available in languages other than English.]
+<!-- Current information about datasets available from the -->
+<!-- [ABS.Stat](http://stat.data.abs.gov.au/) API can be obtained by calling -->
+<!-- `abs_cache`.^[`abs_cachelist` is simply a saved return of `abs_cache(lang = -->
+<!-- "en")`.]  Updated cache information can be used in the `abs_search` and -->
+<!-- `abs_stats` functions by setting the `cache` argument equal to the saved results -->
+<!-- returned by `abs_cache`. While using updated cache information will ensure you -->
+<!-- identify all available datasets, the `abs_cache` function can take a long time -->
+<!-- to download all datasets, so use judiciously. Because of this, `abs_cache` -->
+<!-- includes functionality to report progress back to the console. The frequency of -->
+<!-- reporting can be set with the `progress` argument (by default `progress=10`). -->
+<!-- The second example downloads a new cache in French.^[Note, the -->
+<!-- [ABS.Stat](http://stat.data.abs.gov.au/) API currently has limited support for -->
+<!-- other languages, so data may not be available in languages other than English.] -->
 
-```{r eval=FALSE}
-## Default language: English
-new_cache <- abs_cache(progress=10)
-## French language version
-new_cache_fr <- abs_cache(lang="fr", progress=10)
-```
+<!-- ```{r eval=FALSE} -->
+<!-- ## Default language: English -->
+<!-- new_cache <- abs_cache(progress=10) -->
+<!-- ## French language version -->
+<!-- new_cache_fr <- abs_cache(lang="fr", progress=10) -->
+<!-- ``` -->
 
 
 ### Checking dataset dimensions with `abs_dimensions()`
@@ -549,9 +548,9 @@ abs_search(c("All groups CPI","Sydney"), dataset="CPI")
 
 If `code_only=TRUE`, the indicator search function returns only codes for each
 matching dimension. This, in turn, can be used directly as input to the `filter`
-argument of the `abs_stats` function. The following example returns dimension
-codes for datasets matching both the regular expressions "All groups CPI" and
-"Sydney".
+argument of the `abs_stats` function. The following two examples returns
+dimension codes for datasets matching "All groups CPI" (example 1) and matching
+both "All groups CPI" and "Sydney" (example 2).
 
 ```{r echo=FALSE, eval=FALSE}
 abs_search("All groups CPI", dataset="CPI", code_only=TRUE)

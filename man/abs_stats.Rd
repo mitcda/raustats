@@ -7,7 +7,8 @@
 abs_stats(dataset, filter, start_date, end_date, lang = c("en", "fr"),
   dimensionAtObservation = c("AllDimensions", "TimeDimension",
   "MeasureDimension"), detail = c("Full", "DataOnly", "SeriesKeysOnly",
-  "NoData"), enforce_api_limits = TRUE, return_url = FALSE, cache)
+  "NoData"), enforce_api_limits = TRUE, return_url = FALSE,
+  update_cache = FALSE)
 }
 \arguments{
 \item{dataset}{Character vector of ABS.Stat dataset codes. These codes correspond to the
@@ -51,8 +52,8 @@ submits the API call regardless and attempts to return the results.}
 \item{return_url}{Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
 request URL and does not submit the request.}
 
-\item{cache}{An existing cachelist of available ABS datasets created by \code{abs_cachelist}. If
-missing, the function uses the stored package cachelist.}
+\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+ABS.Stat datasets, if TRUE, update the list of available datasets.}
 }
 \value{
 Returns a data frame of the selected series from the specified ABS dataset.
