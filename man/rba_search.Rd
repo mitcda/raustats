@@ -5,7 +5,7 @@
 \title{Return list of data tables from RBA website}
 \usage{
 rba_search(pattern, fields = c("table_no", "table_name"),
-  ignore.case = TRUE, cache)
+  ignore.case = TRUE, update_cache = FALSE)
 }
 \arguments{
 \item{pattern}{Character string or regular expression to be matched}
@@ -15,8 +15,8 @@ searches 'table_no' and 'table_name'.}
 
 \item{ignore.case}{Case senstive pattern match or not.}
 
-\item{cache}{RBA table cache, returned by \code{rba_table_cache} function. If omitted,
-\code{rba_tablecache} is used.}
+\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+RBA tables (\code{rba_tablecache}), if TRUE, update the list of available datasets.}
 }
 \value{
 data frame in long format

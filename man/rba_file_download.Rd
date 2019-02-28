@@ -4,13 +4,16 @@
 \alias{rba_file_download}
 \title{Function to download statistics files from the RBA website and store locally}
 \usage{
-rba_file_download(url, exdir = tempdir())
+rba_file_download(url, exdir = tempdir(), update_cache = TRUE)
 }
 \arguments{
 \item{url}{Character vector specifying one or more RBA data set URLs.}
 
 \item{exdir}{Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 created if it doesn't exist.}
+
+\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+RBA datasets, if TRUE, update the list of available datasets.}
 }
 \value{
 Downloads data from the ABS website and returns a character vector listing the location

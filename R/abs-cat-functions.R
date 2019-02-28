@@ -246,7 +246,7 @@ abs_cat_download <- function(data_urls, exdir=tempdir()) {
   local_filenames <- abs_local_filename(data_urls);
   ## Check if any data_urls are not ABS data URLs
   bool_abs_urls <- sapply(data_urls,
-                          function(x) grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/austats/abs@\\.nsf.+",
+                          function(x) grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
                                             x, ignore.case=TRUE))
   if (any(!bool_abs_urls))
     stop(sprintf("Following url(s) are not valid ABS urls: %s",

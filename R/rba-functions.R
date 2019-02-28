@@ -90,21 +90,21 @@ rba_table_cache <- function()
 #' @param fields Character vector of column names through which to search. By default, the function
 #'   searches 'table_no' and 'table_name'.
 #' @param ignore.case Case senstive pattern match or not.
-#' @param cache RBA table cache, returned by \code{rba_table_cache} function. If omitted,
-#'   \code{rba_tablecache} is used.
+#' @param update_cache Logical expression, if FALSE (default), use the cached list of available
+#'   RBA tables (\code{rba_tablecache}), if TRUE, update the list of available datasets.
 #' @return data frame in long format
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
 #' @examples
 #'  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
-rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=TRUE, cache)
+rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=TRUE, update_cache=FALSE)
 {
   if (missing(pattern))
     stop("No pattern supplied")
-  if (missing(cache)) {
-    rba_cache <- raustats::rba_tablecache;
-  } else {
+  if (update_cache) {
     rba_cache <- rba_table_cache();
+  } else {
+    rba_cache <- raustats::rba_tablecache;
   }
   if (any(!fields %in% names(rba_cache)))
     stop(sprintf("Field names: %s not in cache", fields[!fields %in% names(rba_cache)]))
@@ -166,7 +166,7 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
   }
 
   if (!missing(pattern))
-    urls <- as.character(rba_search(pattern, cache=rba_cache, ...)$url)
+    urls <- as.character(rba_search(pattern, update_cache=rba_cache, ...)$url)
   
   if (!missing(url)) {
     if (!any(url %in% rba_cache$url))
@@ -194,16 +194,25 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
 #' @param url Character vector specifying one or more RBA data set URLs.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
+#' @param update_cache Logical expression, if FALSE (default), use the cached list of available
+#'   RBA datasets, if TRUE, update the list of available datasets.
 #' @return Downloads data from the ABS website and returns a character vector listing the location
 #'   where files are saved.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
-rba_file_download <- function(url, exdir=tempdir()) {
+rba_file_download <- function(url, exdir=tempdir(), update_cache=TRUE) {
   if(!dir.exists(exdir))
     dir.create(exdir)
   url <- as.character(url)
   local_filename <- basename(url);
-  
+
+  ## Update RBA table list
+  if (update_cache) {
+    rba_cache <- rba_table_cache();
+  } else {
+    rba_cache <- raustats::rba_tablecache;
+  }
+
   ## Check if any url are not ABS data URLs
   if (!url %in% rba_cache$url)
     stop(sprintf("Invalid RBA url: %s", url));
