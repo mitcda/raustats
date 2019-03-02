@@ -1,7 +1,7 @@
 Package: raustats
 Type: Package
 Title: Access Data and Statistics from the ABS and RBA Websites
-Description: An R package for downloading Australian economic statistics
+Description: Functions for downloading Australian economic statistics
   from the Australian Bureau of Statistics (ABS) and Reserve Bank of Australia
   (RBA) websites.
 Version: 0.1.0
