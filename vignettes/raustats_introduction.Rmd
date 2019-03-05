@@ -184,7 +184,7 @@ The ABS does not provide a consolidated searchable list of all current
 statistical collections available through the ABS Catalogue. A text search
 facility is available on the ABS website:
 [www.abs.gov.au](http://www.abs.gov.au), but this package does not currently
-provide any functionality to access this facility. Instead, the `abs_tablecache`
+provide any functionality to access this facility. Instead, the `abs_cat_cachelist`
 data set contained in this package lists the more common ABS Catalogue
 statistics.
 
@@ -226,7 +226,7 @@ columns:
 
 ```{r echo=FALSE, results=TRUE}
 ## Latest quarterly national accounts
-knitr::kable(head(ana_q))
+head(ana_q)
 ```
 
 The `tables` argument allows users to select the set of catalogue tables to be
@@ -332,7 +332,7 @@ ana_tables <- abs_cat_tables(cat_no="5206.0")
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(ana_tables))
+head(ana_tables)
 ```
 
 ```{r message=FALSE}
@@ -341,7 +341,7 @@ cpi_tables <- abs_cat_tables(cat_no="6401.0")
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(cpi_tables))
+head(cpi_tables)
 ```
 
 
@@ -365,7 +365,7 @@ ana_tables <- abs_cat_tables(cat_no="5206.0", releases=c("Sep 2017", "Dec 2017")
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(ana_tables))
+head(ana_tables)
 ```
 
 And the following example illustrates use of the `abs_cat_tables` to return all
@@ -378,7 +378,7 @@ asgs_files <- abs_cat_tables(cat_no="1270.0.55.001", types="css", include_urls=T
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(asgs_files))
+head(asgs_files)
 ```
 
 
@@ -446,7 +446,7 @@ included.
 
 ```{r message=FALSE, results="asis"}
 datasets <- abs_datasets()
-knitr::kable(head(datasets))
+head(datasets)
 ```
 
 #### Cached list of available ABS.Stat datasets `abs_cachelist`
@@ -587,7 +587,7 @@ The filter conditions are:
   * `FREQUENCY=Q` -- Quarterly observations
 
 ```{r echo=FALSE}
-knitr::kable(head(cpi))
+head(cpi)
 ```
 
 The `filter` argument can also be set equal to "all", in which case the function
@@ -679,7 +679,7 @@ statistical tables. The function scans the RBA website and returns a list of all
 data tables](https://www.rba.gov.au/statistics/historical-data.html) and
 [Discontinued data
 tables](https://www.rba.gov.au/statistics/discontinued-data.html). (The
-`rba_tablecache` data set included in this package contains a pre-saved list of
+`rba_cachelist` data set included in this package contains a pre-saved list of
 all available RBA statistical tables.)
 
 The dataset has four columns:
@@ -698,7 +698,7 @@ rba_cache <- rba_table_cache()
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(rba_cache))
+head(rba_cache)
 ```
 
 ### Search available data with `rba_search()`
@@ -710,7 +710,7 @@ searches the `table_code` and `table_name` fields only. The `ignore.case`
 argument allows for case sensitive regular expression matching---the default is
 case insensitive matching (`ignore.case=TRUE`). The `update_cache` argument
 specifies specifies whether the function uses the list of RBA tables supplied
-with the package `rba_tablecache` (`update_cache=FALSE`, the default) or to
+with the package `rba_cachelist` (`update_cache=FALSE`, the default) or to
 update list of tables from the RBA website (`update_cache=TRUE`).
 
 
@@ -755,7 +755,7 @@ rba_a1 <- rba_stats(table_no = "A1")
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(rba_a1))
+head(rba_a1)
 ```
 
 The second example downloads the same tables using the `pattern` argument to
@@ -776,11 +776,11 @@ rba_a1 <- rba_stats(url = a1_tables$url)
 ```
 
 ```{r echo=FALSE}
-knitr::kable(head(rba_a1))
+head(rba_a1)
 ```
 
 Again, the `update_cache` argument specifies whether the function uses the list
-of RBA tables supplied with the package with the package `rba_tablecache` (the
+of RBA tables supplied with the package with the package `rba_cachelist` (the
 default) or to update list of tables from the RBA website. The `rba_stats`
 function also optionally accepts `rba_search` arguments: `fields` and
 `ignore.case`, for informing pattern matching.
@@ -831,7 +831,7 @@ a1_data <- rba_read_tss(downloaded_tables)
 ```
 
 ```{r echo=FALSE, eval=FALSE}
-knitr::kable(head(a1_data))
+head(a1_data)
 ```
 
 

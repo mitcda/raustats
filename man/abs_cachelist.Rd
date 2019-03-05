@@ -4,13 +4,11 @@
 \name{abs_cachelist}
 \alias{abs_cachelist}
 \title{Datasets available through the ABS API}
-\format{TO BE UPDATED -- A data frame containing five columns:
+\format{A data frame containing three columns:
 \itemize{
-\item \code{publication_title} ABS publication title.
-\item \code{catalogue_no} ABS catalogue number.
-\item \code{abs_url} ABS URL.
-\item \code{last_updated} Publication last updated.
-\item \code{type} Publication type -- one of either 'time series', 'panel' or 'summary'.RBA URL 
+\item \code{id} ABS dataset identifier.
+\item \code{agencyID} Source agency identifier (ABS).
+\item \code{name} ABS dataset name.
 }}
 \usage{
 abs_cachelist

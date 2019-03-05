@@ -16,7 +16,7 @@ searches 'table_no' and 'table_name'.}
 \item{ignore.case}{Case senstive pattern match or not.}
 
 \item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
-RBA tables (\code{rba_tablecache}), if TRUE, update the list of available datasets.}
+RBA tables (\code{rba_cachelist}), if TRUE, update the list of available datasets.}
 }
 \value{
 data frame in long format
