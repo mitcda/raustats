@@ -21,7 +21,7 @@ rba_urls <- function()
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \dontrun{
-#'     rba_tablecache <- rba_table_cache();
+#'     rba_cachelist <- rba_table_cache();
 #'   }
 rba_table_cache <- function()
 {
@@ -97,7 +97,7 @@ rba_table_cache <- function()
 #'   searches 'table_no' and 'table_name'.
 #' @param ignore.case Case senstive pattern match or not.
 #' @param update_cache Logical expression, if FALSE (default), use the cached list of available
-#'   RBA tables (\code{rba_tablecache}), if TRUE, update the list of available datasets.
+#'   RBA tables (\code{rba_cachelist}), if TRUE, update the list of available datasets.
 #' @return data frame in long format
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
@@ -110,7 +110,7 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
   if (update_cache) {
     rba_cache <- rba_table_cache();
   } else {
-    rba_cache <- raustats::rba_tablecache;
+    rba_cache <- raustats::rba_cachelist;
   }
   if (any(!fields %in% names(rba_cache)))
     stop(sprintf("Field names: %s not in cache", fields[!fields %in% names(rba_cache)]))
@@ -161,7 +161,7 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
   if (update_cache) {
     rba_cache <- rba_table_cache();
   } else {
-    rba_cache <- raustats::rba_tablecache;
+    rba_cache <- raustats::rba_cachelist;
   }
 
   ## TO DO: Add table_type attribute to vector 'urls'
@@ -223,7 +223,7 @@ rba_file_download <- function(data_url, exdir=tempdir(), update_cache=TRUE)
   if (update_cache) {
     rba_cache <- rba_table_cache();
   } else {
-    rba_cache <- raustats::rba_tablecache;
+    rba_cache <- raustats::rba_cachelist;
   }
 
   ## Check if url is not valid RBA data URL

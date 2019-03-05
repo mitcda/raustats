@@ -200,7 +200,7 @@ available in a specified ABS Catalogue series. The Quick Start illustrated how
 to download all CPI tables. The following example downloads the latest quarterly
 national accounts statistics (ABS Catalogue no. 5206.0):
 
-```{r message=FALSE}
+```{r message=FALSE, results=FALSE}
 ana_q <- abs_cat_stats(cat_no = "5206.0")
 ```
 
@@ -226,7 +226,7 @@ columns:
 
 ```{r echo=FALSE, results=TRUE}
 ## Latest quarterly national accounts
-head(ana_q)
+knitr::kable(head(ana_q))
 ```
 
 The `tables` argument allows users to select the set of catalogue tables to be
@@ -332,7 +332,7 @@ ana_tables <- abs_cat_tables(cat_no="5206.0")
 ```
 
 ```{r echo=FALSE}
-head(ana_tables)
+knitr::kable(head(ana_tables))
 ```
 
 ```{r message=FALSE}
@@ -341,7 +341,7 @@ cpi_tables <- abs_cat_tables(cat_no="6401.0")
 ```
 
 ```{r echo=FALSE}
-head(cpi_tables)
+knitr::kable(head(cpi_tables))
 ```
 
 
@@ -365,7 +365,7 @@ ana_tables <- abs_cat_tables(cat_no="5206.0", releases=c("Sep 2017", "Dec 2017")
 ```
 
 ```{r echo=FALSE}
-head(ana_tables)
+knitr::kable(head(ana_tables))
 ```
 
 And the following example illustrates use of the `abs_cat_tables` to return all
@@ -378,7 +378,7 @@ asgs_files <- abs_cat_tables(cat_no="1270.0.55.001", types="css", include_urls=T
 ```
 
 ```{r echo=FALSE}
-head(asgs_files)
+knitr::kable(head(asgs_files))
 ```
 
 
@@ -400,7 +400,7 @@ supplied URL. It is called inside the `abs_cat_stats` and can be used directly
 to download one or more ABS Catalogue table files. It is most usefully used in
 conjunction with the `abs_cat_tables` function, as follows:
 
-```{r message=FALSE}
+```{r message=FALSE, results=FALSE}
 tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
 print(downloaded_tables)
@@ -444,9 +444,9 @@ The `abs_datasets` function returns a list of all datasets available through
 `include_notes=FALSE`). The following example shows the results with notes
 included.
 
-```{r message=FALSE}
+```{r message=FALSE, results="asis"}
 datasets <- abs_datasets()
-head(datasets)
+knitr::kable(head(datasets))
 ```
 
 #### Cached list of available ABS.Stat datasets `abs_cachelist`
@@ -572,7 +572,7 @@ The following example downloads original  All groups CPI index numbers for each
 of the eight Australian state and territory capital cities and also the average
 for all capital cities.
 
-```{r}
+```{r message=FALSE, results=FALSE}
 cpi <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
                                             INDEX=10001, TSEST=10, FREQUENCY="Q"))
 ```
@@ -587,7 +587,7 @@ The filter conditions are:
   * `FREQUENCY=Q` -- Quarterly observations
 
 ```{r echo=FALSE}
-head(cpi)
+knitr::kable(head(cpi))
 ```
 
 The `filter` argument can also be set equal to "all", in which case the function
@@ -614,16 +614,18 @@ By default, `abs_stats` checks whether the query string length and the estimated
 number of records to be returned and will halt execution if the query breaches
 any of these conditions. Setting the `enforce_api_limits = FALSE` (default:
 `TRUE`) will ignore these checks and submit the query to the
-[ABS.Stat](http://stat.data.abs.gov.au/) API anyway. If the query fails it will
-return an error. For example, the following function call will return an
-error.
+[ABS.Stat](http://stat.data.abs.gov.au/) API anyway---though this is not
+recommended. 
+<!-- If the query fails it will return an error. For example, the following -->
+<!-- function call will return an error. -->
 
 ```{r eval=FALSE}
 cpi <- abs_stats(dataset="CPI", filter="all", enforce_api_limits=FALSE)
-#> lexical error: invalid char in json text.
-#>                                        http://stat.data.abs.gov.au/SDM
-#>                      (right here) ------^
 ```
+<!-- #> lexical error: invalid char in json text. -->
+<!-- #>                                        http://stat.data.abs.gov.au/SDM -->
+<!-- #>                      (right here) ------^ -->
+
 
 Setting the `return_url = TRUE` (default: `FALSE`) will return the RESTful URL
 query string, but does not submit the query to the
@@ -641,7 +643,7 @@ following code block produces the same filter list, specified in the previous
 example, and can subsequently be supplied to the `abs_stats` `filter` argument.
 
 
-```{r}
+```{r message=FALSE, results=FALSE}
 filter_lst <- abs_search(c("Index numbers", "All groups",
                            "Sydney|Melbourne|Brisbane|Adelaide|Perth|Hobart|Darwin|Canberra|capital cities",
                            "Original", "Quarterly"),
@@ -657,7 +659,7 @@ formatted as follows: month -- '2016-M01', quarter -- '2016-Q1', half-year --
 '2016-B2', financial year -- '2016-17'.  The following example returns all CPI
 observations between September 2015 and June 2018.
 
-```{r}
+```{r message=FALSE, results=FALSE}
 cpi <- abs_stats(dataset="CPI", filter=filter_lst,
                  start_date = "2015-Q3", end_date = "2018-Q2")
 ```
@@ -696,7 +698,7 @@ rba_cache <- rba_table_cache()
 ```
 
 ```{r echo=FALSE}
-head(rba_cache)
+knitr::kable(head(rba_cache))
 ```
 
 ### Search available data with `rba_search()`
@@ -748,12 +750,12 @@ The following examples demonstrate typical uses of the function and the various
 function arguments. The first example downloads RBA Statistical Table A1 --
 Liabilities and Assets using `table_no`.
 
-```{r}
+```{r message=FALSE, results=FALSE}
 rba_a1 <- rba_stats(table_no = "A1")
 ```
 
 ```{r echo=FALSE}
-head(rba_a1)
+knitr::kable(head(rba_a1))
 ```
 
 The second example downloads the same tables using the `pattern` argument to
@@ -768,13 +770,13 @@ example presented below first returns a list of all RBA tables matching the
 supplied regular expression ('Liabilities and Assets.+A1') and then uses the
 returned URLs to download each data set.
 
-```{r}
+```{r message=FALSE, results=FALSE}
 a1_tables <- rba_search(pattern = "Liabilities and Assets.+Summary")
 rba_a1 <- rba_stats(url = a1_tables$url)
 ```
 
 ```{r echo=FALSE}
-head(rba_a1)
+knitr::kable(head(rba_a1))
 ```
 
 Again, the `update_cache` argument specifies whether the function uses the list
@@ -813,7 +815,7 @@ statistical table files. It is most usefully used in conjunction with the
 `rba_search` function.
 
 
-```{r message=FALSE}
+```{r message=FALSE, results=FALSE}
 a1_tables <- rba_search(pattern = "Liabilities and Assets.+Summary")
 downloaded_tables <- rba_file_download(a1_tables$url, exdir=tempdir())
 print(downloaded_tables)
@@ -829,7 +831,7 @@ a1_data <- rba_read_tss(downloaded_tables)
 ```
 
 ```{r echo=FALSE, eval=FALSE}
-head(a1_data)
+knitr::kable(head(a1_data))
 ```
 
 
