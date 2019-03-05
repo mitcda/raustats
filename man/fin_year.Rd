@@ -18,8 +18,10 @@ Date object
 Function to create a financial year date object
 }
 \examples{
- x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
- fin_year(x)
+  \dontrun{
+    x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
+   fin_year(x)
+  }
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

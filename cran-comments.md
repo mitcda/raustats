@@ -2,7 +2,7 @@
 
 ## Test environments
 * local Debian Linux 4.18, R 3.5.2 and R-devel
-* local Windows 10, R 3.5.2 and R-devel
+* win-builder (release and devel)
 
 
 ## R CMD check results

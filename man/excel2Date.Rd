@@ -16,6 +16,8 @@ Date object
 Function to convert Excel numeric date to R Date object
 }
 \examples{
- xDate <- excel2Date(x);
+  \dontrun{
+    excel2Date(43445);
+  }
 }
 \keyword{internal}
