@@ -1,26 +1,26 @@
 ### ABS API functions
 
-## @name abs_api_urls
-## @title URL chunks to be used in API calls
-## @description This function is called inside other functions in this package.
-## @return a list with a base url and a url section for formatting the JSON API calls
-## @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @name abs_api_urls
+#' @title URL chunks to be used in API calls
+#' @description This function is called inside other functions in this package.
+#' @return a list with a base url and a url section for formatting the JSON API calls
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 abs_api_urls <- function()
-{
   list(base_url = "http://stat.data.abs.gov.au",
        datastr_path = "restsdmx/sdmx.ashx/GetDataStructure",
        sdmx_json_path = "SDMX-JSON/data")
-}
 
 
-## @name abs_api_call
-## @title Download updated indicator information from the ABS API
-## @description TBC
-## @param path Character vector specifying one or more ABS collections or catalogue numbers to
-##   download.
-## @param args Named list of arguments to supply to call.
-## @return data frame in long format
-## @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @name abs_api_call
+#' @title Download updated indicator information from the ABS API
+#' @description TBC
+#' @param path Character vector specifying one or more ABS collections or catalogue numbers to
+#'   download.
+#' @param args Named list of arguments to supply to call.
+#' @return data frame in long format
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 abs_api_call <- function(path, args)
 {
     if (missing(path))
@@ -35,21 +35,22 @@ abs_api_call <- function(path, args)
 }
 
 
-## @name abs_call_api
-## @title Download specified URL
-## @description TBC
-## @importFrom xml2 read_xml
-## @param url Character vector specifying one or more ABS collections or catalogue numbers to
-##   download.
-## @param args Named list of arguments to supply to call.
-## @return data frame in long format
-## @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @name abs_call_api
+#' @title Download specified URL
+#' @description Submit API call to ABS.Stat
+#' @importFrom xml2 read_xml
+#' @importFrom httr http_error
+#' @param url Character vector specifying one or more ABS collections or catalogue numbers to
+#'   download.
+#' @return data frame in long format
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 abs_call_api <- function(url)
 {
-  if (httr::http_error(url))
+  if (http_error(url))
     stop(sprintf("HTTP error returned by url: %s", url))
   
-  x <- xml2::read_xml(url)
+  x <- read_xml(url)
   return(x);
 }
 
@@ -68,6 +69,7 @@ abs_call_api <- function(url)
 #'     datasets <- abs_datasets()
 #'     datasets <- abs_datasets(include_notes=TRUE)
 #'   }
+#' @keywords internal
 abs_datasets <- function(lang="en", include_notes=FALSE)
 {
   ## Return xml document of ABS indicators
@@ -212,14 +214,7 @@ abs_dimensions <- function(dataset, update_cache=FALSE)
   }
   if (!dataset %in% cache$id)
     stop(sprintf("%s not valid dataset name.", dataset));
-  ## ISS01:  Return metadata
-  ## ISS01:  if (missing(cache)) {
-  ## ISS01:    metadata <- raustats::abs_cachelist[[dataset]];
-  ## ISS01:  } else {
-  ## ISS01:    metadata <- cache[[dataset]];
-  ## ISS01:  }
   metadata <- abs_metadata(dataset)
-
   ## Return data frame of dataset dimensions:
   z <- data.frame(name = attr(metadata, "concept"),
                   type = attr(metadata, "type"));
@@ -265,7 +260,6 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
   } else {
     cache <- raustats::abs_cachelist;
   }
-  ## ISS01: cache_table <- abs_cachelist2table(cache);
   ## 
   if (is.null(dataset)) {
     ## 1. If dataset not specified, search through list of datasets
@@ -286,9 +280,7 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
     ## 2. If dataset specified, search through list of datasets
     if (!dataset %in% cache$id)
       stop(sprintf("Dataset: %s not available on ABS.Stat", dataset))
-    ## ISS01: .cachelist <- cache[[dataset]]
     .cachelist <- abs_metadata(dataset);
-    ## ISS01: names(.cachelist) <- attr(cache[[dataset]], "concept");
     names(.cachelist) <- attr(.cachelist, "concept");
     ## Return list of all dataset dimensions with matching elements
     filter_index <- lapply(.cachelist,
@@ -310,6 +302,7 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #' @title Download data from the ABS API
 #' @description This function downloads the specified ABS data series from the ABS API.
 #' @importFrom xml2 read_xml read_html
+#' @importFrom httr content GET http_error http_status http_type progress status_code
 #' @importFrom jsonlite fromJSON
 #' @importFrom stats setNames
 #' @param dataset Character vector of ABS.Stat dataset codes. These codes correspond to the
@@ -496,8 +489,29 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                            "Filter query in one or more dimensions."),
                      n_filter * n_time));
     }
+
     ## Download data
-    x_json <- fromJSON(url)
+    resp <- GET(url, raustats_ua(), progress())
+    ## Error check URL call
+    if (http_error(resp)) {
+      stop(
+        sprintf(
+          "ABS.Stat API request failed [%s]\n%s\n<%s>", 
+          status_code(resp),
+          http_status(resp)$message,
+          http_status(resp)$reason,
+          ),
+        call. = FALSE
+      )
+    }
+    ## Check content type
+    if (!grepl("draft-sdmx-json", http_type(resp))) {
+      stop("ABS.Stat API did not return SDMX-JSON format", call. = FALSE)
+    }
+
+    ## Convert JSON to list
+    x_json <- fromJSON(content(resp, as="text")) ## , simplifyVector = FALSE)
+    
     ## Convert JSON format to long (tidy) data frame
     x_obs <- x_json$dataSets$observation;
     x_str <- x_json$structure$dimensions$observation;

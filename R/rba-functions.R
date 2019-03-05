@@ -1,9 +1,15 @@
+### Function: rba_urls
+#' @name rba_urls
+#' @title RBA base URL and data paths
+#' @description List containing RBA base URL and data paths
+#' @return list of RBA base URL and data paths
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 rba_urls <- function()
-{
   list(base_url = "https://www.rba.gov.au",
        stats_path = "statistics",
        tables_path = "tables");
-}
+
 
 ### Function: rba_table_cache
 #' @name rba_table_cache
@@ -175,8 +181,10 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
     urls <- as.character(url)
   }
   
-  ## Download RBA statistical data ..
-  z <- lapply(urls, rba_file_download);
+  ## Download RBA statistical data
+  ## Consider adding tryCatch() check to 'rba_file_download' step,
+  ## If error, specify a warning message and replace with NULL.
+  z <- lapply(urls, rba_file_download); 
   ## Read data
   data <- lapply(z, rba_read_tss);
   data <- do.call(rbind, data);
@@ -189,9 +197,8 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
 #' @title Function to download statistics files from the RBA website and store locally
 #' @description This function downloads one or more RBA data files at the specified by URLs and
 #'   saves a local copy.
-#' @importFrom utils download.file
-#' @importFrom httr http_error
-#' @param url Character vector specifying one or more RBA data set URLs.
+#' @importFrom httr GET http_type http_error progress status_code write_disk 
+#' @param data_url Character vector specifying an RBA data set URL.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
 #' @param update_cache Logical expression, if FALSE (default), use the cached list of available
@@ -200,11 +207,17 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
 #'   where files are saved.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @export
-rba_file_download <- function(url, exdir=tempdir(), update_cache=TRUE) {
-  if(!dir.exists(exdir))
-    dir.create(exdir)
-  url <- as.character(url)
-  local_filename <- basename(url);
+rba_file_download <- function(data_url, exdir=tempdir(), update_cache=TRUE)
+{
+  if (FALSE) {
+    ## -- UP TO HERE --
+    exdir <- tempdir()
+    data_url <- head(rba_table_cache()$url, 1);
+    xx <- rba_file_download(rba_url);
+  }
+  if (!dir.exists(exdir))  dir.create(exdir)
+  data_url <- as.character(data_url)
+  local_filename <- basename(data_url);
 
   ## Update RBA table list
   if (update_cache) {
@@ -213,15 +226,32 @@ rba_file_download <- function(url, exdir=tempdir(), update_cache=TRUE) {
     rba_cache <- raustats::rba_tablecache;
   }
 
-  ## Check if any url are not ABS data URLs
-  if (!url %in% rba_cache$url)
-    stop(sprintf("Invalid RBA url: %s", url));
-  ## Check if url accessible
-  if (http_error(url))
-    stop(sprintf("url: %s not accessible", url));
+  ## Check if url is not valid RBA data URL
+  if (!data_url %in% rba_cache$url)
+    stop(sprintf("Invalid RBA url: %s", data_url));
   ## -- Download files --
-  mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
-         url, file.path(exdir, local_filename));
+  cat(sprintf("Downloading: %s", local_filename));
+  resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
+              raustats_ua(), progress());
+  http_type(resp)
+  ## File download validation code based on:
+  ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
+  if (http_error(resp)) {
+    stop(
+      sprintf(
+        "RBA data file request failed (Error code: %s)\nInvalid URL: %s", 
+        status_code(resp),
+        data_url
+      ),
+      call. = FALSE
+    )
+  }
+
+  ##  RBA website returns: content-type: application/octet-stream
+  ## if (!http_type(resp) %in% c("text/csv", "application/vnd.ms-excel")) {
+  ##   stop("RBA file request did not return an Excel or CSV file", call. = FALSE)
+  ## }
+
   ## Return results
   return(file.path(exdir, local_filename));
 }

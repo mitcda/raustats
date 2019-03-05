@@ -4,10 +4,10 @@
 \alias{abs_cat_download}
 \title{Function to download files from the ABS website and store locally}
 \usage{
-abs_cat_download(data_urls, exdir = tempdir())
+abs_cat_download(data_url, exdir = tempdir())
 }
 \arguments{
-\item{data_urls}{Character vector specifying one or more ABS data URLs.}
+\item{data_url}{Character vector specifying an ABS data URLs.}
 
 \item{exdir}{Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 created if it doesn't exist.}
@@ -17,7 +17,7 @@ Downloads data from the ABS website and returns a character vector listing the l
   where files are saved.
 }
 \description{
-This function downloads the
+Gets files from ABS website specified by URL
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

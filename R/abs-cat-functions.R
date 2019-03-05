@@ -170,12 +170,12 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                 ## The following nested apply functions, exploits this structure to extract the
                 ## list of available publication types and associated links.
                 all_nodes <- lapply(sapply(ht, function(x) html_nodes(x, "tr")),
-                                function(x)
-                                  c(html_text(html_nodes(x, "td")),
-                                    ## html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
-                                    paste0(abs_urls()$base_url,
-                                           html_attr(html_nodes(html_nodes(x, "td"), "a"), "href"))
-                                    ));
+                                    function(x)
+                                      c(html_text(html_nodes(x, "td")),
+                                        ## html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
+                                        paste0(abs_urls()$base_url,
+                                               html_attr(html_nodes(html_nodes(x, "td"), "a"), "href"))
+                                        ));
                 nodes <- all_nodes[unlist(lapply(all_nodes,
                                                  function(x) any(grepl(sprintf("(%s)",
                                                                                paste(types, collapse="|")),
@@ -230,38 +230,55 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 
 #' @name abs_cat_download
 #' @title Function to download files from the ABS website and store locally
-#' @description This function downloads the 
-#' @importFrom utils download.file unzip
-#' @importFrom httr http_error
-#' @param data_urls Character vector specifying one or more ABS data URLs.
+#' @description Gets files from ABS website specified by URL
+#' @importFrom httr GET http_type http_error progress status_code write_disk 
+#' @param data_url Character vector specifying an ABS data URLs.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
 #' @return Downloads data from the ABS website and returns a character vector listing the location
 #'   where files are saved.
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
-abs_cat_download <- function(data_urls, exdir=tempdir()) {
-  if(!dir.exists(exdir))
-    dir.create(exdir)
-  local_filenames <- abs_local_filename(data_urls);
+abs_cat_download <- function(data_url, exdir=tempdir()) {
+  if (FALSE) {
+    exdir <- tempdir()
+    abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
+    data_url <- head(abs_tables_5206_url$path_1, 1)
+    xx <- abs_cat_download(data_url);
+  }
+  if (!dir.exists(exdir)) dir.create(exdir);
+  local_filename <- abs_local_filename(data_url);
   ## Check if any data_urls are not ABS data URLs
-  bool_abs_urls <- sapply(data_urls,
-                          function(x) grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
-                                            x, ignore.case=TRUE))
-  if (any(!bool_abs_urls))
-    stop(sprintf("Following url(s) are not valid ABS urls: %s",
-                 paste(data_urls[!bool_abs_urls], collapse=", ")));
+  if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
+             data_url, ignore.case=TRUE))	
+    stop(sprintf("Invalid ABS url: %s", data_url));
   ## Check if any data_urls are not accessible
-  if (any(sapply(data_urls, http_error)))
-    stop(sprintf("One or more url(s) not accessible: %s",
-                 paste(data_urls[sapply(data_urls, http_error)], collapse=", ")));
+  ## if (any(sapply(data_urls, http_error)))
+  ##   stop(sprintf("One or more url(s) not accessible: %s",
+  ##                paste(data_urls[sapply(data_urls, http_error)], collapse=", ")));
   
   ## -- Download files --
-  mapply(function(x, y) download.file(x, y, method="auto", mode="wb"),
-         data_urls,
-         file.path(exdir, local_filenames));
+  cat(sprintf("Downloading: %s", local_filename));
+  resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
+              raustats_ua(), progress());
+  ## File download validation code based on:
+  ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
+  if (http_error(resp)) {
+    stop(
+      sprintf(
+        "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
+        status_code(resp),
+        data_url
+      ),
+      call. = FALSE
+    )
+  }
+  ## Check content-type is compliant
+  if (!http_type(resp) %in% c("application/x-zip", "application/vnd.ms-excel")) {
+    stop("ABS file request did not return Excel or Zip file", call. = FALSE)
+  }
   ## Return results
-  return(file.path(exdir, local_filenames));
+  return(file.path(exdir, local_filename));
 }
 
 
@@ -278,16 +295,13 @@ abs_local_filename <- function(url)
           sub("^.+&(.+)\\.(zip|xlsx*)&.+$", "\\1", url),
           sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", url),
           sub("^.+&(.+)\\.(zip|xlsx*)&.+$", "\\2", url));
-          ## sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\1", url),
-          ## sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", url),
-          ## sub("^.+&(\\w+)\\.(zip|xlsx*).+$", "\\2", url));
 }
 
 
 #' @name abs_cat_unzip
 #' @title Uncompress locally-stored ABS Catalogue data file archives
 #' @description Function to uncompress locally-stored ABS Catalogue data file archives
-#' @importFrom utils download.file unzip zip
+#' @importFrom utils unzip zip
 #' @param files One or more local zip files.
 #' @param exdir Target directory for extracted archive files. Directory is created if it doesn't
 #'   exist. If missing, creates a new subdirectory in \code{tempdir()} using the respective zip

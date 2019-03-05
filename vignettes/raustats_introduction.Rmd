@@ -706,8 +706,10 @@ matching a regular expression supplied to `pattern`.  The `fields` argument
 specifies the fields in the RBA table cache to search---by default the function
 searches the `table_code` and `table_name` fields only. The `ignore.case`
 argument allows for case sensitive regular expression matching---the default is
-case insensitive matching (`ignore.case=TRUE`). The `cache` argument specifies
-the RBA table cache to be used. If omitted, `rba_tablecache` is used.
+case insensitive matching (`ignore.case=TRUE`). The `update_cache` argument
+specifies specifies whether the function uses the list of RBA tables supplied
+with the package `rba_tablecache` (`update_cache=FALSE`, the default) or to
+update list of tables from the RBA website (`update_cache=TRUE`).
 
 
 ```{r}
@@ -749,6 +751,7 @@ Liabilities and Assets using `table_no`.
 ```{r}
 rba_a1 <- rba_stats(table_no = "A1")
 ```
+
 ```{r echo=FALSE}
 head(rba_a1)
 ```
@@ -769,14 +772,16 @@ returned URLs to download each data set.
 a1_tables <- rba_search(pattern = "Liabilities and Assets.+Summary")
 rba_a1 <- rba_stats(url = a1_tables$url)
 ```
+
 ```{r echo=FALSE}
 head(rba_a1)
 ```
 
-Again, the `cache` argument specifies the RBA table cache to be used---if
-omitted, `rba_tablecache` is used. The `rba_stats` function also optionally
-accepts `rba_search` arguments: `fields` and `ignore.case`, for informing
-pattern matching.
+Again, the `update_cache` argument specifies whether the function uses the list
+of RBA tables supplied with the package with the package `rba_tablecache` (the
+default) or to update list of tables from the RBA website. The `rba_stats`
+function also optionally accepts `rba_search` arguments: `fields` and
+`ignore.case`, for informing pattern matching.
 
 At present, the `rba_stats` function only handles [Statistical
 tables](https://www.rba.gov.au/statistics/tables/), which have a consistently
@@ -786,7 +791,6 @@ tables](https://www.rba.gov.au/statistics/historical-data.html) and
 [Discontinued data
 tables](https://www.rba.gov.au/statistics/discontinued-data.html) are in
 progress.
-
 
 
 ### Other RBA helper functions
