@@ -1,5 +1,4 @@
 ## httr settings
-
 #' @name raustats_ua
 #' @title raustats package user agent
 #' @description This function specifies the package user agent, and is used inside

@@ -28,7 +28,7 @@ Returns a data frame listing the data collection tables and links.
 Return list of tables from specified ABS catalogue number
 }
 \examples{
-  \dontrun{
+  \donttest{
     ## List latest available quarterly National Accounts tables
     ana_tables <- abs_cat_tables("5206.0", releases="Latest");
     ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);

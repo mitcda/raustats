@@ -17,12 +17,6 @@ Date object
 \description{
 Function to create a financial year date object
 }
-\examples{
-  \dontrun{
-    x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-   fin_year(x)
-  }
-}
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>
 }

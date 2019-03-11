@@ -9,7 +9,8 @@ quarter2Date(x, base.month = "Mar", format = "\%Y-Q\%q")
 \arguments{
 \item{x}{Year-quarter date format}
 
-\item{base.month}{Specifies base month for first quarter. Can be a scalar: 1,2,3 or character object: Jan,Feb,Mar.}
+\item{base.month}{Specifies base month for first quarter. Can be a scalar: 1,2,3 or character
+object: Jan, Feb, Mar.}
 
 \item{format}{The input date format. Default is "\%Y-Q\%q".}
 }
@@ -18,13 +19,6 @@ This function returns a Date format object.
 }
 \description{
 Function to convert dates formatted as year-quarter to date-format objects
-}
-\examples{
-  \dontrun{
-    x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
-    quarter2Date(x);
-    quarter2Date(x, base.month="Jan");
-  }
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

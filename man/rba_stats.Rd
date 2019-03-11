@@ -25,11 +25,11 @@ data frame in long format
 Function to download and return specified RBA time series data.
 }
 \examples{
-  \dontrun{
-    ## Example - selecting by table_no
+  \donttest{
+    ## Example - Selecting by table_no
     x <- rba_stats("A1");
 
-    ## Example - selecting by pattern
+    ## Example - Selecting by pattern
     x <- rba_stats(pattern="Liabilities and Assets");
   }
 }

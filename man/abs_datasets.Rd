@@ -18,7 +18,7 @@ data frame in long format
 TBC
 }
 \examples{
-  \dontrun{
+  \donttest{
     datasets <- abs_datasets()
     datasets <- abs_datasets(include_notes=TRUE)
   }
@@ -26,4 +26,3 @@ TBC
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>
 }
-\keyword{internal}

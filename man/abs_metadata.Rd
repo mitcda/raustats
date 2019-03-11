@@ -18,7 +18,7 @@ data frame in long format
 TBC
 }
 \examples{
-  \dontrun{
+  \donttest{
     datasets <- abs_datasets();
     x <- abs_metadata("CPI");
     x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));

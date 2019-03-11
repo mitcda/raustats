@@ -21,7 +21,7 @@ a data frame with available dataset dimensions.
 This function returns the available dimeninsions for a specified ABS API dataset.
 }
 \examples{
-  \dontrun{
+  \donttest{
     ## CPI - Consumer Price Index
     x <- abs_dimensions("CPI");
     str(x)

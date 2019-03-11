@@ -39,7 +39,7 @@
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     z <- abs_cache(lang='en', progress=5)
 #'   }
 abs_cache <- function(lang="en", progress=10)
@@ -88,7 +88,7 @@ abs_cache <- function(lang="en", progress=10)
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @note This is an internal library function and is not exported.
 #' @examples
-#'  \dontrun{
+#'  \donttest{
 #'    abs_ct <- abs_cachelist2table(raustats::abs_cachelist)
 #'  }
 abs_cachelist2table <- function(cache)

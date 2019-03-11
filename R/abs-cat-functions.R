@@ -1,6 +1,6 @@
 abs_urls <- function()
 {
-  list(base_url = "http://www.abs.gov.au",
+  list(base_url = "https://www.abs.gov.au",
        ausstats_path = "ausstats/abs@.nsf/mf",
        downloads_regex = "Downloads",
        releases_regex = "Past.*Future.*Releases");
@@ -26,7 +26,7 @@ abs_urls <- function()
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     ## Download quarterly Australian National Accounts, Tables 1 & 2 
 #'     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
 #'
@@ -101,7 +101,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     ## List latest available quarterly National Accounts tables
 #'     ana_tables <- abs_cat_tables("5206.0", releases="Latest");
 #'     ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
@@ -352,7 +352,7 @@ abs_cat_unzip <- function(files, exdir) {
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     ## Read specified ABS Excel time series files
 #'     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
 #'     downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())

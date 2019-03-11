@@ -29,7 +29,7 @@ data frame in long format
 TBC
 }
 \examples{
-  \dontrun{
+  \donttest{
     ## Download quarterly Australian National Accounts, Tables 1 & 2 
     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
 

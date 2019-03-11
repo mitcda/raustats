@@ -20,7 +20,7 @@ rba_urls <- function()
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     rba_cachelist <- rba_table_cache();
 #'   }
 rba_table_cache <- function()
@@ -103,7 +103,8 @@ rba_table_cache <- function()
 #' @export
 #' @examples
 #'  rba_datasets <- rba_search(pattern = "Liabilities and Assets");
-rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=TRUE, update_cache=FALSE)
+rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=TRUE,
+                       update_cache=FALSE)
 {
   if (missing(pattern))
     stop("No pattern supplied")
@@ -138,11 +139,11 @@ rba_search <- function(pattern, fields=c("table_no", "table_name"), ignore.case=
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
-#'     ## Example - selecting by table_no
+#'   \donttest{
+#'     ## Example - Selecting by table_no
 #'     x <- rba_stats("A1");
 #'
-#'     ## Example - selecting by pattern
+#'     ## Example - Selecting by pattern
 #'     x <- rba_stats(pattern="Liabilities and Assets");
 #'   }
 rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
@@ -172,7 +173,7 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
   }
 
   if (!missing(pattern))
-    urls <- as.character(rba_search(pattern, update_cache=rba_cache, ...)$url)
+    urls <- as.character(rba_search(pattern, update_cache=update_cache, ...)$url)
   
   if (!missing(url)) {
     if (!any(url %in% rba_cache$url))

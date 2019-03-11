@@ -13,7 +13,7 @@ data frame in long format
 Function to return an updated list of data tables available from the RBA website.
 }
 \examples{
-  \dontrun{
+  \donttest{
     rba_cachelist <- rba_table_cache();
   }
 }

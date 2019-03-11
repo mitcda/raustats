@@ -15,9 +15,4 @@ Date object
 \description{
 Function to convert Excel numeric date to R Date object
 }
-\examples{
-  \dontrun{
-    excel2Date(43445);
-  }
-}
 \keyword{internal}

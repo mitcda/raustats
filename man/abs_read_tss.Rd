@@ -19,7 +19,7 @@ data frame in long format
 This function extracts time series data from ABS data files.
 }
 \examples{
-  \dontrun{
+  \donttest{
     ## Read specified ABS Excel time series files
     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
     downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())

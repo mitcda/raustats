@@ -65,11 +65,10 @@ abs_call_api <- function(url)
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     datasets <- abs_datasets()
 #'     datasets <- abs_datasets(include_notes=TRUE)
 #'   }
-#' @keywords internal
 abs_datasets <- function(lang="en", include_notes=FALSE)
 {
   ## Return xml document of ABS indicators
@@ -119,7 +118,7 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     datasets <- abs_datasets();
 #'     x <- abs_metadata("CPI");
 #'     x <- abs_metadata(grep("cpi", datasets$id, ignore.case=TRUE, value=TRUE));
@@ -194,7 +193,7 @@ abs_metadata <- function(id, lang="en")
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     ## CPI - Consumer Price Index
 #'     x <- abs_dimensions("CPI");
 #'     str(x)
@@ -338,6 +337,8 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #'     \item NoData: returns the groups and series, including attributes and annotations, without observations (all values = NA)
 #'   }
 #' 
+## #' @param simplify Logical. If \code{TRUE}, the function returns data in a data frame. If
+## #'   \code{FALSE}, function returns result in raw sdmx-json format.
 #' @param enforce_api_limits If \code{TRUE} (the default), the function enforces the ABS.Stat
 #'   RESTful API limits and will not submit the query if the URL string length exceeds 1000
 #'   characters or the query would return more than 1 million records. If \code{FALSE}, the function
@@ -365,7 +366,7 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'   \dontrun{
+#'   \donttest{
 #'     x <- abs_stats(dataset="CPI", filter="all", return_url=TRUE);
 #'     x <- abs_stats(dataset="CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
 #'                                               INDEX=10001, TSEST=10, FREQUENCY="Q"));
@@ -378,6 +379,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
                       ## remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
+                      ## simplify=TRUE,
                       enforce_api_limits=TRUE, return_url=FALSE, update_cache=FALSE)
 {
   ## Check dataset present and valid 
@@ -491,6 +493,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
     }
 
     ## Download data
+    ## cat(sprintf("API query submitted: %s...\n", substr(url, 30)));
     resp <- GET(url, raustats_ua(), progress())
     ## Error check URL call
     if (http_error(resp)) {
@@ -509,7 +512,12 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
       stop("ABS.Stat API did not return SDMX-JSON format", call. = FALSE)
     }
 
-    ## Convert JSON to list
+    ## if (!simplify) {
+    ##   ## Return results as sdmx-json text format
+    ##   return(content(resp, as="text"))
+    ## } else {
+    ## cat("Converting query output to data frame ... ");
+        ## Convert JSON to list
     x_json <- fromJSON(content(resp, as="text")) ## , simplifyVector = FALSE)
     
     ## Convert JSON format to long (tidy) data frame
@@ -545,7 +553,9 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
     y$dataset_name <- x_json$structure$name;
     ## Re-index rows
     row.names(y) <- seq_len(nrow(y));
+    ## cat("completed.\n");
     ## Return data
     return(y);
+    ## }
   }
 }
