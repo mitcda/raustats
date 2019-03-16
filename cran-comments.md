@@ -9,7 +9,7 @@ This is a resubmission.  In this version I have:
 
 * Replaced all instances of \dontrun{} with \donttest{} in Rd-files.
 
-* Omitted examples for unexported functions.
+* Removed examples for all unexported functions.
 
 
 ## Test environments

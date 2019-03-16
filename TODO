@@ -1,11 +1,17 @@
-#' # TO DO
+-*- mode: markdown -*- 
+
+# TO DO
 
 * The ABS Engineering Construction tables seem to require that the
   sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [DONE 15/09/2018]
 
 ## ABS API functions
 
-* Simplify abs_cachetable to include only a list of datasets and call
+* abs_stats function
+  - Add `simplify` argument to `abs_stats` function to provide option to return
+    raw sdmx-json format output
+
+* Simplify `abs_cachetable` to include only a list of datasets and call
   abs_metadata each time detailed dataset information is required.
 
 * Wrap all url calls inside a `try`/`catch`
@@ -32,7 +38,7 @@
   - Added exdir argument - [DONE 2018-11-01]
 
 * Candidate additional arguments for abs_stats
-#' @param include_lastUpdated = FALSEtables A character vector of regular expressions denoting
+#' `@param include_lastUpdated = FALSE` A character vector of regular expressions denoting
 #'   tables to download. The default ('All') downloads all time series spreadsheet tables for each
 #'   specified catalogue. Use a list to specify different table sets for each specified ABS
 #'   catalogue number.
@@ -42,5 +48,3 @@
 #' Warning messages:
 #' 1: In eval(substitute(list(...)), `_data`, parent.frame()) :
 #' NAs introduced by coercion
-
-
