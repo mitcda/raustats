@@ -2,7 +2,7 @@
 % Please edit documentation in R/abs-api-functions.R
 \name{abs_datasets}
 \alias{abs_datasets}
-\title{Download updated data series information from the ABS API}
+\title{Download ABS.Stat datasets}
 \usage{
 abs_datasets(lang = "en", include_notes = FALSE)
 }
@@ -15,7 +15,7 @@ abs_datasets(lang = "en", include_notes = FALSE)
 data frame in long format
 }
 \description{
-TBC
+This function returns a list of all datasets available from ABS.Stat.
 }
 \examples{
   \donttest{

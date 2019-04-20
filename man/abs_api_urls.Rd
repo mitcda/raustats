@@ -2,7 +2,7 @@
 % Please edit documentation in R/abs-api-functions.R
 \name{abs_api_urls}
 \alias{abs_api_urls}
-\title{URL chunks to be used in API calls}
+\title{ABS URL addresses and paths used in ABS.Stat API calls}
 \usage{
 abs_api_urls()
 }
@@ -10,7 +10,8 @@ abs_api_urls()
 a list with a base url and a url section for formatting the JSON API calls
 }
 \description{
-This function is called inside other functions in this package.
+This function returns a list of URLs and data paths used to construction ABS.Stat
+  API call. It is used in other functions in this package and need not be called directly.
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

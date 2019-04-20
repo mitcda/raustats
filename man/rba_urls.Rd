@@ -10,7 +10,8 @@ rba_urls()
 list of RBA base URL and data paths
 }
 \description{
-List containing RBA base URL and data paths
+This function returns a list of URLs and data paths used to construct RBA data
+  access calls. It is used in other functions in this package and need not be called directly.
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

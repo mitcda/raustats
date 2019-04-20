@@ -2,7 +2,7 @@
 % Please edit documentation in R/abs-api-functions.R
 \name{abs_api_call}
 \alias{abs_api_call}
-\title{Download updated indicator information from the ABS API}
+\title{Create ABS.Stat API URL call}
 \usage{
 abs_api_call(path, args)
 }
@@ -16,7 +16,7 @@ download.}
 data frame in long format
 }
 \description{
-TBC
+The function created the ABS.Stat API call URL
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

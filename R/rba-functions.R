@@ -1,7 +1,8 @@
 ### Function: rba_urls
 #' @name rba_urls
 #' @title RBA base URL and data paths
-#' @description List containing RBA base URL and data paths
+#' @description This function returns a list of URLs and data paths used to construct RBA data
+#'   access calls. It is used in other functions in this package and need not be called directly.
 #' @return list of RBA base URL and data paths
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal

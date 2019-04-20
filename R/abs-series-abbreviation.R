@@ -1,7 +1,7 @@
 ## =========================================================================
 ## Filename:    
 ## Created: 
-## Updated:     <2018-11-19 09:42:28 david at grover>
+## Updated:     <2019-04-03 14:40:55 david at grover>
 ## Author:      
 ## Description: 
 ##              
@@ -156,6 +156,50 @@
 ##                                paste0(series_abb, "_ix"), series_abb)) %>%
 ##     mutate(series_abb = ifelse(grepl("proportion", unit, ignore.case=TRUE),
 ##                                paste0(series_abb, "_rt"), series_abb))
+## }
+
+
+
+
+## ppi_series_abb <- function(x) {
+##   x %>%
+##     ## Publication abbreviations
+##     mutate(series_abb = ifelse(grepl("^producer price indexes", publication_title, ignore.case=TRUE),
+##                                "ppi", "")) %>%
+##     ## Sector abbreviations
+##     mutate(series_abb = ifelse(grepl("transport.+warehousing", table_title, ignore.case=TRUE),
+##                                paste0(series_abb, "_tr"), series_abb)) %>%
+##     ## Series abbreviations
+##     mutate(series_abb =
+##              paste0(series_abb,
+##                     case_when(grepl("road freight", data_item_description, ignore.case=TRUE) ~ "_rdfrt",
+##                               grepl("urban bus", data_item_description, ignore.case=TRUE) ~ "_ubus",
+##                               grepl("taxi", data_item_description, ignore.case=TRUE) ~ "_taxi",
+##                               grepl("rail freight", data_item_description, ignore.case=TRUE) ~ "_rlfrt",
+##                               grepl("water freight", data_item_description, ignore.case=TRUE) ~ "_wtfrt",
+##                               grepl("pipeline", data_item_description, ignore.case=TRUE) ~ "_pipe",
+##                               grepl("postal and courier", data_item_description, ignore.case=TRUE) ~ "_pstl",
+##                               grepl("courier pick-up", data_item_description, ignore.case=TRUE) ~ "_cour",
+##                               grepl("water transport support", data_item_description, ignore.case=TRUE) ~ "_wtspt",
+##                               grepl("stevedoring", data_item_description, ignore.case=TRUE) ~ "_wtstv",
+##                               grepl("port and water transport", data_item_description, ignore.case=TRUE) ~ "_wtprt",
+##                               grepl("other water", data_item_description, ignore.case=TRUE) ~ "_wtoth",
+##                               grepl("airport operations", data_item_description, ignore.case=TRUE) ~ "_arprt",
+##                               grepl("customs agency", data_item_description, ignore.case=TRUE) ~ "_svcust",
+##                               grepl("warehousing and storage", data_item_description, ignore.case=TRUE) ~ "_whgen",
+##                               grepl("grain storage", data_item_description, ignore.case=TRUE) ~ "_whgrn",
+##                               grepl("other warehousing", data_item_description, ignore.case=TRUE) ~ "_whoth",
+##                               TRUE ~ ""))
+##            ) %>%
+##     ## Percentage change/ratio/index
+##     mutate(series_abb =
+##              paste0(series_abb,
+##                     case_when(grepl("percent", unit, ignore.case=TRUE) ~ "_pc",
+##                               grepl("\\$.*million", unit, ignore.case=TRUE) ~ "_aud",
+##                               grepl("index", unit, ignore.case=TRUE) ~ "_ix",
+##                               grepl("proportion", unit, ignore.case=TRUE) ~ "_rt",
+##                               TRUE ~ ""))
+##            );
 ## }
 
 

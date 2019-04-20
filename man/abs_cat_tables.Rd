@@ -25,7 +25,7 @@ include data file URLs.}
 Returns a data frame listing the data collection tables and links.
 }
 \description{
-Return list of tables from specified ABS catalogue number
+Return list of data tables available from specified ABS catalogue number.
 }
 \examples{
   \donttest{

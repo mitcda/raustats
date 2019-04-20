@@ -1,8 +1,9 @@
 ### ABS API functions
 
 #' @name abs_api_urls
-#' @title URL chunks to be used in API calls
-#' @description This function is called inside other functions in this package.
+#' @title ABS URL addresses and paths used in ABS.Stat API calls
+#' @description This function returns a list of URLs and data paths used to construction ABS.Stat
+#'   API call. It is used in other functions in this package and need not be called directly.
 #' @return a list with a base url and a url section for formatting the JSON API calls
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
@@ -13,8 +14,8 @@ abs_api_urls <- function()
 
 
 #' @name abs_api_call
-#' @title Download updated indicator information from the ABS API
-#' @description TBC
+#' @title Create ABS.Stat API URL call
+#' @description The function created the ABS.Stat API call URL
 #' @param path Character vector specifying one or more ABS collections or catalogue numbers to
 #'   download.
 #' @param args Named list of arguments to supply to call.
@@ -36,8 +37,8 @@ abs_api_call <- function(path, args)
 
 
 #' @name abs_call_api
-#' @title Download specified URL
-#' @description Submit API call to ABS.Stat
+#' @title Submit API call to ABS.Stat
+#' @description This function submits the specified API call to ABS.Stat
 #' @importFrom xml2 read_xml
 #' @importFrom httr http_error
 #' @param url Character vector specifying one or more ABS collections or catalogue numbers to
@@ -56,8 +57,8 @@ abs_call_api <- function(url)
 
 
 #' @name abs_datasets
-#' @title Download updated data series information from the ABS API
-#' @description TBC
+#' @title Download ABS.Stat datasets
+#' @description This function returns a list of all datasets available from ABS.Stat.
 #' @importFrom xml2 as_list read_xml read_html xml_name xml_find_all
 #' @param lang Preferred language (default 'en' - English).
 #' @param include_notes Include ABS annotation information for each series.
@@ -109,9 +110,11 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
 
 
 #' @name abs_metadata
-#' @title Download updated data series information from the ABS API
-#' @description TBC
-#' @importFrom xml2 xml_name xml_children xml_child xml_length xml_attrs xml_attr xml_ns_strip xml_text xml_find_all xml_parent
+#' @title Download dataset metadata from the ABS API
+#' @description This function queries and returns all metadata associated with a specified dataset
+#'   from ABS.Stat.
+#' @importFrom xml2 xml_name xml_children xml_child xml_length xml_attrs xml_attr xml_ns_strip
+#'   xml_text xml_find_all xml_parent
 #' @param id ABS dataset ID.
 #' @param lang Preferred language (default 'en' - English).
 #' @return data frame in long format
@@ -299,7 +302,7 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 
 #' @name abs_stats
 #' @title Download data from the ABS API
-#' @description This function downloads the specified ABS data series from the ABS API.
+#' @description This function queries and returns data for a specified ABS dataset from the ABS API.
 #' @importFrom xml2 read_xml read_html
 #' @importFrom httr content GET http_error http_status http_type progress status_code
 #' @importFrom jsonlite fromJSON
@@ -317,13 +320,11 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #'   data -- '2016-17'.
 #' @param end_date Numeric or character (refer to \code{startdate}).
 #' @param lang Language in which to return the results. If \code{lang} is unspecified, english is
-#'   the default.
-## @param remove_na If \code{TRUE}, remove blank or NA observations. If \code{FALSE}, no blank or NA
-##   values are removed from the return.
-## @param include_unit If \code{TRUE}, the column unit is not removed from the return. If
-##   \code{FALSE}, this column is removed.
-## @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from the return. If
-##   \code{FALSE}, this column is removed.
+#'   the default.  ## @param remove_na If \code{TRUE}, remove blank or NA observations. If
+#'   \code{FALSE}, no blank or NA ## values are removed from the return.  ## @param include_unit If
+#'   \code{TRUE}, the column unit is not removed from the return. If ## \code{FALSE}, this column is
+#'   removed.  ## @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from
+#'   the return. If ## \code{FALSE}, this column is removed.
 #' @param dimensionAtObservation The identifier of the dimension to be attached at the observation
 #'   level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
 #'   AllDimensions results in a flat list of observations without any grouping.

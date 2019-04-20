@@ -17,7 +17,7 @@ files (specified in \code{files}.}
 Returns a character vector listing the names of all files extracted.
 }
 \description{
-Function to uncompress locally-stored ABS Catalogue data file archives
+Function to uncompress locally-stored ABS Catalogue data file archives.
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

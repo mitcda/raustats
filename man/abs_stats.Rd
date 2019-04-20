@@ -28,7 +28,11 @@ data -- '2016-17'.}
 \item{end_date}{Numeric or character (refer to \code{startdate}).}
 
 \item{lang}{Language in which to return the results. If \code{lang} is unspecified, english is
-the default.}
+the default.  ## @param remove_na If \code{TRUE}, remove blank or NA observations. If
+\code{FALSE}, no blank or NA ## values are removed from the return.  ## @param include_unit If
+\code{TRUE}, the column unit is not removed from the return. If ## \code{FALSE}, this column is
+removed.  ## @param include_obsStatus If \code{TRUE}, the column obsStatus is not removed from
+the return. If ## \code{FALSE}, this column is removed.}
 
 \item{dimensionAtObservation}{The identifier of the dimension to be attached at the observation
 level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimension'.
@@ -59,7 +63,7 @@ ABS.Stat datasets, if TRUE, update the list of available datasets.}
 Returns a data frame of the selected series from the specified ABS dataset.
 }
 \description{
-This function downloads the specified ABS data series from the ABS API.
+This function queries and returns data for a specified ABS dataset from the ABS API.
 }
 \note{
 The data query submitted by this function uses the ABS RESTful API based on the SDMX-JSON

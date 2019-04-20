@@ -2,21 +2,35 @@
 % Please edit documentation in R/abs-cat-functions.R
 \name{abs_read_tss}
 \alias{abs_read_tss}
-\title{Read ABS time series data file(s)}
+\alias{abs_read_tss_}
+\title{Extract data from an ABS time series data file}
 \usage{
-abs_read_tss(files, type = "tss")
+abs_read_tss(files, type = "tss", na.rm = na.rm)
+
+abs_read_tss_(file, type = "tss", na.rm = na.rm)
 }
 \arguments{
 \item{files}{Names of one or more ABS data files}
 
-\item{type}{One of either 'tss'  -- ABS Time Series  Spreadsheet (the Default) or  'css' -- Data
+\item{type}{One of either 'tss' -- ABS Time Series Spreadsheet (the Default) or 'css' -- Data
 Cube.R}
+
+\item{na.rm}{logical. If \code{TRUE} (default), remove observations containing missing values.}
+
+\item{files}{Names of one or more ABS data files}
+
+\item{type}{One of either 'tss' -- ABS Time Series Spreadsheet (the Default) or 'css' -- Data
+Cube.R}
+
+\item{na.rm}{logical. If \code{TRUE} (default), remove observations containing missing values.}
 }
 \value{
 data frame in long format
 }
 \description{
 This function extracts time series data from ABS data files.
+
+This is the internal function that extracts time series data from ABS data files.
 }
 \examples{
   \donttest{
@@ -29,4 +43,7 @@ This function extracts time series data from ABS data files.
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>
+
+David Mitchell <david.pk.mitchell@gmail.com>
 }
+\keyword{internal}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/abs-api-functions.R
 \name{abs_metadata}
 \alias{abs_metadata}
-\title{Download updated data series information from the ABS API}
+\title{Download dataset metadata from the ABS API}
 \usage{
 abs_metadata(id, lang = "en")
 }
@@ -15,7 +15,8 @@ abs_metadata(id, lang = "en")
 data frame in long format
 }
 \description{
-TBC
+This function queries and returns all metadata associated with a specified dataset
+  from ABS.Stat.
 }
 \examples{
   \donttest{

@@ -99,7 +99,7 @@ library(raustats)
 ## Downloading ABS Catalogue Statistics
 
 The `abs_cat_stats` function downloads ABS statistics by ABS Catalogue
-Number. For example, the latest Consumer Price Index (CPI) data set (ABS
+number. For example, the latest Consumer Price Index (CPI) data set (ABS
 Catalogue no. 6401.0) can be downloaded with the following call:
 
 ```{r eval=FALSE}
@@ -343,7 +343,6 @@ cpi_tables <- abs_cat_tables(cat_no="6401.0")
 ```{r echo=FALSE}
 head(cpi_tables)
 ```
-
 
 The `abs_cat_tables` also has three additional arguments: `releases`, `types`
 and `include_urls`.  The `releases` argument returns the list of downloadable

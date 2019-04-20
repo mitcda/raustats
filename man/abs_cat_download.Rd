@@ -17,7 +17,8 @@ Downloads data from the ABS website and returns a character vector listing the l
   where files are saved.
 }
 \description{
-Gets files from ABS website specified by URL
+Downloads specified ABS catalogue data files from the ABS website, using a valid ABS
+  data table URL.
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/abs-api-functions.R
 \name{abs_call_api}
 \alias{abs_call_api}
-\title{Download specified URL}
+\title{Submit API call to ABS.Stat}
 \usage{
 abs_call_api(url)
 }
@@ -14,7 +14,7 @@ download.}
 data frame in long format
 }
 \description{
-Submit API call to ABS.Stat
+This function submits the specified API call to ABS.Stat
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

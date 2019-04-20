@@ -1,3 +1,13 @@
+### ABS Catalogue functions
+
+#' @name abs_urls
+#' @title ABS URL addresses and paths used in accessing ABS Catalogue data calls
+#' @description This function returns a list of URLs and data paths used to construct ABS Catalogue
+#'   data access calls. It is used in other functions in this package and need not be called
+#'   directly.
+#' @return a list with a base url and a url section for formatting ABS Catalogue statistics calls
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 abs_urls <- function()
 {
   list(base_url = "https://www.abs.gov.au",
@@ -9,7 +19,7 @@ abs_urls <- function()
 
 #' @name abs_cat_stats
 #' @title Get ABS catalogue series data
-#' @description TBC
+#' @description This function downloads ABS catalogue series statistics, by ABS catalogue number.
 #' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
 #' @param cat_no Character vector specifying one or more ABS collections or catalogue numbers to
@@ -22,6 +32,7 @@ abs_urls <- function()
 #'   examples for further details.
 #' @param types One of either 'tss' -- ABS time series spreadsheet (the default) or 'css' -- ABS
 #'   data cube (cross-section spreadsheet).
+#' @param na.rm logical (default: \code{TRUE}) - remove observations containing missing values.
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
@@ -33,7 +44,7 @@ abs_urls <- function()
 #'     ## Download December 2017 Australian National Accounts, Table 1
 #'     ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\W+", release="Dec 2017");
 #'   }
-abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
+abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", na.rm=TRUE)
 {
   if (missing(cat_no))
     stop("No cat_no supplied.");
@@ -75,8 +86,8 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
   ## Download ABS TSS/Data Cubes ..
   z <- lapply(sel_urls, abs_cat_download);
   z <- lapply(z, abs_cat_unzip);
-  ## .. and extract into single data frame
-  data <- lapply(z, abs_read_tss);
+  ## .. and combine into single data frame
+  data <- lapply(z, function(x) abs_read_tss(x, na.rm=na.rm));
   data <- do.call(rbind, data);
   rownames(data) <- seq_len(nrow(data));
   return(data);
@@ -85,7 +96,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss")
 
 #' @name abs_cat_tables
 #' @title Return ABS catalogue tables
-#' @description Return list of tables from specified ABS catalogue number
+#' @description Return list of data tables available from specified ABS catalogue number.
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom httr http_error 
 #' @param cat_no ABS catalogue numbers.
@@ -230,8 +241,9 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 
 #' @name abs_cat_download
 #' @title Function to download files from the ABS website and store locally
-#' @description Gets files from ABS website specified by URL
-#' @importFrom httr GET http_type http_error progress status_code write_disk 
+#' @description Downloads specified ABS catalogue data files from the ABS website, using a valid ABS
+#'   data table URL.
+#' @importFrom httr GET http_type http_error progress status_code write_disk
 #' @param data_url Character vector specifying an ABS data URLs.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
@@ -240,22 +252,12 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_cat_download <- function(data_url, exdir=tempdir()) {
-  if (FALSE) {
-    exdir <- tempdir()
-    abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-    data_url <- head(abs_tables_5206_url$path_1, 1)
-    xx <- abs_cat_download(data_url);
-  }
   if (!dir.exists(exdir)) dir.create(exdir);
   local_filename <- abs_local_filename(data_url);
   ## Check if any data_urls are not ABS data URLs
   if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
              data_url, ignore.case=TRUE))	
     stop(sprintf("Invalid ABS url: %s", data_url));
-  ## Check if any data_urls are not accessible
-  ## if (any(sapply(data_urls, http_error)))
-  ##   stop(sprintf("One or more url(s) not accessible: %s",
-  ##                paste(data_urls[sapply(data_urls, http_error)], collapse=", ")));
   
   ## -- Download files --
   cat(sprintf("Downloading: %s", local_filename));
@@ -282,13 +284,13 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
 }
 
 
-## @name abs_local_filename
-## @title Create local file names for storing downloaded ABS data files
-## @description Function to create local filename from web-based file name
-## @param url Character vector specifying one or more ABS data URLs.
-## @return Returns a local file names (character vector) in which downloaded files will be saved.
-## @author David Mitchell <david.pk.mitchell@@gmail.com>
-##
+#' @name abs_local_filename
+#' @title Create local file names for storing downloaded ABS data files
+#' @description Function to create local filename from web-based file name.
+#' @param url Character vector specifying one or more ABS data URLs.
+#' @return Returns a local file names (character vector) in which downloaded files will be saved.
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 abs_local_filename <- function(url)
 {
   sprintf("%s_%s.%s",
@@ -300,7 +302,7 @@ abs_local_filename <- function(url)
 
 #' @name abs_cat_unzip
 #' @title Uncompress locally-stored ABS Catalogue data file archives
-#' @description Function to uncompress locally-stored ABS Catalogue data file archives
+#' @description Function to uncompress locally-stored ABS Catalogue data file archives.
 #' @importFrom utils unzip zip
 #' @param files One or more local zip files.
 #' @param exdir Target directory for extracted archive files. Directory is created if it doesn't
@@ -339,15 +341,12 @@ abs_cat_unzip <- function(files, exdir) {
 
 ### Function: abs_read_tss
 #' @name abs_read_tss
-#' @title Read ABS time series data file(s)
+#' @title Extract data from an ABS time series data file
 #' @description This function extracts time series data from ABS data files.
-#' @importFrom readxl read_excel excel_sheets
-#' @importFrom dplyr left_join
-#' @importFrom tidyr gather
-#' @importFrom stats complete.cases
 #' @param files Names of one or more ABS data files
-#' @param type  One of either 'tss'  -- ABS Time Series  Spreadsheet (the Default) or  'css' -- Data
+#' @param type One of either 'tss' -- ABS Time Series Spreadsheet (the Default) or 'css' -- Data
 #'   Cube.R
+#' @param na.rm logical. If \code{TRUE} (default), remove observations containing missing values.
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
@@ -359,10 +358,10 @@ abs_cat_unzip <- function(files, exdir) {
 #'     extracted_files <- abs_cat_unzip(downloaded_tables)
 #'     x <- abs_read_tss(extracted_files);
 #'   }
-abs_read_tss <- function(files, type="tss") {
+abs_read_tss <- function(files, type="tss", na.rm=na.rm) {
   x <- lapply(files,
               function(file)
-                abs_read_tss_(file, type=type));
+                abs_read_tss_(file, type=type, na.rm=na.rm));
   z <- do.call(rbind, x);
   rownames(z) <- seq_len(nrow(z));
   return(z);
@@ -370,13 +369,20 @@ abs_read_tss <- function(files, type="tss") {
 
 
 ### Function: abs_read_tss_
-## @name abs_read_tss
-## @title Read ABS time series data file(s)
-## @description This function extracts time series data from ABS data files.
-abs_read_tss_ <- function(file, type="tss") {
-  if (FALSE) {
-    file <- "/tmp/340101.xls"
-  }
+#' @name abs_read_tss
+#' @title Read ABS time series data file(s)
+#' @description This is the internal function that extracts time series data from ABS data files.
+#' @importFrom readxl read_excel excel_sheets
+#' @importFrom dplyr left_join
+#' @importFrom tidyr gather
+#' @importFrom stats complete.cases
+#' @param files Names of one or more ABS data files
+#' @param type One of either 'tss' -- ABS Time Series Spreadsheet (the Default) or 'css' -- Data
+#'   Cube.R
+#' @param na.rm logical. If \code{TRUE} (default), remove observations containing missing values.
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
+abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   ## Avoid 'No visible binding for global variables' note
   { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
   
@@ -458,7 +464,8 @@ abs_read_tss_ <- function(file, type="tss") {
                  });
   data <- do.call(rbind, data);
   data <- left_join(data, metadata, by="series_id");
-  data <- data[complete.cases(data),];
+  if (na.rm)
+    data <- data[complete.cases(data),]
   names(data) <- tolower(names(data));
   return(data);
 }
