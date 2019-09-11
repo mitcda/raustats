@@ -1,9 +1,11 @@
 -*- mode: markdown -*- 
 
-# TO DO
+# TO DO - Feature requests
 
 * The ABS Engineering Construction tables seem to require that the
   sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [DONE 15/09/2018]
+
+* Add functionality to list all available releases.
 
 ## ABS API functions
 

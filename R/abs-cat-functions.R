@@ -78,18 +78,24 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
                     function(y) {
                       ## If zip in path1/path2, select zip file, else select xls(x) file
                       if (any(grepl("\\.zip", y, ignore.case=TRUE))) {
-                        grep("\\.zip", unlist(y), ignore.case=TRUE, value=TRUE)
+                        unique(grep("\\.zip", unlist(y), ignore.case=TRUE, value=TRUE))
                       } else {
-                        grep("\\.xlsx*", unlist(y), ignore.case=TRUE, value=TRUE)
+                        unique(grep("\\.xlsx*", unlist(y), ignore.case=TRUE, value=TRUE))
                       }
                     });
   ## Download ABS TSS/Data Cubes ..
   z <- lapply(sel_urls, abs_cat_download);
-  z <- lapply(z, abs_cat_unzip);
+  z <- lapply(z,
+              function(x)
+                if (grepl("\\.zip$", x, ignore.case=TRUE)) {
+                  abs_cat_unzip(x)
+                } else {
+                  x
+                });
   ## .. and combine into single data frame
   data <- lapply(z, function(x) abs_read_tss(x, na.rm=na.rm));
   data <- do.call(rbind, data);
-  rownames(data) <- seq_len(nrow(data));
+#  rownames(data) <- 1:nrow(data); ## seq_len(nrow(data));
   return(data);
 }
 
@@ -330,8 +336,8 @@ abs_cat_unzip <- function(files, exdir) {
                            if (!dir.exists(exdir))
                              dir.create(exdir)
                          }
-                           unzip(x, exdir=exdir);
-                           file.path(exdir, unzip(x, list=TRUE)$Name);
+                         unzip(x, exdir=exdir);
+                         file.path(exdir, unzip(x, list=TRUE)$Name);
                        } else {
                          x;
                        });
@@ -363,7 +369,7 @@ abs_read_tss <- function(files, type="tss", na.rm=na.rm) {
               function(file)
                 abs_read_tss_(file, type=type, na.rm=na.rm));
   z <- do.call(rbind, x);
-  rownames(z) <- seq_len(nrow(z));
+#  rownames(z) <- seq_len(nrow(z));
   return(z);
 }
 
