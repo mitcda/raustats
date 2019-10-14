@@ -46,7 +46,7 @@
 
 #' @name aus_state_codes
 #' @title Table of Australian state and territory codes
-#' @description A list of Australian state and territory codes.
+#' @description A list of Australian state and territory codes (including code 0 -- Australia)
 #'
 #' @format A data frame containing three columns:
 #' \itemize{
