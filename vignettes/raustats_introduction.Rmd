@@ -1,7 +1,7 @@
 ---
-title: "Introduction to the raustats package"
+title:  "Introduction to the raustats package"
 author: "David Mitchell"
-date: "`r Sys.Date()`"
+date:   "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{01_-_Using_the_raustats_package}
@@ -591,14 +591,19 @@ head(cpi)
 
 The `filter` argument can also be set equal to "all", in which case the function
 will attempt to download all observations available for the specified
-dataset. However, if the dataset is large it may breach the
+dataset. 
+
+
+#### ABS.Stat query download constraints
+
+If the data request is large it may breach the
 [ABS.Stat](http://stat.data.abs.gov.au/) API query length, record and/or session
-time constraints.^[[ABS.Stat](http://stat.data.abs.gov.au/) has a query string
+time constraints. [ABS.Stat](http://stat.data.abs.gov.au/) has a query string
 length limit (maximum of 1000 characters) on URL queries, a record return limit
 (1 million records) and session time limits (maximum 10-minute session time
-limit). (See the [ABS.Stat Web Services User Guide
+limit).^[See the [ABS.Stat Web Services User Guide
 FAQ](http://www.abs.gov.au/ausstats/abs@.nsf/Lookup/by%20Subject/1407.0.55.002~User%20Guide~Main%20Features~Frequently%20Asked%20Questions~9)
-for further details.)] Queries that breach these limits will need to be
+for further details.] Queries that breach these limits will need to be
 re-specified as multiple separate calls to obtain the required data.
 
 For example, the following `abs_stats` function call, attempts to download all
@@ -649,6 +654,44 @@ filter_lst <- abs_search(c("Index numbers", "All groups",
                          dataset="CPI", code_only=TRUE)
 cpi <- abs_stats("CPI", filter = filter_lst)
 ```
+
+#### Splitting an ABS filter list into multiple short queries
+
+The `purrr` package functions: `map` and `cross` can be used to split a long
+query into a list of several shorter length queries to submit to ABS.Stat. For
+example, the following code block first uses `abs_search` to create a filter
+list to download estimated resident population (ERP), by state/territory, age
+(year) and sex, for June 2017, and splits the filter into groups no longer than
+26 elements in length (`purrr::map` and `split`), and combines them into
+complete list (`purrr::cross`). The final step imports the data by iterating
+over the filter list (`ds_filter`) using `lapply` and combining the results into
+a data frame using `bind_rows`.
+
+```{r message=FALSE, results=FALSE}
+## ERP dataset ID
+abs_ds <- abs_search(pattern="quarterly.*population.*estimates") %>%
+  select(id) %>% unlist;
+
+## Create filter 
+ds_filter <- abs_search(pattern=c("Estimated Resident Population", "Males|Females|Persons",
+                                  "^\\d{1,3}$", "Jun-2017"),
+                        dataset=abs_ds, code_only=TRUE) %>%
+  map(~ .x %>% split(., ceiling(seq_along(.)/26))) %>%
+  cross;
+  
+## Download Jun 2017 ERP
+erp_st_age_sex_2017 <-
+  lapply(ds_filter,
+         function(i_filter)
+           abs_stats(abs_ds,
+                     start_date="2017-Q2", end_date="2017-Q2",
+                     filter=i_filter)
+         ) %>%
+  bind_rows;
+```
+
+
+#### Other ABS.Stat query arguments
 
 Users can also limit the date range to return by specifying one or
 both`start_date` and `end_date` arguments. These accept either a numeric or
