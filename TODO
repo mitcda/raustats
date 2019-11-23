@@ -2,10 +2,19 @@
 
 # TO DO - Feature requests
 
-* The ABS Engineering Construction tables seem to require that the
-  sub(regex_table_name, ...) has ignore.case = TRUE (to capture "TABLE") - [DONE 15/09/2018]
+* Add argument: `format = c("table", "raw")` argument to `abs_stats` function to
+  provide option to return results as raw JSON
 
-* Add functionality to list all available releases.
+* Add functionality to check for zero-length data sets returned by `abs_stats`,
+  to avoid failing on bind_rows step.
+
+* The ABS Engineering Construction tables seem to require that the
+  `sub(regex_table_name, ...)` has `ignore.case = TRUE` (to capture "TABLE") - [DONE 15/09/2018]
+
+* Add functionality to list all available releases for a specified catalogue number.
+
+* Fix path variables in `abs_cat_tables` function
+
 
 ## ABS API functions
 

@@ -11,10 +11,28 @@
 abs_urls <- function()
 {
   list(base_url = "https://www.abs.gov.au",
-       ausstats_path = "ausstats/abs@.nsf/mf",
+       ausstats_path = "ausstats/abs@.nsf",
+       mf_path = "mf",
        downloads_regex = "Downloads",
        releases_regex = "Past.*Future.*Releases");
 }
+
+
+#' @name abs_filetypes
+#' @title Valid ABS file types
+#' @description This function returns a vector of valid ABS file types for using list of URLs and data paths used to construct ABS Catalogue
+#'   data access calls. It is used in other functions in this package and need not be called
+#'   directly.
+#' @return a vector containing a list of valid ABS file types.
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
+abs_filetypes <- function()
+{
+  c(zip_files = "application/x-zip",
+    excel_files = "application/vnd.ms-excel",
+    openxml_files = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+}
+
 
 
 #' @name abs_cat_stats
@@ -86,11 +104,11 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   ## Download ABS TSS/Data Cubes ..
   z <- lapply(sel_urls, abs_cat_download);
   z <- lapply(z,
-              function(x)
-                if (grepl("\\.zip$", x, ignore.case=TRUE)) {
-                  abs_cat_unzip(x)
-                } else {
+              function(x) 
+                if (!grepl("\\.zip", x, ignore.case=TRUE)) {
                   x
+                } else {
+                  abs_cat_unzip(files=x)
                 });
   ## .. and combine into single data frame
   data <- lapply(z, function(x) abs_read_tss(x, na.rm=na.rm));
@@ -137,6 +155,12 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #'   }
 abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), include_urls=FALSE)
 {
+  if (DEBUG) {
+    cat_no <- "6401.0";  types <- "tss";
+    cat_no <- "5209.0.55.001";  types <- "css";
+    include_urls <- TRUE
+    releases <- "Latest"
+  }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
@@ -150,13 +174,13 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
   types <- sapply(types,
                      function(x) switch(x,
                                         "tss" = "Time Series Spreadsheet",
-                                        "css" = "Data Cube",
+                                        "css" = "Data Cubes",
                                         "pub" = "Publication"));
   ## Create ABS URL and open session 
-  url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, cat_no);
+  url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
   ## Check for HTTP errors
   if (http_error(url))
-    stop(sprintf("File cannot be downloaded: %s", url))
+    stop(sprintf("File cannot be downloaded. Check URL: %s", url))
   suppressWarnings(s <- html_session(url));
   
   releases <- unique(releases);
@@ -199,14 +223,24 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                                                        x, ignore.case=TRUE)) &
                                                              any(grepl("ausstats", x, ignore.case=TRUE))
                                                  ))];
-                ## Remove non-breaking space (&nbsp;) and blank entries
+                ## Remove non-breaking spaces (&nbsp;),  and blank entries
                 nodes <- lapply(nodes,
                                  function(x) {
-                                   z <- trimws(gsub("\u00a0", "", x));
-                                   z <- replace(z, z == "", NA_character_);
-                                   z <- z[!is.na(z)]
+                                   z <- trimws(gsub("\u00a0", "", x));      ## Remove non-breaking spaces
+                                   z <- replace(z, z == "", NA_character_); ## Replace blank objects with NA
+                                   ## Replace entries not starting with 'table' or 'http' with 'NA_character_'
+                                   z <- replace(z,                          
+                                                !grepl("^(Table|http).+", z, ignore.case=TRUE),
+                                                NA_character_);
+                                   z <- z[!is.na(z)];                       ## Remove NA objects
+                                   ## -- NEW CODE HERE --
+                                   ## names(z) <- case_when(grepl("^Table", z, ignore.case=TRUE) ~ "item_name",
+                                   ##                       grepl("\\.xlsx*", z, ignore.case=TRUE) ~ "path_xls",
+                                   ##                       grepl("\\.zip", z, ignore.case=TRUE) ~ "path_zip",
+                                   ##                       TRUE ~ NA_character_);
+                                   ## return(z);
                                  });
-                ## Tidy HTML return into data.frame
+                ## Tidy HTML return into data.frame -- consider using 'bind_rows'
                 dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
                 ## Check if non-'path' columns contain types string, and discard if not
                 idx <- sapply(names(dt)[-1],
@@ -245,6 +279,69 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 }
 
 
+#' @name abs_cat_releases
+#' @title Return ABS catalogue table releases
+#' @description Return list of all releases available for specified ABS catalogue number.
+#' @importFrom rvest html_session html_table html_text html_nodes html_attr follow_link
+#' @importFrom httr http_error
+#' @param cat_no ABS catalogue numbers.
+#' @param include_urls Include full path URL to specified ABS catalogue releases. Default (FALSE)
+#'   does not include release URLs.
+#' @return Returns a data frame listing available ABS catalogue releases.
+#' @export
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @examples
+#'   \donttest{
+#'     ## List all available quarterly National Accounts tables
+#'     ana_releases <- abs_cat_releases("5206.0");
+#'     ana_release_urls <- abs_cat_releases("5206.0", include_urls=TRUE);
+#'   
+#'     ## List latest available CPI Time Series Spreadsheet tables only
+#'     cpi_releases <- abs_cat_releases("6401.0");
+#'     cpi_release_urls <- abs_cat_releases("6401.0", include_urls=TRUE);
+#'   }
+abs_cat_releases <- function(cat_no, include_urls=FALSE)
+{
+  if (FALSE) {
+    ## DEBUGGING CODE
+    cat_no <- "5206.0"
+    include_urls <- FALSE
+  }
+  if (missing(cat_no))
+    stop("No cat_no supplied.");
+  if (!is.logical(include_urls))
+    stop("include_urls must be either TRUE or FALSE");
+  ## Create ABS URL and open session 
+  url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
+  ## Check for HTTP errors
+  if (http_error(url))
+    stop(sprintf("File cannot be downloaded. Check URL: %s", url))
+  suppressWarnings(s <- html_session(url));
+  ## Get path to 'Past & Future Releases' page
+  .paths <- html_nodes(s, "a");
+  .paths <- .paths[grepl(abs_urls()$releases_regex, .paths)];
+  .paths <- html_attr(.paths, "href");
+  s <- jump_to(s, .paths)
+  ## Xpath cheatsheet: https://devhints.io/xpath
+  ## Get list of Path Releases
+  .tables <- html_nodes(s, "table");
+  .tables <- .tables[grepl("Past Releases", .tables, ignore.case=TRUE)];
+  .paths <- html_nodes(.tables, "a");
+  ## Return results 
+  if (!include_urls) {
+    z <- data.frame(releases = html_text(.paths))
+  } else {
+    z <- data.frame(releases = html_text(.paths),
+                    urls = file.path(abs_urls()$base_url,
+                                     abs_urls()$ausstats_path,
+                                     html_attr(.paths, "href")))
+  }
+  row.names(z) <- seq_len(nrow(z));
+  return(z)
+}
+
+
+
 #' @name abs_cat_download
 #' @title Function to download files from the ABS website and store locally
 #' @description Downloads specified ABS catalogue data files from the ABS website, using a valid ABS
@@ -264,7 +361,7 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
   if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
              data_url, ignore.case=TRUE))	
     stop(sprintf("Invalid ABS url: %s", data_url));
-  
+  ##
   ## -- Download files --
   cat(sprintf("Downloading: %s", local_filename));
   resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
@@ -282,7 +379,7 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
     )
   }
   ## Check content-type is compliant
-  if (!http_type(resp) %in% c("application/x-zip", "application/vnd.ms-excel")) {
+  if (!http_type(resp) %in% abs_filetypes()) {
     stop("ABS file request did not return Excel or Zip file", call. = FALSE)
   }
   ## Return results
