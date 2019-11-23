@@ -6,11 +6,13 @@
   times and apply `abs_cat_unzip` function only to compressed files.
 * Added OpenXml Spreadsheet files to list of valid ABS catalogue statistics file
   types.
-  
+* Silently handle zero-length (empty) returns in `abs_stats`.
 
 ## Changes:
 * Added `na.rm` argument to `abs_cat_stats` and `abs_read_tss` functions.
 * Added `abs_cat_releases` function.
+* Internal changes to `abs_cat_tables` function clarifying column names for
+  Excel and Zip format file URLs. 
 
 
 # raustats 0.1.0

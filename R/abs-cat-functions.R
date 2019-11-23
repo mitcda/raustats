@@ -113,7 +113,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   ## .. and combine into single data frame
   data <- lapply(z, function(x) abs_read_tss(x, na.rm=na.rm));
   data <- do.call(rbind, data);
-#  rownames(data) <- 1:nrow(data); ## seq_len(nrow(data));
+  # rownames(data) <- 1:nrow(data); ## seq_len(nrow(data));
   return(data);
 }
 
@@ -122,7 +122,8 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #' @title Return ABS catalogue tables
 #' @description Return list of data tables available from specified ABS catalogue number.
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
-#' @importFrom httr http_error 
+#' @importFrom httr http_error
+#' @importFrom dplyr case_when bind_rows
 #' @param cat_no ABS catalogue numbers.
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
@@ -132,7 +133,8 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #'   default returns all Time Series Spreadsheets and Data Cubes.
 #' @param include_urls Include full URLs to returned ABS data files. Default (FALSE) does not
 #'   include data file URLs.
-#' @return Returns a data frame listing the data collection tables and links.
+#' @return Returns a data frame listing the data collection tables and URLs for Excel (column:
+#'   \code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
@@ -155,17 +157,15 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #'   }
 abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), include_urls=FALSE)
 {
-  if (DEBUG) {
-    cat_no <- "6401.0";  types <- "tss";
-    cat_no <- "5209.0.55.001";  types <- "css";
-    include_urls <- TRUE
-    releases <- "Latest"
-  }
+  ## if (FALSE) {
+  ##   -- DEBUGGING CODE --
+  ##   cat_no <- "6401.0";  types <- "tss";
+  ##   cat_no <- "5209.0.55.001";  types <- "css";
+  ##   include_urls <- TRUE;
+  ##   releases <- "Latest";
+  ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
-  ## if (tolower(releases) != "latest" ||
-  ##     releases IS NOT A DATE )
-  ##   stop("releases arguments ")
   if (any(!types %in% c("tss", "css", "pub")))
     stop("Allowable type arguments limited to one or more of: 'tss', 'css' or 'pub'.");
   if (!is.logical(include_urls))
@@ -215,45 +215,50 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                       c(html_text(html_nodes(x, "td")),
                                         ## html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")));
                                         paste0(abs_urls()$base_url,
-                                               html_attr(html_nodes(html_nodes(x, "td"), "a"), "href"))
-                                        ));
+                                               html_attr(html_nodes(html_nodes(x, "td"), "a"), "href")))
+                                    );
                 nodes <- all_nodes[unlist(lapply(all_nodes,
-                                                 function(x) any(grepl(sprintf("(%s)",
-                                                                               paste(types, collapse="|")),
-                                                                       x, ignore.case=TRUE)) &
-                                                             any(grepl("ausstats", x, ignore.case=TRUE))
+                                                 function(x)
+                                                   any(grepl(sprintf("(%s)",
+                                                                     paste(types, collapse="|")),
+                                                             x, ignore.case=TRUE)) &
+                                                   any(grepl("ausstats", x, ignore.case=TRUE))
                                                  ))];
-                ## Remove non-breaking spaces (&nbsp;),  and blank entries
+                ## Remove non-breaking spaces (&nbsp;), and blank entries
                 nodes <- lapply(nodes,
                                  function(x) {
                                    z <- trimws(gsub("\u00a0", "", x));      ## Remove non-breaking spaces
                                    z <- replace(z, z == "", NA_character_); ## Replace blank objects with NA
-                                   ## Replace entries not starting with 'table' or 'http' with 'NA_character_'
+                                   ## Set entries not starting with 'table' or 'http' with 'NA_character_'
                                    z <- replace(z,                          
                                                 !grepl("^(Table|http).+", z, ignore.case=TRUE),
                                                 NA_character_);
                                    z <- z[!is.na(z)];                       ## Remove NA objects
-                                   ## -- NEW CODE HERE --
-                                   ## names(z) <- case_when(grepl("^Table", z, ignore.case=TRUE) ~ "item_name",
-                                   ##                       grepl("\\.xlsx*", z, ignore.case=TRUE) ~ "path_xls",
-                                   ##                       grepl("\\.zip", z, ignore.case=TRUE) ~ "path_zip",
-                                   ##                       TRUE ~ NA_character_);
-                                   ## return(z);
+                                   ## Set column names
+                                   names(z) <- case_when(grepl("^Table", z, ignore.case=TRUE) ~ "item_name",
+                                                         grepl("\\.xlsx*", z, ignore.case=TRUE) ~ "path_xls",
+                                                         grepl("\\.zip", z, ignore.case=TRUE) ~ "path_zip",
+                                                         TRUE ~ NA_character_)
+                                   z <- as.data.frame(t(cbind.data.frame(z, deparse.level=1)),
+                                                      stringsAsFactors=FALSE);
+                                   return(z);
                                  });
                 ## Tidy HTML return into data.frame -- consider using 'bind_rows'
-                dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
-                ## Check if non-'path' columns contain types string, and discard if not
-                idx <- sapply(names(dt)[-1],
-                              function(x) any(grepl(sprintf("(%s)",
-                                                            paste(types, collapse="|")),
-                                                    dt[,x], ignore.case=TRUE))
-                              );
-                dt <- dt[, c(TRUE, idx)];
-                ## Specify dt column names
-                names(dt) <- c("item_name", paste("path", seq_len(ncol(dt)-1), sep="_"));
-                ## Lastly replace spaces in URL paths with '%20' string
-                for(name in names(dt)[-1])
-                  dt[,name] <- gsub("\\s+", "%20", dt[,name]);
+                ## OLD: dt <- suppressWarnings(as.data.frame(do.call(rbind, nodes), stringsAsFactors = FALSE));
+                dt <- suppressWarnings(bind_rows(nodes))
+                ## OLD: Check if non-'path' columns contain types string, and discard if not
+                ## OLD: idx <- sapply(names(dt)[-1],
+                ## OLD:               function(x)
+                ## OLD:                 any(grepl(sprintf("(%s)",
+                ## OLD:                                   paste(types, collapse="|")),
+                ## OLD:                           dt[,x], ignore.case=TRUE))
+                ## OLD:               );
+                ## OLD: dt <- dt[, c(TRUE, idx)];
+                ## OLD: ## Specify dt column names
+                ## OLD: # names(dt) <- c("item_name", paste("path", seq_len(ncol(dt)-1), sep="_"));
+                ## OLD: ## Lastly replace spaces in URL paths with '%20' string
+                ## OLD: for(name in names(dt)[-1])
+                ## OLD:   dt[,name] <- gsub("\\s+", "%20", dt[,name]);
                 return(dt);
               });
   ## Add catalogue number and release information to table
@@ -263,7 +268,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                 v[[i]]$cat_no <- cat_no;
                 as.data.frame(v)
               });
-
+  ## Bind all results together
   z <- do.call(rbind, v);
   ## If rbind breaks on different row names try:
   ## z <- do.call(function(...) rbind(..., make.row.names=FALSE), v);
@@ -302,11 +307,11 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 #'   }
 abs_cat_releases <- function(cat_no, include_urls=FALSE)
 {
-  if (FALSE) {
-    ## DEBUGGING CODE
-    cat_no <- "5206.0"
-    include_urls <- FALSE
-  }
+  ## if (FALSE) {
+  ##   ## -- DEBUGGING CODE --
+  ##   cat_no <- "5206.0"
+  ##   include_urls <- FALSE
+  ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   if (!is.logical(include_urls))
@@ -322,8 +327,7 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
   .paths <- .paths[grepl(abs_urls()$releases_regex, .paths)];
   .paths <- html_attr(.paths, "href");
   s <- jump_to(s, .paths)
-  ## Xpath cheatsheet: https://devhints.io/xpath
-  ## Get list of Path Releases
+  ## Get list of available ABS catalogue releases (See: https://devhints.io/xpath for Xpath hints)
   .tables <- html_nodes(s, "table");
   .tables <- .tables[grepl("Past Releases", .tables, ignore.case=TRUE)];
   .paths <- html_nodes(.tables, "a");
@@ -339,7 +343,6 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
   row.names(z) <- seq_len(nrow(z));
   return(z)
 }
-
 
 
 #' @name abs_cat_download
@@ -457,7 +460,7 @@ abs_cat_unzip <- function(files, exdir) {
 #'   \donttest{
 #'     ## Read specified ABS Excel time series files
 #'     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-#'     downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
+#'     downloaded_tables <- abs_cat_download(tables$path_zip, exdir=tempdir())
 #'     extracted_files <- abs_cat_unzip(downloaded_tables)
 #'     x <- abs_read_tss(extracted_files);
 #'   }

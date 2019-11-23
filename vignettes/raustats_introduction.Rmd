@@ -291,7 +291,7 @@ table: *LM1 - Labour force status by Age, Greater Capital City and Rest of State
 ```{r eval=FALSE}
 lf_age <- abs_cat_tables("6291.0.55.001", include_urls=TRUE) %>%
   filter(grepl("LM1.+", item_name)) %>%
-  .$path_1 %>%
+  .$path_zip %>%
   abs_cat_download %>%
   abs_cat_unzip %>%
   read_excel(sheet="Data 1", skip=3)
@@ -401,7 +401,7 @@ conjunction with the `abs_cat_tables` function, as follows:
 
 ```{r message=FALSE, results=FALSE}
 tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-downloaded_tables <- abs_cat_download(tables$path_2[1], exdir=tempdir())
+downloaded_tables <- abs_cat_download(tables$path_xls[1], exdir=tempdir())
 print(downloaded_tables)
 ```
 
