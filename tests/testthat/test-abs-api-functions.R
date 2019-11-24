@@ -120,13 +120,20 @@ test_that("abs_stats fails well",
   skip_on_appveyor()
 
   ## library(testthat);
-  expect_error(abs_stats());              ## No dataset provided
-  expect_error(abs_stats("INVALID_ID"));  ## Non-existent dataset
-  expect_error(abs_stats("CPI"));         ## No filter supplied
+  expect_error(abs_stats());                                ## No dataset provided
+  expect_error(abs_stats("INVALID_ID"));                    ## Non-existent dataset
+  expect_error(abs_stats("CPI"));                           ## No filter supplied
   expect_error(abs_stats("CPI", filter="invalid_filter"));  ## Invalid filter value
   expect_error(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
                                             INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                         start_date=2008, end_date=2006));  ## start_date > end_date
+                         start_date=2008, end_date=2006));
+
+  ## Test that calls returning no observations fail cleanly
+  expect_error(abs_stats("ABS_REGIONAL_ASGS2016",
+                         filter=list(MEASURE="CABEE_6",
+                                     REGIONTYPE="STE",
+                                     ASGS_2016=1:8),
+                         start_date=2008, end_date=2006));
 })
 
 test_that("abs_stats returns valid URL",
@@ -139,6 +146,20 @@ test_that("abs_stats returns valid URL",
                "^http:\\/\\/stat.data.abs.gov.au\\/SDMX-JSON\\/data\\/CPI");
 })
 
+test_that("abs_stats returns raw JSON object",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  ## Test specific filter and start/end dates
+  expect_type(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
+                                           INDEX=10001, TSEST=10, FREQUENCY="Q"),
+                        start_date="2008-Q3", end_date="2018-Q2", return_json=TRUE),
+              "character");
+})
+
+
 test_that("abs_stats returns valid data frame",
 {
   skip_on_cran()
@@ -148,12 +169,15 @@ test_that("abs_stats returns valid data frame",
   ## Test specific filter and start/end dates
   expect_s3_class(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
                                                INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                            start_date="2008-Q3", end_date="2018-Q2"), "data.frame");
+                            start_date="2008-Q3", end_date="2018-Q2"),
+                  "data.frame");
   ## Test incomplete filter set
-  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50),
-                                                    INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                                 start_date="2008-Q3", end_date="2018-Q2"));
-  expect_s3_class(xx, "data.frame");
+  partial_flt <- list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q")
+  expect_warning(abs_stats("CPI", filter=partial_flt,
+                           start_date="2008-Q3", end_date="2018-Q2"));
+  expect_s3_class(abs_stats("CPI", filter=partial_flt,
+                            start_date="2008-Q3", end_date="2018-Q2"),
+                  "data.frame");
   ## Test function returns character string
   expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50),
                                                     INDEX=10001, TSEST=10, FREQUENCY="Q"),

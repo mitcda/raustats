@@ -338,14 +338,14 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 #'     \item NoData: returns the groups and series, including attributes and annotations, without observations (all values = NA)
 #'   }
 #' 
-## #' @param simplify Logical. If \code{TRUE}, the function returns data in a data frame. If
-## #'   \code{FALSE}, function returns result in raw sdmx-json format.
+#' @param return_json Logical. Default is \code{FALSE}. If \code{TRUE}, the function returns the
+#'   result in raw sdmx-json.
+#' @param return_url Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
+#'   request URL and does not submit the request.
 #' @param enforce_api_limits If \code{TRUE} (the default), the function enforces the ABS.Stat
 #'   RESTful API limits and will not submit the query if the URL string length exceeds 1000
 #'   characters or the query would return more than 1 million records. If \code{FALSE}, the function
 #'   submits the API call regardless and attempts to return the results.
-#' @param return_url Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
-#'   request URL and does not submit the request.
 #' @param update_cache Logical expression, if FALSE (default), use the cached list of available
 #'   ABS.Stat datasets, if TRUE, update the list of available datasets.
 #' @return Returns a data frame of the selected series from the specified ABS dataset.
@@ -380,8 +380,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
                       ## remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
-                      ## simplify=TRUE,
-                      enforce_api_limits=TRUE, return_url=FALSE, update_cache=FALSE)
+                      return_json=FALSE, return_url=FALSE,
+                      enforce_api_limits=TRUE, update_cache=FALSE)
 {
   ## Check dataset present and valid 
   if (missing(dataset))
@@ -513,50 +513,53 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
       stop("ABS.Stat API did not return SDMX-JSON format", call. = FALSE)
     }
 
-    ## if (!simplify) {
-    ##   ## Return results as sdmx-json text format
-    ##   return(content(resp, as="text"))
-    ## } else {
-    ## cat("Converting query output to data frame ... ");
-        ## Convert JSON to list
-    x_json <- fromJSON(content(resp, as="text")) ## , simplifyVector = FALSE)
-    
-    ## Convert JSON format to long (tidy) data frame
-    x_obs <- x_json$dataSets$observation;
-    x_str <- x_json$structure$dimensions$observation;
-    y <- data.frame(do.call(rbind, unlist(x_obs, recursive=FALSE)));
-    ## Set names of returned records
-    y <- if (detail == "Full") {
-           setNames(y, c("values","obs_status","unknown"))
-         } else if (detail == "SeriesKeysOnly") {
-           setNames(y, c("series_key"));
-         } else if (detail == "DataOnly") {
-           setNames(y, c("values"));
-         } else { ## if (detail == NoData) {
-           setNames(y, c("values","obs_status","unknown"))
-         }
-    y <- cbind(setNames(data.frame(do.call(rbind, strsplit(row.names(y), ":"))),
-                        tolower(sub("\\s+","_", x_str$name))),
-               y);
-    ## Re-index dimension IDs from 0-based to 1-based
-    for (name in tolower(sub("\\s+","_", x_str$name)))
-      y[,name] <- as.integer(as.character(y[,name])) + 1;
-    names_y <- setNames(lapply(seq_len(nrow(x_str)),
-                               function(j) unlist(x_str[j,"values"], recursive=FALSE)
-                               ),
-                        tolower(sub("\\s+","_", x_str$name)));
-    ## Substitute dimension IDs for Names
-    for (name in names(names_y))
-      y[,name] <- names_y[[name]]$name[y[,name]]
-    ## Insert dataset_name
-    y$agency_id <- x_json$header$sender$id;
-    y$agency_name <- x_json$header$sender$name;
-    y$dataset_name <- x_json$structure$name;
-    ## Re-index rows
-    row.names(y) <- seq_len(nrow(y));
-    ## cat("completed.\n");
-    ## Return data
-    return(y);
-    ## }
+    if (return_json) {
+      ## Return results as sdmx-json text format
+      return(content(resp, as="text"))
+    } else {
+      cat("Converting query output to data frame ... ");
+      ## Convert JSON to list
+      x_json <- fromJSON(content(resp, as="text")) ## , simplifyVector = FALSE)
+      ## Check whether data contains any observations
+      if (ncol(x_json$dataSets$observation) == 0)
+        stop(paste("API call returns no observations.",
+                   "Check ABS.Stat or inspect JSON object with `return_json=TRUE`"), call. = FALSE);
+      ## Convert JSON format to long (tidy) data frame
+      x_obs <- x_json$dataSets$observation;
+      x_str <- x_json$structure$dimensions$observation;
+      y <- data.frame(do.call(rbind, unlist(x_obs, recursive=FALSE)));
+      ## Set names of returned records
+      y <- if (detail == "Full") {
+             setNames(y, c("values","obs_status","unknown"))
+           } else if (detail == "SeriesKeysOnly") {
+             setNames(y, c("series_key"));
+           } else if (detail == "DataOnly") {
+             setNames(y, c("values"));
+           } else { ## if (detail == NoData) {
+             setNames(y, c("values","obs_status","unknown"))
+           }
+      y <- cbind(setNames(data.frame(do.call(rbind, strsplit(row.names(y), ":"))),
+                          tolower(sub("\\s+","_", x_str$name))),
+                 y);
+      ## Re-index dimension IDs from 0-based to 1-based
+      for (name in tolower(sub("\\s+","_", x_str$name)))
+        y[,name] <- as.integer(as.character(y[,name])) + 1;
+      names_y <- setNames(lapply(seq_len(nrow(x_str)),
+                                 function(j) unlist(x_str[j,"values"], recursive=FALSE)
+                                 ),
+                          tolower(sub("\\s+","_", x_str$name)));
+      ## Substitute dimension IDs for Names
+      for (name in names(names_y))
+        y[,name] <- names_y[[name]]$name[y[,name]]
+      ## Insert dataset_name
+      y$agency_id <- x_json$header$sender$id;
+      y$agency_name <- x_json$header$sender$name;
+      y$dataset_name <- x_json$structure$name;
+      ## Re-index rows
+      row.names(y) <- seq_len(nrow(y));
+      ## cat("completed.\n");
+      ## Return data
+      return(y);
+    } ## End: return_json
   }
 }

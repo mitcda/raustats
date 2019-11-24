@@ -1,6 +1,7 @@
 cran-comments.md
 README.Rmd
 README.html
+z-debugging-code.R
 z-deprecated-functions.R
 z-release-questions.R
 read-abs-discards.R
