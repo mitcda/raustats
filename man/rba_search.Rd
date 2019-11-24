@@ -4,8 +4,12 @@
 \alias{rba_search}
 \title{Return list of data tables from RBA website}
 \usage{
-rba_search(pattern, fields = c("table_no", "table_name"),
-  ignore.case = TRUE, update_cache = FALSE)
+rba_search(
+  pattern,
+  fields = c("table_no", "table_name"),
+  ignore.case = TRUE,
+  update_cache = FALSE
+)
 }
 \arguments{
 \item{pattern}{Character string or regular expression to be matched}

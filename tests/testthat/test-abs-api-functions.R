@@ -175,12 +175,13 @@ test_that("abs_stats returns valid data frame",
   partial_flt <- list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q")
   expect_warning(abs_stats("CPI", filter=partial_flt,
                            start_date="2008-Q3", end_date="2018-Q2"));
-  expect_s3_class(abs_stats("CPI", filter=partial_flt,
-                            start_date="2008-Q3", end_date="2018-Q2"),
+  expect_s3_class(suppressWarnings(abs_stats("CPI", filter=partial_flt,
+                                             start_date="2008-Q3", end_date="2018-Q2")),
                   "data.frame");
   ## Test function returns character string
-  expect_warning(xx <- abs_stats("CPI", filter=list(REGION=c(1:8,50),
-                                                    INDEX=10001, TSEST=10, FREQUENCY="Q"),
-                                 start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE));
-  expect_type(xx, "character");
+  expect_warning(abs_stats("CPI", filter=partial_flt,
+                           start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE));
+  expect_type(suppressWarnings(abs_stats("CPI", filter=partial_flt,
+                                         start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE)),
+              "character");
 })

@@ -1,5 +1,4 @@
 Meta
-doc
 .Rproj.user
 .Rhistory
 .RData
@@ -7,3 +6,4 @@ doc
 R-example-code/*
 *discards*
 /README.html
+

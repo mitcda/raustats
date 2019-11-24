@@ -3,7 +3,6 @@
 \docType{package}
 \name{raustats}
 \alias{raustats}
-\alias{raustats-package}
 \title{raustats: An R package for accessing data and statistics from the ABS and RBA websites}
 \description{
 The raustats package provides structured access to all data and statistics 

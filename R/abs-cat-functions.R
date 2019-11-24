@@ -30,9 +30,9 @@ abs_filetypes <- function()
 {
   c(zip_files = "application/x-zip",
     excel_files = "application/vnd.ms-excel",
-    openxml_files = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    openxml_files = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    pdf_files = "application/pdf");
 }
-
 
 
 #' @name abs_cat_stats
@@ -64,6 +64,13 @@ abs_filetypes <- function()
 #'   }
 abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", na.rm=TRUE)
 {
+  if (FALSE) {
+    cat_no = "5206.0"
+    tables = "all"
+    releases = "Latest"
+    types = "tss"
+  }
+
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
@@ -94,7 +101,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   ## Select only the user specified tables ('sel_tables')
   sel_urls <- apply(sel_tables, 1,
                     function(y) {
-                      ## If zip in path1/path2, select zip file, else select xls(x) file
+                      ## If zip in path_zip, select zip file, else select xls(x) file
                       if (any(grepl("\\.zip", y, ignore.case=TRUE))) {
                         unique(grep("\\.zip", unlist(y), ignore.case=TRUE, value=TRUE))
                       } else {
@@ -113,7 +120,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   ## .. and combine into single data frame
   data <- lapply(z, function(x) abs_read_tss(x, na.rm=na.rm));
   data <- do.call(rbind, data);
-  # rownames(data) <- 1:nrow(data); ## seq_len(nrow(data));
+  rownames(data) <- 1:nrow(data);
   return(data);
 }
 
@@ -159,10 +166,10 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 {
   ## if (FALSE) {
   ##   -- DEBUGGING CODE --
-  ##   cat_no <- "6401.0";  types <- "tss";
-  ##   cat_no <- "5209.0.55.001";  types <- "css";
-  ##   include_urls <- TRUE;
-  ##   releases <- "Latest";
+  ## cat_no <- "6401.0"; types <- "tss"; releases <- "Latest"; include_urls <- TRUE;
+  ## cat_no <- "5209.0.55.001"; types <- "css"; releases <- "Latest"; include_urls <- TRUE;
+  ## cat_no <- "1270.0.55.001"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
+  ## cat_no <- "6202.0"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
   ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
@@ -229,16 +236,26 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                  function(x) {
                                    z <- trimws(gsub("\u00a0", "", x));      ## Remove non-breaking spaces
                                    z <- replace(z, z == "", NA_character_); ## Replace blank objects with NA
-                                   ## Set entries not starting with 'table' or 'http' with 'NA_character_'
+                                   ## Set entries not starting with 'https*' with 'NA_character_'
+                                   z[-1] <- replace(z[-1],                          
+                                                    !grepl("^https*.+", z[-1], ignore.case=TRUE),
+                                                    NA_character_);
+                                   ## Set entries containing 'INotes' with 'NA_character_'
                                    z <- replace(z,                          
-                                                !grepl("^(Table|http).+", z, ignore.case=TRUE),
+                                                grepl("INotes", z, ignore.case=TRUE),
                                                 NA_character_);
+                                   ## z <- replace(z,                          
+                                   ##              !grepl("^(Table|http|All).+", z, ignore.case=TRUE),
+                                   ##              NA_character_);
                                    z <- z[!is.na(z)];                       ## Remove NA objects
-                                   ## Set column names
-                                   names(z) <- case_when(grepl("^Table", z, ignore.case=TRUE) ~ "item_name",
-                                                         grepl("\\.xlsx*", z, ignore.case=TRUE) ~ "path_xls",
-                                                         grepl("\\.zip", z, ignore.case=TRUE) ~ "path_zip",
-                                                         TRUE ~ NA_character_)
+                                   ## Set object names: First element = 'item_name'
+                                   names(z)[1] <- "item_name";
+                                   names(z)[-1] <- case_when(
+                                     ## !grepl("(^https*|^Releases|INotes)", z, ignore.case=TRUE) ~ "item_name",
+                                     grepl("\\.xlsx*", z[-1], ignore.case=TRUE) ~ "path_xls",
+                                     grepl("\\.zip", z[-1], ignore.case=TRUE) ~ "path_zip",
+                                     grepl("\\.pdf", z[-1], ignore.case=TRUE) ~ "path_pdf",
+                                     TRUE ~ NA_character_)
                                    z <- as.data.frame(t(cbind.data.frame(z, deparse.level=1)),
                                                       stringsAsFactors=FALSE);
                                    return(z);
@@ -256,9 +273,9 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                 ## OLD: dt <- dt[, c(TRUE, idx)];
                 ## OLD: ## Specify dt column names
                 ## OLD: # names(dt) <- c("item_name", paste("path", seq_len(ncol(dt)-1), sep="_"));
-                ## OLD: ## Lastly replace spaces in URL paths with '%20' string
-                ## OLD: for(name in names(dt)[-1])
-                ## OLD:   dt[,name] <- gsub("\\s+", "%20", dt[,name]);
+                ## Lastly replace spaces in all URL paths with '%20' string
+                for(name in grep("^path_", names(dt), ignore.case=TRUE, value=TRUE)) # names(dt)[-1]
+                  dt[,name] <- gsub("\\s+", "%20", dt[,name]);
                 return(dt);
               });
   ## Add catalogue number and release information to table
@@ -359,34 +376,66 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 abs_cat_download <- function(data_url, exdir=tempdir()) {
   if (!dir.exists(exdir)) dir.create(exdir);
-  local_filename <- abs_local_filename(data_url);
-  ## Check if any data_urls are not ABS data URLs
-  if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
-             data_url, ignore.case=TRUE))	
-    stop(sprintf("Invalid ABS url: %s", data_url));
-  ##
-  ## -- Download files --
-  cat(sprintf("Downloading: %s", local_filename));
-  resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
-              raustats_ua(), progress());
-  ## File download validation code based on:
-  ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
-  if (http_error(resp)) {
-    stop(
-      sprintf(
-        "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
-        status_code(resp),
-        data_url
-      ),
-      call. = FALSE
-    )
-  }
-  ## Check content-type is compliant
-  if (!http_type(resp) %in% abs_filetypes()) {
-    stop("ABS file request did not return Excel or Zip file", call. = FALSE)
-  }
+  local_filenames <-
+    sapply(data_url[!is.na(data_url)],
+           function(url) {
+             this_filename <- abs_local_filename(url);
+             ## Check if any data_urls are not ABS data URLs
+             if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
+                        url, ignore.case=TRUE))	
+               stop(sprintf("Invalid ABS url: %s", url));
+             ##
+             ## -- Download files --
+             cat(sprintf("Downloading: %s", this_filename));
+             resp <- GET(url, write_disk(file.path(exdir, this_filename), overwrite=TRUE),
+                         raustats_ua(), progress());
+             ## File download validation code based on:
+             ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
+             if (http_error(resp)) {
+               stop(
+                 sprintf(
+                   "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
+                   status_code(resp),
+                   url
+                 ),
+                 call. = FALSE
+               )
+             }
+             ## Check content-type is compliant
+             if (!http_type(resp) %in% abs_filetypes()) {
+               stop("ABS file request did not return Excel, Zip or PDF file", call. = FALSE)
+             }
+             return(file.path(exdir, this_filename));
+           })
+    ## local_filename <- abs_local_filename(data_url);
+  ## ## Check if any data_urls are not ABS data URLs
+  ## if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
+  ##            data_url, ignore.case=TRUE))	
+  ##   stop(sprintf("Invalid ABS url: %s", data_url));
+  ## ##
+  ## ## -- Download files --
+  ## cat(sprintf("Downloading: %s", local_filename));
+  ## resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
+  ##             raustats_ua(), progress());
+  ## ## File download validation code based on:
+  ## ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
+  ## if (http_error(resp)) {
+  ##   stop(
+  ##     sprintf(
+  ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
+  ##       status_code(resp),
+  ##       data_url
+  ##     ),
+  ##     call. = FALSE
+  ##   )
+  ## }
+  ## ## Check content-type is compliant
+  ## if (!http_type(resp) %in% abs_filetypes()) {
+  ##   stop("ABS file request did not return Excel, Zip or PDF file", call. = FALSE)
+  ## }
   ## Return results
-  return(file.path(exdir, local_filename));
+  ## return(file.path(exdir, local_filename));
+  return(local_filenames);
 }
 
 
@@ -400,9 +449,9 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
 abs_local_filename <- function(url)
 {
   sprintf("%s_%s.%s",
-          sub("^.+&(.+)\\.(zip|xlsx*)&.+$", "\\1", url),
+          sub("^.+&(.+)\\.(zip|xlsx*|pdf)&.+$", "\\1", url),
           sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", url),
-          sub("^.+&(.+)\\.(zip|xlsx*)&.+$", "\\2", url));
+          sub("^.+&(.+)\\.(zip|xlsx*|pdf)&.+$", "\\2", url));
 }
 
 
@@ -464,7 +513,7 @@ abs_cat_unzip <- function(files, exdir) {
 #'     extracted_files <- abs_cat_unzip(downloaded_tables)
 #'     x <- abs_read_tss(extracted_files);
 #'   }
-abs_read_tss <- function(files, type="tss", na.rm=na.rm) {
+abs_read_tss <- function(files, type="tss", na.rm=TRUE) {
   x <- lapply(files,
               function(file)
                 abs_read_tss_(file, type=type, na.rm=na.rm));

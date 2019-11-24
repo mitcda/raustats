@@ -11,6 +11,7 @@ vignette: >
 
 ```{r, echo=FALSE}
 knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+library()
 ```
 
 
@@ -127,10 +128,10 @@ are provided [below](#abs-cat-stats-functions).
 
 ## Downloading ABS data via [ABS.Stat](http://stat.data.abs.gov.au/)
 
-The `abs_stats` function is used to download ABS statistics via the ABS.Stat
-API. For example, to download the latest CPI data series for 'All Groups'
-changes in prices across Australia and each of the eight capital cities, simply
-call:
+The `abs_stats` function is used to download ABS statistics via the
+[ABS.Stat](http://stat.data.abs.gov.au/) API. For example, to download the
+latest CPI data series for 'All Groups' changes in prices across Australia and
+each of the eight capital cities, simply call:
 
 ```{r eval=FALSE}
 cpi_api <- abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
@@ -237,7 +238,7 @@ tables from the specified catalogue number. The following sample code downloads
 Tables 1 and 2 from Catalogue no. 5206.0.
 
 ```{r eval=FALSE, message=FALSE}
-ana_q <- abs_cat_stats(cat_no = "5206.0", tables=c("^Table 1\\.", "^Table 2\\."))
+ana_q <- abs_cat_stats(cat_no = "5206.0", tables=c("^Table 1\\D", "^Table 2\\D"))
 ```
 
 The same result may be achieved by specifying one or more regular expressions
@@ -257,22 +258,22 @@ code downloads Table 1 from the December 2017 release of the quarterly national
 accounts. 
 
 ```{r eval=FALSE}
-ana_2017Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases="Dec 2017");
+ana_2017Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases="Dec 2017")
 ## or
-ana_2017Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases=as.Date("2017-12-01"));
+ana_2017Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases=as.Date("2017-12-01"))
 ```
 
 The `releases` argument accepts multiple elements, as per the following example,
 which downloads Table 1 from each of the December 2016 and 2017 quarter national accounts:
 ```{r eval=FALSE}
-ana_Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases=c("Dec 2017","Dec 2016"));
+ana_Q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1", releases=c("Dec 2017","Dec 2016"))
 ```
 
 The `abs_cat_stats` function is designed to download both ABS time series
 spreadsheets (`types="tss"`) and cross-section spreadsheets
 (`types="css"`)---'Data Cubes' in ABS terminology.  ABS time series spreadsheets
 generally have a standard format, with a single column for each series, several
-headers rows containing series metadata and a single row with the unique series
+header rows containing series metadata and a single row with the unique series
 identifier.  ABS cross-section spreadsheet formats vary, depending on the number
 of dimensions (categories) available in the data set. These tables typically
 have multiple uniquely-identifying header rows.
@@ -381,6 +382,35 @@ head(asgs_files)
 ```
 
 
+<!-- Start - New material -->
+### Listing all available Catalogue releases with `abs_cat_releases`
+
+The `abs_cat_releases` function returns a table of all available past releases
+for a specified ABS Catalogue number.  If `include_urls=TRUE` (default is
+`FALSE`), the function includes the full URL for each of the available
+releases. The default is `include_urls=FALSE`.  The following examples return
+all available releases for the quarterly national accounts (5206.0) and CPI
+(6401.0), respectively.
+
+```{r message=FALSE}
+ana_releases <- abs_cat_releases(cat_no="5206.0")
+```
+
+```{r echo=FALSE}
+head(ana_releases)
+```
+
+```{r message=FALSE}
+## CPI
+cpi_releases <- abs_cat_releases(cat_no="6401.0", include_urls=TRUE)
+```
+
+```{r echo=FALSE}
+head(cpi_releases)
+```
+<!-- END - New material -->
+
+
 ### Other ABS Catalogue helper functions
 
 As already noted, there are several ABS Catalogue helper functions that are called by
@@ -400,8 +430,8 @@ to download one or more ABS Catalogue table files. It is most usefully used in
 conjunction with the `abs_cat_tables` function, as follows:
 
 ```{r message=FALSE, results=FALSE}
-tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-downloaded_tables <- abs_cat_download(tables$path_xls[1], exdir=tempdir())
+tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE)
+downloaded_tables <- abs_cat_download(tables$path_xls, exdir=tempdir())
 print(downloaded_tables)
 ```
 
@@ -423,7 +453,7 @@ next example shows use of the function to read Table 1 from the national
 accounts (Catalogue 5206.0).
 
 ```{r eval=FALSE}
-ana_q <- abs_read_tss(extracted_files);
+ana_q <- abs_read_tss(extracted_files)
 ```
 
 
@@ -658,16 +688,16 @@ cpi <- abs_stats("CPI", filter = filter_lst)
 #### Splitting an ABS filter list into multiple short queries
 
 The `purrr` package functions: `map` and `cross` can be used to split a long
-query into a list of several shorter length queries to submit to ABS.Stat. For
-example, the following code block first uses `abs_search` to create a filter
-list to download estimated resident population (ERP), by state/territory, age
-(year) and sex, for June 2017, and splits the filter into groups no longer than
-26 elements in length (`purrr::map` and `split`), and combines them into
-complete list (`purrr::cross`). The final step imports the data by iterating
-over the filter list (`ds_filter`) using `lapply` and combining the results into
-a data frame using `bind_rows`.
+query into a list of several shorter length queries to submit to
+[ABS.Stat](http://stat.data.abs.gov.au/). For example, the following code block
+first uses `abs_search` to create a filter list to download estimated resident
+population (ERP), by state/territory, age (year) and sex, for June 2017, and
+splits the filter into groups no longer than 26 elements in length (`purrr::map`
+and `split`), and combines them into complete list (`purrr::cross`). The final
+step imports the data by iterating over the filter list (`ds_filter`) using
+`lapply` and combining the results into a data frame using `bind_rows`.
 
-```{r message=FALSE, results=FALSE}
+```{r message=FALSE, eval=FALSE, results=FALSE}
 ## ERP dataset ID
 abs_ds <- abs_search(pattern="quarterly.*population.*estimates") %>%
   select(id) %>% unlist;

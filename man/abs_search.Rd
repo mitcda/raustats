@@ -4,8 +4,13 @@
 \alias{abs_search}
 \title{Search dataset information from the ABS.Stat API}
 \usage{
-abs_search(pattern, dataset = NULL, ignore.case = TRUE,
-  code_only = FALSE, update_cache = FALSE)
+abs_search(
+  pattern,
+  dataset = NULL,
+  ignore.case = TRUE,
+  code_only = FALSE,
+  update_cache = FALSE
+)
 }
 \arguments{
 \item{pattern}{Character string or regular expression to be matched.}

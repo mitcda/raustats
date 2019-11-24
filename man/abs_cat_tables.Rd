@@ -4,8 +4,12 @@
 \alias{abs_cat_tables}
 \title{Return ABS catalogue tables}
 \usage{
-abs_cat_tables(cat_no, releases = "Latest", types = c("tss", "css"),
-  include_urls = FALSE)
+abs_cat_tables(
+  cat_no,
+  releases = "Latest",
+  types = c("tss", "css"),
+  include_urls = FALSE
+)
 }
 \arguments{
 \item{cat_no}{ABS catalogue numbers.}
@@ -22,7 +26,8 @@ default returns all Time Series Spreadsheets and Data Cubes.}
 include data file URLs.}
 }
 \value{
-Returns a data frame listing the data collection tables and links.
+Returns a data frame listing the data collection tables and URLs for Excel (column:
+  \code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
 }
 \description{
 Return list of data tables available from specified ABS catalogue number.
