@@ -422,7 +422,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
     ## If filter is a list:
     if (any(!metadata_dims %in% names(filter))) {
       ## Check if any filter dimensions missing, and append missing elements (set to 'all')
-      warning(sprintf("Filter dimension(s): %s not in filter, added and set to 'all'.",
+      message(sprintf("Filter dimension(s): %s not in filter, dimensions added and set to 'all'.",
                       paste(metadata_dims[!metadata_dims %in% names(filter)], collapse=", ")));
       for (name in metadata_dims[!metadata_dims %in% names(filter)])
         filter[[name]] <- "all"
@@ -495,19 +495,21 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
 
     ## Download data
     ## cat(sprintf("API query submitted: %s...\n", substr(url, 30)));
-    resp <- GET(url, raustats_ua(), progress())
     ## Error check URL call
-    if (http_error(resp)) {
-      stop(
-        sprintf(
-          "ABS.Stat API request failed [%s]\n%s\n<%s>", 
-          status_code(resp),
-          http_status(resp)$message,
-          http_status(resp)$reason,
-          ),
-        call. = FALSE
-      )
-    }
+    raustats_check_url_available(url)
+    resp <- GET(url, raustats_ua(), progress())
+    ## ## Error check URL call
+    ## if (http_error(resp)) {
+    ##   stop(
+    ##     sprintf(
+    ##       "ABS.Stat API request failed [%s]\n%s\n<%s>", 
+    ##       status_code(resp),
+    ##       http_status(resp)$message,
+    ##       http_status(resp)$reason,
+    ##       ),
+    ##     call. = FALSE
+    ##   )
+    ## }
     ## Check content type
     if (!grepl("draft-sdmx-json", http_type(resp))) {
       stop("ABS.Stat API did not return SDMX-JSON format", call. = FALSE)

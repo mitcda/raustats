@@ -64,13 +64,6 @@ abs_filetypes <- function()
 #'   }
 abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", na.rm=TRUE)
 {
-  if (FALSE) {
-    cat_no = "5206.0"
-    tables = "all"
-    releases = "Latest"
-    types = "tss"
-  }
-
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
@@ -79,6 +72,10 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   if (any(!types %in% c("tss","css")))
     stop("Allowable type arguments limited to one or both: 'tss' and 'css'.");
   ## Get available catalogue tables
+  if (FALSE) {
+    cat_no <- "5206.0"; tables <- c("Table 1\\W+", "Table 2\\W+");
+    releases <- "Latest"; types <- "tss"; include_urls <- FALSE;
+  }
   cat_tables <- abs_cat_tables(cat_no=cat_no, releases=releases, types=types, include_urls=TRUE)
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
@@ -149,7 +146,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #'     ## List latest available quarterly National Accounts tables
 #'     ana_tables <- abs_cat_tables("5206.0", releases="Latest");
 #'     ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-#'   
+#'
 #'     ## List latest available CPI Time Series Spreadsheet tables only
 #'     cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
 #'     cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
@@ -186,10 +183,12 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
   ## Create ABS URL and open session 
   url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
   ## Check for HTTP errors
-  if (http_error(url))
-    stop(sprintf("File cannot be downloaded. Check URL: %s", url))
+  raustats_check_url_available(url);
+  ## -- OLD CODE --
+  ## if (http_error(url))
+  ##   stop(sprintf("File cannot be downloaded. Check URL: %s", url))
+  ## Open html session
   suppressWarnings(s <- html_session(url));
-  
   releases <- unique(releases);
   if (length(releases) == 1 && tolower(releases) == "latest") {
     .paths <- "";
@@ -206,8 +205,9 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
   ## Return list of all downloadable files, for specified catalogue tables ('cat_tables')
   v <- lapply(.paths,
               function(x) {
+                ## Check for HTTP errors
+                ## raustats_check_url_available(file.path(s, x));
                 y <- jump_to(s, x)
-                ## z <- abs_cat_tables(.url$url)
                 l <- follow_link(y, abs_urls()$downloads_regex)
                 ht <- html_nodes(html_nodes(l, "table"), "table")
                 ## Return data table
@@ -336,8 +336,9 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
   ## Create ABS URL and open session 
   url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
   ## Check for HTTP errors
-  if (http_error(url))
-    stop(sprintf("File cannot be downloaded. Check URL: %s", url))
+  raustats_check_url_available(url)
+  ## if (http_error(url))
+  ##   stop(sprintf("File cannot be downloaded. Check URL: %s", url))
   suppressWarnings(s <- html_session(url));
   ## Get path to 'Past & Future Releases' page
   .paths <- html_nodes(s, "a");
@@ -387,20 +388,22 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
              ##
              ## -- Download files --
              cat(sprintf("Downloading: %s", this_filename));
+             ## Check for errors
+             raustats_check_url_available(url)
              resp <- GET(url, write_disk(file.path(exdir, this_filename), overwrite=TRUE),
                          raustats_ua(), progress());
-             ## File download validation code based on:
-             ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
-             if (http_error(resp)) {
-               stop(
-                 sprintf(
-                   "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
-                   status_code(resp),
-                   url
-                 ),
-                 call. = FALSE
-               )
-             }
+             ## ## File download validation code based on:
+             ## ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
+             ## if (http_error(resp)) {
+             ##   stop(
+             ##     sprintf(
+             ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
+             ##       status_code(resp),
+             ##       url
+             ##     ),
+             ##     call. = FALSE
+             ##   )
+             ## }
              ## Check content-type is compliant
              if (!http_type(resp) %in% abs_filetypes()) {
                stop("ABS file request did not return Excel, Zip or PDF file", call. = FALSE)

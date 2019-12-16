@@ -37,7 +37,7 @@ Return list of data tables available from specified ABS catalogue number.
     ## List latest available quarterly National Accounts tables
     ana_tables <- abs_cat_tables("5206.0", releases="Latest");
     ana_tables_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-  
+
     ## List latest available CPI Time Series Spreadsheet tables only
     cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
     cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
