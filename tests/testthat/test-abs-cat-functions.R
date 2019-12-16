@@ -19,8 +19,8 @@ test_that("abs_cat_tables fails well",
   skip_on_travis()
   skip_on_appveyor()
   
-  bad_url <- "http://www.rba.gov.au/"
-  expect_error(abs_cat_tables(bad_url));
+  invalid_cat_no <- "5205.0"
+  expect_error(abs_cat_tables(invalid_cat_no));
 })
 
 
@@ -129,7 +129,8 @@ test_that("abs_cat_unzip extracts from valid filenames",
   skip_on_appveyor()
 
   abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-  downloaded_tables <- abs_cat_download(head(abs_tables_5206_url$path_zip, 3), exdir=tempdir());
+  downloaded_tables <- abs_cat_download(abs_tables_5206_url$path_zip %>% .[!is.na(.)],
+                                        exdir=tempdir());
   extracted_files <- abs_cat_unzip(downloaded_tables);
   expect_type(extracted_files, "character");
   expect_match(extracted_files, "\\w+\\.xlsx*$");
@@ -144,7 +145,8 @@ test_that("abs_read_tss returns valid data.frame",
   skip_on_appveyor()
 
   abs_tables_5206_url <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-  downloaded_tables <- abs_cat_download(head(abs_tables_5206_url$path_zip, 3), exdir=tempdir());
+  downloaded_tables <- abs_cat_download(abs_tables_5206_url$path_zip %>% .[!is.na(.)],
+                                        exdir=tempdir());
   extracted_files <- abs_cat_unzip(downloaded_tables)
   expect_s3_class(abs_read_tss(extracted_files[1]), "data.frame"); ## Extract one file
   expect_s3_class(abs_read_tss(extracted_files), "data.frame");    ## Extract multiple files

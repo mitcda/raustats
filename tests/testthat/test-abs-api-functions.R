@@ -172,14 +172,14 @@ test_that("abs_stats returns valid data frame",
                             start_date="2008-Q3", end_date="2018-Q2"),
                   "data.frame");
   ## Test incomplete filter set
-  partial_flt <- list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q")
-  expect_warning(abs_stats("CPI", filter=partial_flt,
+  partial_flt <- list(REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q");
+  expect_message(abs_stats("CPI", filter=partial_flt,
                            start_date="2008-Q3", end_date="2018-Q2"));
   expect_s3_class(suppressWarnings(abs_stats("CPI", filter=partial_flt,
                                              start_date="2008-Q3", end_date="2018-Q2")),
                   "data.frame");
   ## Test function returns character string
-  expect_warning(abs_stats("CPI", filter=partial_flt,
+  expect_message(abs_stats("CPI", filter=partial_flt,
                            start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE));
   expect_type(suppressWarnings(abs_stats("CPI", filter=partial_flt,
                                          start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE)),
