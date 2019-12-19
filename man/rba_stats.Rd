@@ -16,7 +16,7 @@ rba_stats(table_no, pattern, url, update_cache = FALSE, ...)
 \item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
 RBA datasets, if TRUE, update the list of available datasets.}
 
-\item{...}{Other arguments to \code{\link{rba_search}}}
+\item{...}{Other arguments to \code{\link{rba_search}}, e.g. \code{series_type = "statistical_tables"}.}
 }
 \value{
 data frame in long format

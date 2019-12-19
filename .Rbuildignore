@@ -1,9 +1,6 @@
 cran-comments.md
 README.Rmd
 README.html
-^z-debugging-code\.R$
-^z-release-questions\.R$
-^z-unused-functions\.R$
 ^Meta$
 ^doc$
 # Rbuildignore
@@ -11,13 +8,14 @@ README.html
 ^.git/$
 ^.gitignore$
 ^.Rhistory$
+data-raw
 ^EXTRA-CODE$
 ^README$
 ^CHANGES$
-^Setup.R$
-^SQL.R$
-^misc.R$
 ^TODO$
 ^R-example-code/$
-data-raw
-raustats_presentation.Rmd
+abs-series-abbreviation.R
+z-debugging-code.R
+z-release-questions.R
+z-unused-functions.R
+raustats_presentation.*

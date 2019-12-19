@@ -11,4 +11,4 @@ usethis::use_data(abs_cat_cachelist, overwrite=TRUE);
 usethis::use_data(abs_cachelist, overwrite=TRUE);
 usethis::use_data(aus_state_codes, overwrite=TRUE);
 
-### =============================== EOF =====================================
+## ---------------------------------- EOF -------------------------------------

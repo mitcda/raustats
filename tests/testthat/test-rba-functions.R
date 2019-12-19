@@ -43,6 +43,18 @@ test_that("rba_search returns valid results",
 })
 
 
+test_that("rba_search returns valid results",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  expect_s3_class(rba_search("G3"), "data.frame");
+  expect_s3_class(rba_search("G3", series_type="discontinued data", update_cache=TRUE),
+                  "data.frame");
+})
+
+
 test_that("rba_file_download returns valid data.frame",
 {
   skip_on_cran()
@@ -86,3 +98,18 @@ test_that("rba_stats returns valid data.frame",
   expect_s3_class(rba_stats(url=url), "data.frame");
 })
 
+
+test_that("More tests that rba_stats returns valid data.frame",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  ## Specific table tests:
+  ## 1) Table G1
+  expect_s3_class(rba_stats(table_no = "G1"), "data.frame");
+  ## 2) Table D2
+  expect_s3_class(rba_stats(table_no = "D2"), "data.frame");
+  ## 3) Table G3
+  expect_s3_class(rba_stats(table_no = "G3"), "data.frame");
+})

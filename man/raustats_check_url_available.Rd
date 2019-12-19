@@ -2,10 +2,9 @@
 % Please edit documentation in R/httr-utilities.R
 \name{raustats_check_url_available}
 \alias{raustats_check_url_available}
-\alias{raustats_check_api_available}
-\title{raustats check URL available}
+\title{Check specified ABS/RBA URL available}
 \usage{
-raustats_check_api_available(url)
+raustats_check_url_available(url)
 }
 \arguments{
 \item{url}{The base URL to check.}
@@ -18,7 +17,7 @@ Function to ensure URL calls fail gracefully with an informative message if the
   resource is not available (and not give a check warning nor error).
 }
 \details{
-Check if the given openSenseMap API endpoint is available
+Check if the specified ABS/RBA URL is available
 }
 \note{
 Based on code in \code{opensensmapR}  \url{ttps://github.com/sensebox/opensensmapR/blob/f69cf62b2771d5b6ed605c04b7ddd618f5a272c2/R/api.R}{\code{api.R}}.

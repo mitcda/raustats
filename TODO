@@ -15,6 +15,18 @@
 
 * Fix path variables in `abs_cat_tables` function
 
+* Fix `rba_stats` function - error on loading tables D2 & G3, among possible
+  others. (Identified by David Stephan ) - Fixed 2019-12-16
+  - 
+	Specifically, the following command works beautifully: rba_g1 <- rba_stats(table_no = "G1")
+
+However, the following command crashes: rba_D2 <- rba_stats("D2") The error given is: Error in 1:header_row : argument of length 0
+
+I have the same issue with the table G3, however a workaround that seems to work for that is the following sequence of commands: 
+
+g3_tables <- rba_search(pattern = "Expectations")
+rba_g3 <- rba_stats(url = g3_tables$url)
+
 
 ## ABS API functions
 

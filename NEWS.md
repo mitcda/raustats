@@ -1,20 +1,45 @@
-# raustats 0.1.0.9050
+# raustats 0.15.0
 ---------------------------------------------------------------------
 
-## Bug fixes:
-* Fixed bug in `abs_cat_stats` function to avoid downloading the files multiple
-  times and apply `abs_cat_unzip` function only to compressed files.
-* Silently handle zero-length (empty) returns in `abs_stats`.
-
 ## Changes:
-* Added `na.rm` argument to `abs_cat_stats` and `abs_read_tss` functions.
-* Added `abs_cat_releases` function.
-* Internal changes to `abs_cat_tables` function clarifying column names for
-  Excel, Zip and PDF file format URLs. 
-* Added `return_json` argument to `abs_stats` function.
-* Added OpenXml Spreadsheet files to list of valid ABS catalogue statistics file
-  types.
-* Added PDF files to valid list of downloadable ABS catalogue file types.
+
+* `abs_cat_stats` includes new argument `na.rm` to provide option to remove rows
+  with `NA` values.
+
+* `abs_read_tss` includes new argument `na.rm` to provide option to remove rows
+  with `NA` values.
+
+* `abs_cat_download` now includes PDF files in set of downloadable ABS catalogue
+  file types.
+
+* `abs_cat_releases` a new function that returns the set of all available
+  releases for a specified ABS catalogue number.
+
+* `abs_cat_tables` includes internal changes to specifying separate column names
+  for Excel, Zip and PDF resource URLs.
+
+* `abs_stats` includes new option `return_json` which enables return of data in
+  raw JSON format.
+
+* `rba_search` (and by extension `rba_stats`) now includes new option
+  `series_type` which enables user to list only current *statistical tables*
+  (the default), *historical data* or *discontinued data*.
+
+
+## Bug fixes:
+
+* `abs_cat_stats` now avoids multiple file downloads and applies `abs_cat_unzip`
+  only to compressed files.
+
+* `abs_stats` now gracefully handles zero-length (empty) returns.
+
+* `rba_stats` now downloads only current *statistical tables* by
+  default. Previously, `rba_stats` would attempt to read all tables meeting
+  search criteria, and fail in cases involving a mix of *statistical tables*,
+  *historical data* and/or *discontinued data*. (Reported by David Stephan.)
+
+* Added functionality to ensure URL calls fail gracefully with an informative
+  message if the resource is not available.
 
 
 

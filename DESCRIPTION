@@ -16,7 +16,7 @@ Depends: R (>= 3.3.0), readxl
 Imports: stats, dplyr, httr, jsonlite, rvest, tidyr, xml2, lubridate
 Suggests: repo, knitr, rmarkdown, testthat, ggplot2
 LazyData: TRUE
-RoxygenNote: 7.0.1
+RoxygenNote: 7.0.2
 VignetteBuilder: knitr
 NeedsCompilation: no
 Encoding: UTF-8

@@ -7,6 +7,7 @@
 rba_search(
   pattern,
   fields = c("table_no", "table_name"),
+  series_type = "statistical tables",
   ignore.case = TRUE,
   update_cache = FALSE
 )
@@ -16,6 +17,9 @@ rba_search(
 
 \item{fields}{Character vector of column names through which to search. By default, the function
 searches 'table_no' and 'table_name'.}
+
+\item{series_type}{Character vector specifying one or more one of 'statistical tables', 'historical data' or
+'discontinued data'. By default, \code{series_type = 'statistical tables'}.}
 
 \item{ignore.case}{Case senstive pattern match or not.}
 
