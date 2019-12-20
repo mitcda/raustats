@@ -780,9 +780,9 @@ specifies the fields in the RBA table cache to search---by default the function
 searches the `table_code` and `table_name` fields only. The `ignore.case`
 argument allows for case sensitive regular expression matching---the default is
 case insensitive matching (`ignore.case=TRUE`). The `update_cache` argument
-specifies specifies whether the function uses the list of RBA tables supplied
-with the package `rba_cachelist` (`update_cache=FALSE`, the default) or to
-update list of tables from the RBA website (`update_cache=TRUE`).
+specifies whether the function uses the list of RBA tables supplied with the
+package `rba_cachelist` (`update_cache=FALSE`, the default) or to update list of
+tables from the RBA website (`update_cache=TRUE`).
 
 
 ```{r}
@@ -862,8 +862,8 @@ structured format comprising full metadata and observations. Functionality to
 handle [Historical data
 tables](https://www.rba.gov.au/statistics/historical-data.html) and
 [Discontinued data
-tables](https://www.rba.gov.au/statistics/discontinued-data.html) are in
-progress.
+tables](https://www.rba.gov.au/statistics/discontinued-data.html) are yet to be
+added.
 
 
 ### Other RBA helper functions

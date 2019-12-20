@@ -6,7 +6,6 @@ Meta
 R-example-code/*
 *discards*
 /README.html
-
 doc
-/vignettes/raustats_presentation.Rmd
-/vignettes/raustats_presentation.pptx
+raustats_presentation.*
+cran-comments*.md
