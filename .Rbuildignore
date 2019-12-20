@@ -17,5 +17,6 @@ abs-series-abbreviation.R
 z-debugging-code.R
 z-release-questions.R
 z-unused-functions.R
-raustats_presentation\\.
-cran-comments.*\\.md
+raustats_presentation.Rmd
+raustats_presentation.pptx
+cran-comments.md
