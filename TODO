@@ -6,33 +6,25 @@
   provide option to return results as raw JSON
 
 * Add functionality to check for zero-length data sets returned by `abs_stats`,
-  to avoid failing on bind_rows step.
+  to avoid failing on bind_rows step. [COMPLETED 2019-12-20]
 
 * The ABS Engineering Construction tables seem to require that the
-  `sub(regex_table_name, ...)` has `ignore.case = TRUE` (to capture "TABLE") - [DONE 15/09/2018]
+  `sub(regex_table_name, ...)` has `ignore.case = TRUE` (to capture "TABLE") -
+  [COMPLETED 2018-09-15]
 
-* Add functionality to list all available releases for a specified catalogue number.
+* Add function to list all available releases for a specified catalogue
+  number. [COMPLETED 2019-12-20 - `abs_cat_releases`]
 
-* Fix path variables in `abs_cat_tables` function
+* Fix path variables in `abs_cat_tables` function.
 
 * Fix `rba_stats` function - error on loading tables D2 & G3, among possible
-  others. (Identified by David Stephan ) - Fixed 2019-12-16
-  - 
-	Specifically, the following command works beautifully: rba_g1 <- rba_stats(table_no = "G1")
-
-However, the following command crashes: rba_D2 <- rba_stats("D2") The error given is: Error in 1:header_row : argument of length 0
-
-I have the same issue with the table G3, however a workaround that seems to work for that is the following sequence of commands: 
-
-g3_tables <- rba_search(pattern = "Expectations")
-rba_g3 <- rba_stats(url = g3_tables$url)
+  others. (Reported by David Stephan ) - [COMPLETED 2019-12-20]
 
 
 ## ABS API functions
 
-* abs_stats function
-  - Add `simplify` argument to `abs_stats` function to provide option to return
-    raw sdmx-json format output
+* `abs_stats function` - Add `simplify` argument to `abs_stats` function to
+    provide option to return raw sdmx-json format output
 
 * Simplify `abs_cachetable` to include only a list of datasets and call
   abs_metadata each time detailed dataset information is required.
@@ -43,31 +35,31 @@ rba_g3 <- rba_stats(url = g3_tables$url)
 
 * Test all ABS catalogue functions
 
-* abs_cat_stats
+* `abs_cat_stats`
   - Insert code to handle Date class `releases` arguments, e.g. releases=as.Date("2017-12-01").
   - Add `header_start` and `header_rows` argument to `abs_cat_stats` function.
   - Add `return_urls` functionality to `abs_cat_stats` function - [DONE 2018-11-01]
 
-* abs_cat_tables
+* `abs_cat_tables`
   - Add code to handle varying number of paths returned by `abs_cat_tables`
   - Remove Released 'dd/mm/yyyy' columns from final results.
   - Modify `abs_cat_tables` function to list tables for specified catalogue numbers. [DONE 2018-11-05]
   - Generalise `abs_cat_tables` function to handle non-time series results with only one column of URLs. [DONE 2018-11-06]
 
-* abs_cat_unzip
+* `abs_cat_unzip`
   - Added exdir argument - [DONE 2018-11-01]
 
-* abs_cat_download
+* `abs_cat_download`
   - Added exdir argument - [DONE 2018-11-01]
 
-* Candidate additional arguments for abs_stats
+* Candidate additional arguments for `abs_stats`
 #' `@param include_lastUpdated = FALSE` A character vector of regular expressions denoting
 #'   tables to download. The default ('All') downloads all time series spreadsheet tables for each
 #'   specified catalogue. Use a list to specify different table sets for each specified ABS
 #'   catalogue number.
 
 
-* Check warning messages issued by rba_stats(url = ...):
+* Check warning messages issued by `rba_stats(url = ...)`:
 #' Warning messages:
 #' 1: In eval(substitute(list(...)), `_data`, parent.frame()) :
 #' NAs introduced by coercion

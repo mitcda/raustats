@@ -1,4 +1,4 @@
-cran-comments.md
+cran-comments*.md
 README.Rmd
 README.html
 ^Meta$
