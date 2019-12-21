@@ -379,7 +379,6 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
 abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       dimensionAtObservation=c("AllDimensions","TimeDimension","MeasureDimension"),
                       detail=c("Full","DataOnly","SeriesKeysOnly","NoData"),
-                      ## remove_na=TRUE, include_unit=TRUE, include_obsStatus=FALSE,
                       return_json=FALSE, return_url=FALSE,
                       enforce_api_limits=TRUE, update_cache=FALSE)
 {
@@ -481,12 +480,12 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                              length(grep("^\\d{4}-B\\d+$", time_filter)),
                              NA_integer_)),
                     c(ifelse("Q" %in% filter$FREQUENCY,
-                               length(grep("^\\d{4}-Q\\d+$", time_filter)),
-                               NA_integer_)),
-                      c(ifelse("M" %in% filter$FREQUENCY,
-                               length(grep("^\\d{4}-M\\d+$", time_filter)),
-                               NA_integer_)),
-                      na.rm = TRUE);
+                             length(grep("^\\d{4}-Q\\d+$", time_filter)),
+                             NA_integer_)),
+                    c(ifelse("M" %in% filter$FREQUENCY,
+                             length(grep("^\\d{4}-M\\d+$", time_filter)),
+                             NA_integer_)),
+                    na.rm = TRUE);
       if (n_filter * n_time > 10^6)
         stop(sprintf(paste("Estimated number of records (%i) exceeds ABS.Stat limit (1 million).",
                            "Filter query in one or more dimensions."),
@@ -519,7 +518,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
       ## Return results as sdmx-json text format
       return(content(resp, as="text"))
     } else {
-      cat("Converting query output to data frame ... ");
+      cat("Converting query output to data frame ... \n");
       ## Convert JSON to list
       x_json <- fromJSON(content(resp, as="text")) ## , simplifyVector = FALSE)
       ## Check whether data contains any observations

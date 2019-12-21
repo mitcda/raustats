@@ -26,10 +26,10 @@ raustats_check_url_available <- function(url) {
   try({ code = status_code(GET(url, raustats_ua())) }, silent = TRUE)
   
   if (code == 200)
-    return(TRUE)
+    return(NULL)
   
-  if (code != FALSE)
+  if (code != FALSE) {
     errtext = sprintf("The API at %s is currently not available. (HTTP code %s)", url, code)
-  stop(paste(errtext, collapse='\n'), call. = FALSE)
-  FALSE
+    stop(paste(errtext, collapse='\n'), call. = FALSE)
+  }
 }
