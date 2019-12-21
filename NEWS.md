@@ -15,8 +15,8 @@
 * `abs_cat_releases` a new function that returns the set of all available
   releases for a specified ABS catalogue number.
 
-* `abs_cat_tables` includes internal changes to specifying separate column names
-  for Excel, Zip and PDF resource URLs.
+* `abs_cat_tables` includes internal changes that specify separate columns for
+  Excel, Zip and PDF resource URLs.
 
 * `abs_stats` includes new option `return_json` which enables return of data in
   raw JSON format.
@@ -30,6 +30,11 @@
 
 * `abs_cat_stats` now avoids multiple file downloads and applies `abs_cat_unzip`
   only to compressed files.
+
+* `abs_cat_tables` includes revisions that correct errors thrown by
+  `abs_cat_tables` and `abs_cat_stats` for some ABS catalogue numbers
+  (e.g. 8731.0 and 3105.0.65.001) ([Issue
+  #1](https://github.com/mitcda/raustats/issues/1.))
 
 * `abs_stats` now gracefully handles zero-length (empty) returns.
 

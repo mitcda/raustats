@@ -166,9 +166,17 @@ test_that("abs_stats returns valid data frame",
   skip_on_travis()
   skip_on_appveyor()
 
+  ## Test ERP Quarterly data extraction
+  expect_s3_class(abs_stats("ERP_QUARTERLY",
+                            filter = list(MEASURE = 1,  ## Estimated Resident Population
+                                          SEX_ABS = 3,  ## Persons
+                                          AGE = "TT")), ## All ages
+                  "data.frame");
+  
   ## Test specific filter and start/end dates
-  expect_s3_class(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
-                                               INDEX=10001, TSEST=10, FREQUENCY="Q"),
+  expect_s3_class(abs_stats("CPI",
+                            filter=list(MEASURE=1, REGION=c(1:8,50),
+                                        INDEX=10001, TSEST=10, FREQUENCY="Q"),
                             start_date="2008-Q3", end_date="2018-Q2"),
                   "data.frame");
   ## Test incomplete filter set
