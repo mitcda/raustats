@@ -24,14 +24,18 @@ New submission
 
 Package was archived on CRAN
 
+Possibly mis-spelled words in DESCRIPTION:
+  RBA (3:52, 6:30)
+
+- Abbreviation spelt out in DESCRIPTION.
+
 CRAN repository db overrides:
   X-CRAN-Comment: Archived on 2019-12-19 for policy violation.
 
   On Internet access.
 
-
-Added functionality to ensure URL calls fail gracefully with an informative
-message if the resource is not available.
+- Added functionality to ensure URL calls fail gracefully with an 
+  informative message if the resource is not available.
 
 
 ### Downstream dependencies
