@@ -7,23 +7,23 @@ test_that("raustats_check_url_available returns true results",
   skip_on_appveyor()
 
   ## Check valid ABS Catalogue URLs
-  expect_true(raustats_check_url_available(abs_urls()$base_url))
-  expect_true(raustats_check_url_available(file.path(abs_urls()$base_url,
+  expect_null(raustats_check_url_available(abs_urls()$base_url))
+  expect_null(raustats_check_url_available(file.path(abs_urls()$base_url,
                                                      abs_urls()$ausstats_path,
                                                      mf_path = "mf")));
-  expect_true(raustats_check_url_available(file.path(abs_urls()$base_url,
+  expect_null(raustats_check_url_available(file.path(abs_urls()$base_url,
                                                      abs_urls()$ausstats_path,
                                                      abs_urls()$mf_path,
                                                      "5206.0")));
 
   ## Check valid ABS API URLs
-  expect_true(raustats_check_url_available(file.path(abs_api_urls()$base_url)));
+  expect_null(raustats_check_url_available(file.path(abs_api_urls()$base_url)));
 
   ## Check valid RBA paths
-  expect_true(raustats_check_url_available(rba_urls()$base_url));
-  expect_true(raustats_check_url_available(file.path(rba_urls()$base_url,
+  expect_null(raustats_check_url_available(rba_urls()$base_url));
+  expect_null(raustats_check_url_available(file.path(rba_urls()$base_url,
                                                      rba_urls()$stats_path)));
-  expect_true(raustats_check_url_available(file.path(rba_urls()$base_url,
+  expect_null(raustats_check_url_available(file.path(rba_urls()$base_url,
                                                      rba_urls()$stats_path,
                                                      rba_urls()$tables_path)));
 })

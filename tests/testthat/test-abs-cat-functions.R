@@ -49,6 +49,10 @@ test_that("abs_cat_tables returns a valid data.frame",
   ## ABS Catalogue tables - 1292, types="pub"
   abs_tables_1292 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
   expect_s3_class(abs_tables_1292, "data.frame");
+
+  ## ABS Catalogue tables - 8731
+  abs_tables_8731 <- abs_cat_tables("8731.0", releases="Latest", include_urls=TRUE);
+  expect_s3_class(abs_tables_8731, "data.frame");
 })
 
 
@@ -159,8 +163,12 @@ test_that("abs_cat_stats tss call returns valid data frame",
   skip_on_travis()
   skip_on_appveyor()
 
+  ## ABS Catalogue no. 5206.0
   expect_s3_class(abs_cat_stats("5206.0", tables="Table 1\\W+"), "data.frame");
   expect_s3_class(abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+")), "data.frame");
+  ## ABS Catalogue no. 6401.0
   expect_s3_class(abs_cat_stats("6401.0", tables="CPI.+All Groups"), "data.frame");
   expect_s3_class(abs_cat_stats("6401.0", tables="CPI.+All Groups", releases="Dec 2017"), "data.frame");
+  ## ABS Catalogue no. 8731.0
+  expect_s3_class(abs_cat_stats("8731.0", tables=c("TABLE 01\\W+", "TABLE 02\\W+")), "data.frame");
 })

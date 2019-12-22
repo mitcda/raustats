@@ -33,8 +33,7 @@
 
 * `abs_cat_tables` includes revisions that correct errors thrown by
   `abs_cat_tables` and `abs_cat_stats` for some ABS catalogue numbers
-  (e.g. 8731.0 and 3105.0.65.001) ([Issue
-  #1](https://github.com/mitcda/raustats/issues/1.))
+  (e.g. 8731.0 and 3105.0.65.001).
 
 * `abs_stats` now gracefully handles zero-length (empty) returns.
 
