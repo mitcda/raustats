@@ -2,6 +2,12 @@
 
 # TO DO - Feature requests
 
+* Enable `releases="July 2016"` to work for the latest releases in
+  `abs_cat_tables` and `abs_cat_stats`.
+
+
+## Completed functions
+
 * Add argument: `format = c("table", "raw")` argument to `abs_stats` function to
   provide option to return results as raw JSON
 

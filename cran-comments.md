@@ -1,4 +1,4 @@
-# Release version 0.1.1
+# Release version 0.15.0
 
 ## New submission
 
@@ -23,11 +23,6 @@ There was 1 NOTE:
 New submission
 
 Package was archived on CRAN
-
-Possibly mis-spelled words in DESCRIPTION:
-  RBA (3:52, 6:30)
-
-- Abbreviation spelt out in DESCRIPTION.
 
 CRAN repository db overrides:
   X-CRAN-Comment: Archived on 2019-12-19 for policy violation.
