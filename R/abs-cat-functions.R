@@ -163,11 +163,13 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 {
   ## if (FALSE) {
   ##   -- DEBUGGING CODE --
+  ## cat_no <- "5206.0"; types <- "tss"; releases <- "Latest"; include_urls <- TRUE;
   ## cat_no <- "6401.0"; types <- "tss"; releases <- "Latest"; include_urls <- TRUE;
   ## cat_no <- "5209.0.55.001"; types <- "css"; releases <- "Latest"; include_urls <- TRUE;
   ## cat_no <- "1270.0.55.001"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
   ## cat_no <- "6202.0"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
   ## cat_no <- "3105.0.65.001"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
+  ## cat_no <- "3401.0"; releases <- "Latest"; types <- "tss"; include_urls <- TRUE;
   ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
@@ -233,7 +235,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                      function(x) {
                                        if (grepl(paste(c("(^\\W{0,1}$)",
                                                          "(^data\\s*cubes\\W*$)",
-                                                         "(^time series spreadsheet\\W*$)"),
+                                                         "(^time series spreadsheets\\W*$)"),
                                                        collapse="|"),
                                                  x[1], ignore.case=TRUE)) {
                                          NULL

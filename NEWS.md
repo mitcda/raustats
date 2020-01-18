@@ -1,3 +1,13 @@
+# raustats 0.15.1
+---------------------------------------------------------------------
+
+## Bug fixes:
+
+* `abs_cat_tables` failed to list time series spreadsheet tables for some ABS
+  Catalogue numbers.
+
+
+
 # raustats 0.15.0
 ---------------------------------------------------------------------
 
