@@ -1,6 +1,12 @@
 # raustats 0.15.1
 ---------------------------------------------------------------------
 
+## Changes:
+
+* `abs_cat_tables` and `abs_cat_stats` return string columns as character,
+  rather than factor.
+
+
 ## Bug fixes:
 
 * `abs_cat_tables` failed to list time series spreadsheet tables for some ABS

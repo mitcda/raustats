@@ -290,7 +290,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
               function(i) {
                 v[[i]]$release <- sub("^$", "Latest", releases[i]);
                 v[[i]]$cat_no <- cat_no;
-                as.data.frame(v)
+                as.data.frame(v, stringsAsFactors=FALSE)
               });
   ## Bind all results together
   z <- do.call(rbind, v);
@@ -358,12 +358,14 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
   .paths <- html_nodes(.tables, "a");
   ## Return results 
   if (!include_urls) {
-    z <- data.frame(releases = html_text(.paths))
+    z <- data.frame(releases = html_text(.paths),
+                    stringsAsFactors=FALSE)
   } else {
     z <- data.frame(releases = html_text(.paths),
                     urls = file.path(abs_urls()$base_url,
                                      abs_urls()$ausstats_path,
-                                     html_attr(.paths, "href")))
+                                     html_attr(.paths, "href")),
+                    stringsAsFactors=FALSE)
   }
   row.names(z) <- seq_len(nrow(z));
   return(z)
