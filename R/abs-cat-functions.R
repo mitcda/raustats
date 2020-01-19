@@ -170,6 +170,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
   ## cat_no <- "6202.0"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
   ## cat_no <- "3105.0.65.001"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
   ## cat_no <- "3401.0"; releases <- "Latest"; types <- "tss"; include_urls <- TRUE;
+  ## cat_no <- "3218.0"; releases <- "2005-06"; types <- c("tss","css"), include_urls <- TRUE;
   ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
@@ -231,10 +232,14 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                 data_nodes <- lapply(all_nodes,
                                      function(x) {
                                        if (grepl(paste(c("(^\\W{0,1}$)",
-                                                         "(^data\\s*cubes\\W*$)",
-                                                         "(^time series spreadsheets\\W*$)"),
+                                                         "(^publications\\W*$)",
+                                                         "(^time series spreadsheets\\W*$)",
+                                                         "(^data\\s*cubes\\W*$)"),
                                                        collapse="|"),
                                                  x[1], ignore.case=TRUE)) {
+                                         NULL
+                                         ## Also drop SuperTABLE (srd) format files
+                                       } else if (any(grepl("\\.srd", x, ignore.case=TRUE))) {
                                          NULL
                                        } else {
                                          x
