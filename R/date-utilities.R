@@ -4,10 +4,10 @@
 #' @description Function to convert Excel numeric date to R Date object
 #' @param x Excel-based date numeric object
 #' @return Date object
-## #' @examples
-## #'   \donttest{
-## #'     raustats:::excel2Date(43445);
-## #'   }
+#' @examples
+#'   \donttest{
+#'     excel2Date(43445);
+#'   }
 #' @keywords internal
 excel2Date <- function(x) {
   as.Date(x, origin="1899-12-30");
@@ -23,12 +23,12 @@ excel2Date <- function(x) {
 #' @param format The input date format. Default is "\%Y-Q\%q".
 #' @return This function returns a Date format object.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
-## #' @examples
-## #'   \donttest{
-## #'     x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
-## #'     quarter2Date(x);
-## #'     quarter2Date(x, base.month="Jan");
-## #'   }
+#' @examples
+#'   \donttest{
+#'     x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
+#'     quarter2Date(x);
+#'     quarter2Date(x, base.month="Jan");
+#'   }
 #' @keywords internal
 quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 {
@@ -63,11 +63,11 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 #' @param date date object
 #' @return Date object
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
-## #' @examples
-## #'   \donttest{
-## #'     date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-## #'    last_day(date)
-## #'   }
+#' @examples
+#'   \donttest{
+#'     date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
+#'     last_day(date)
+#'   }
 #' @keywords internal
 last_day <- function(date)
   ceiling_date(date, "month") - days(1);
@@ -81,11 +81,11 @@ last_day <- function(date)
 #' @param ending character string abbreviation or number denoting ending month of the financial year
 #' @return Date object 
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
-## #' @examples
-## #'   \donttest{
-## #'     x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-## #'    fin_year(x)
-## #'   }
+#' @examples
+#'   \donttest{
+#'     x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
+#'     fin_year(x)
+#'   }
 #' @keywords internal
 fin_year <- function(date, ending="Jun")
 {

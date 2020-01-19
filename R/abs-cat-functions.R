@@ -20,9 +20,9 @@ abs_urls <- function()
 
 #' @name abs_filetypes
 #' @title Valid ABS file types
-#' @description This function returns a vector of valid ABS file types for using list of URLs and data paths used to construct ABS Catalogue
-#'   data access calls. It is used in other functions in this package and need not be called
-#'   directly.
+#' @description This function returns a vector of valid ABS file types used in filtering ABS
+#'   Catalogue data access calls. It is used in other functions in this package and need not be
+#'   called directly.
 #' @return a vector containing a list of valid ABS file types.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
@@ -64,6 +64,10 @@ abs_filetypes <- function()
 #'   }
 abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", na.rm=TRUE)
 {
+  ## if (FALSE) {
+  ##   cat_no <- "5206.0"; tables <- c("Table 1\\W+", "Table 2\\W+");
+  ##   releases <- "Latest"; types <- "tss"; include_urls <- FALSE;
+  ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   ## if (tolower(releases) != "latest" ||
@@ -72,10 +76,6 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   if (any(!types %in% c("tss","css")))
     stop("Allowable type arguments limited to one or both: 'tss' and 'css'.");
   ## Get available catalogue tables
-  if (FALSE) {
-    cat_no <- "5206.0"; tables <- c("Table 1\\W+", "Table 2\\W+");
-    releases <- "Latest"; types <- "tss"; include_urls <- FALSE;
-  }
   cat_tables <- abs_cat_tables(cat_no=cat_no, releases=releases, types=types, include_urls=TRUE)
   ## Select only the user specified tables ('sel_tables')
   if (length(tables) == 1 && tolower(tables) == "all") {
@@ -187,9 +187,6 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
   url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
   ## Check for HTTP errors
   raustats_check_url_available(url);
-  ## -- OLD CODE --
-  ## if (http_error(url))
-  ##   stop(sprintf("File cannot be downloaded. Check URL: %s", url))
   ## Open html session
   suppressWarnings(s <- html_session(url));
   releases <- unique(releases);
@@ -399,52 +396,13 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
              raustats_check_url_available(url)
              resp <- GET(url, write_disk(file.path(exdir, this_filename), overwrite=TRUE),
                          raustats_ua(), progress());
-             ## ## File download validation code based on:
-             ## ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
-             ## if (http_error(resp)) {
-             ##   stop(
-             ##     sprintf(
-             ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
-             ##       status_code(resp),
-             ##       url
-             ##     ),
-             ##     call. = FALSE
-             ##   )
-             ## }
              ## Check content-type is compliant
              if (!http_type(resp) %in% abs_filetypes()) {
                stop("ABS file request did not return Excel, Zip or PDF file", call. = FALSE)
              }
              return(file.path(exdir, this_filename));
            })
-    ## local_filename <- abs_local_filename(data_url);
-  ## ## Check if any data_urls are not ABS data URLs
-  ## if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
-  ##            data_url, ignore.case=TRUE))	
-  ##   stop(sprintf("Invalid ABS url: %s", data_url));
-  ## ##
-  ## ## -- Download files --
-  ## cat(sprintf("Downloading: %s", local_filename));
-  ## resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
-  ##             raustats_ua(), progress());
-  ## ## File download validation code based on:
-  ## ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
-  ## if (http_error(resp)) {
-  ##   stop(
-  ##     sprintf(
-  ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
-  ##       status_code(resp),
-  ##       data_url
-  ##     ),
-  ##     call. = FALSE
-  ##   )
-  ## }
-  ## ## Check content-type is compliant
-  ## if (!http_type(resp) %in% abs_filetypes()) {
-  ##   stop("ABS file request did not return Excel, Zip or PDF file", call. = FALSE)
-  ## }
   ## Return results
-  ## return(file.path(exdir, local_filename));
   return(local_filenames);
 }
 
@@ -548,6 +506,14 @@ abs_read_tss <- function(files, type="tss", na.rm=TRUE) {
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
 abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
+  ## if (FALSE) {
+  ##   library(tidyr); library(magrittr)
+  ##   tables <- abs_cat_tables("5206.0", include_urls=TRUE);
+  ##   tables <- tables[grepl("^Table 1\\W", tables$item_name, ignore.case=TRUE),];
+  ##   url <- tables$path_xls
+  ##   files <- abs_cat_download(url)
+  ##   file <- files[1]
+  ## }
   ## Avoid 'No visible binding for global variables' note
   { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
   
@@ -574,7 +540,8 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                         series_start     = excel2Date(as.integer(series_start)),
                         series_end       = excel2Date(as.integer(series_end)),
                         no_obs           = as.integer(no_obs),
-                        collection_month = as.integer(collection_month));
+                        collection_month = as.integer(collection_month),
+                        stringsAsFactors=FALSE);
   ##
   ## Get publication details
   ## -- Catalogue number & name --
@@ -605,7 +572,8 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                          catalogue_no      = catno_name[1],
                          publication_title = catno_name[2],
                          table_no          = tableno_name[1],
-                         table_title       = tableno_name[2]);
+                         table_title       = tableno_name[2],
+                         stringsAsFactors=FALSE);
   ## Extract data
   data <- lapply(grep("data", excel_sheets(file), ignore.case=TRUE, value=TRUE),
                  function(sheet_name) {

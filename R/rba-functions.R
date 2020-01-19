@@ -169,11 +169,11 @@ rba_search <- function(pattern, fields = c("table_no", "table_name"),
 #'   }
 rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
 {
-  if (FALSE) {
-    table_no = "D2"
-    rba_g1 <- rba_stats(table_no = "G1")
-    rba_d2 <- rba_stats(table_no = "D2")
-  }
+  ## if (FALSE) {
+  ##   table_no = "D2"
+  ##   rba_g1 <- rba_stats(table_no = "G1")
+  ##   rba_d2 <- rba_stats(table_no = "D2")
+  ## }
   ## Deprecate: series_type
   if (missing(table_no) & missing(pattern) & missing(url))
     stop("One of either table_no, pattern or url must be specified.")
@@ -189,7 +189,6 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
   } else {
     rba_cache <- raustats::rba_cachelist;
   }
-
   ## TO DO: Add table_type attribute to vector 'urls'
   if (!missing(table_no)) {
     if (!table_no %in% rba_cache$table_no)
@@ -198,10 +197,10 @@ rba_stats <- function(table_no, pattern, url, update_cache=FALSE, ...)
     urls <- rba_search(pattern=table_no, update_cache=update_cache, ...)$url
     ## urls <- as.character(table$url[which(table_no == rba_cache$table_no)]);
   }
-
+  ## 
   if (!missing(pattern))
     urls <- as.character(rba_search(pattern, update_cache=update_cache, ...)$url)
-  
+  ##
   if (!missing(url)) {
     if (!any(url %in% rba_cache$url))
       stop(sprintf("Following urls invalid: %s",
@@ -251,7 +250,6 @@ rba_file_download <- function(data_url, exdir=tempdir(), update_cache=TRUE)
   } else {
     rba_cache <- raustats::rba_cachelist;
   }
-
   ## Check if url is not valid RBA data URL
   if (!data_url %in% rba_cache$url)
     stop(sprintf("Invalid RBA url: %s", data_url));
@@ -261,20 +259,7 @@ rba_file_download <- function(data_url, exdir=tempdir(), update_cache=TRUE)
   raustats_check_url_available(data_url);
   resp <- GET(data_url, write_disk(file.path(exdir, local_filename), overwrite=TRUE),
               raustats_ua(), progress());
-  ##  http_type(resp)
-  ## File download validation code based on:
-  ##  https://cran.r-project.org/web/packages/httr/vignettes/api-packages.html
-  ## if (http_error(resp)) {
-  ##   stop(
-  ##     sprintf(
-  ##       "RBA data file request failed (Error code: %s)\nInvalid URL: %s", 
-  ##       status_code(resp),
-  ##       data_url
-  ##     ),
-  ##     call. = FALSE
-  ##   )
-  ## }
-
+  ##
   ##  RBA website returns: content-type: application/octet-stream
   ## if (!http_type(resp) %in% c("text/csv", "application/vnd.ms-excel")) {
   ##   stop("RBA file request did not return an Excel or CSV file", call. = FALSE)

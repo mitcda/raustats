@@ -50,7 +50,6 @@ abs_call_api <- function(url)
 {
   if (http_error(url))
     stop(sprintf("HTTP error returned by url: %s", url))
-  
   x <- read_xml(url)
   return(x);
 }
@@ -134,7 +133,7 @@ abs_metadata <- function(id, lang="en")
   ## Return xml document of ABS indicators
   url <- abs_api_call(path=abs_api_urls()$datastr_path, args=id);
   x <- abs_call_api(url);
-
+  ##
   ## Return all codelists
   i_codelist <- grep("codelist", xml_name(xml_children(x)), ignore.case=TRUE);
   n_codelists <- xml_length(xml_child(x, i_codelist));
@@ -151,7 +150,6 @@ abs_metadata <- function(id, lang="en")
                       function(i) {
                         ## Note 'xml_ns_strip' essential to extracting Description
                         y <- xml_ns_strip(xml_child(xml_child(x, i_codelist), i));
-                  
                         codelist <- data.frame(
                           Code = xml_text(xml_find_all(xml_children(y), "@value")),
                           Description = xml_text(xml_find_all(y,
@@ -266,8 +264,8 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
   if (is.null(dataset)) {
     ## 1. If dataset not specified, search through list of datasets
     ## Return list of matching ABS.Stat datasets
-    match_index <- sapply(names(cache), ## cache_table
-                          function(i) grep(pattern, cache[, i], ignore.case=ignore.case), ## cache_table[, i]
+    match_index <- sapply(names(cache),
+                          function(i) grep(pattern, cache[, i], ignore.case=ignore.case),
                           USE.NAMES = FALSE);
     match_index <- sort(unique(unlist(match_index)));
     if (length(match_index) == 0)
@@ -406,8 +404,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   ## Get list of Dimension name:
   metadata <- abs_metadata(dataset);
   metadata_names <- abs_dimensions(dataset, );
-  metadata_dims <- as.character(metadata_names[grepl("^dimension$", metadata_names$type, ignore.case=TRUE),
-                                               "name"]);
+  metadata_dims <- as.character(metadata_names[grepl("^dimension$", metadata_names$type,
+                                                     ignore.case=TRUE), "name"]);
   names(metadata) <- metadata_names$name;
   ## Return agency name
   ## agency_name <- unlist(attr(cache[[dataset]], "agency"));
@@ -491,24 +489,11 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                            "Filter query in one or more dimensions."),
                      n_filter * n_time));
     }
-
     ## Download data
     ## cat(sprintf("API query submitted: %s...\n", substr(url, 30)));
     ## Error check URL call
     raustats_check_url_available(url)
     resp <- GET(url, raustats_ua(), progress())
-    ## ## Error check URL call
-    ## if (http_error(resp)) {
-    ##   stop(
-    ##     sprintf(
-    ##       "ABS.Stat API request failed [%s]\n%s\n<%s>", 
-    ##       status_code(resp),
-    ##       http_status(resp)$message,
-    ##       http_status(resp)$reason,
-    ##       ),
-    ##     call. = FALSE
-    ##   )
-    ## }
     ## Check content type
     if (!grepl("draft-sdmx-json", http_type(resp))) {
       stop("ABS.Stat API did not return SDMX-JSON format", call. = FALSE)
