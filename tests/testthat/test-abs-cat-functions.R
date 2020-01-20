@@ -53,6 +53,13 @@ test_that("abs_cat_tables returns a valid data.frame",
   ## ABS Catalogue tables - 8731
   abs_tables_8731 <- abs_cat_tables("8731.0", releases="Latest", include_urls=TRUE);
   expect_s3_class(abs_tables_8731, "data.frame");
+
+  ## ABS Catalogue tables - 3218
+  abs_tables_3218 <- abs_cat_tables("3218.0", releases="2005-06", types=c("tss","css"), include_urls=TRUE);
+  expect_s3_class(abs_tables_3218, "data.frame");
+
+  abs_tables_3218_pub <- abs_cat_tables("3218.0", releases="2005-06", types=c("tss","css","pub"), include_urls=TRUE);
+  expect_s3_class(abs_tables_3218_pub, "data.frame");
 })
 
 

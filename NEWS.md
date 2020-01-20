@@ -3,8 +3,8 @@
 
 ## Bug fixes:
 
-* `abs_cat_tables` failed to list time series spreadsheet tables for some ABS
-  Catalogue numbers.
+* `abs_cat_tables` now lists all available publications and/or tables for some
+  ABS Catalogue numbers for which the function previously failed.
 
 
 
