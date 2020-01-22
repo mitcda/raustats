@@ -11,6 +11,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r build, include = FALSE}
+## Build README.md: rmarkdown::render("README.Rmd")
+```
+
+
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 # raustats: An R package for accessing ABS and RBA statistics
@@ -26,11 +31,17 @@ You can install the released version of `raustats` from [CRAN](https://CRAN.R-pr
 ```{r eval=FALSE}
 install.packages("raustats")
 ```
-or the latest development version from github with:
+or the latest development version from github with either:
 
 ```{r, eval = FALSE}
 remotes::install_github("mitcda/raustats")
 ```
+or, to include package vignettes (recommended):
+
+```{r, eval = FALSE}
+remotes::install_github("mitcda/raustats", build_vignettes=TRUE)
+```
+
 
 ## How to use raustats
 
