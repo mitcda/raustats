@@ -20,3 +20,5 @@ z-unused-functions.R
 raustats_presentation.Rmd
 raustats_presentation.pptx
 cran-comments.md
+^raustats\.Rproj$
+^\.Rproj\.user$
