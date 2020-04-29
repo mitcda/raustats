@@ -56,7 +56,7 @@ abs_filetypes <- function()
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \donttest{
-#'     ## Download quarterly Australian National Accounts, Tables 1 & 2 
+#'     ## Download quarterly Australian National Accounts, Tables 1 & 2
 #'     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
 #'
 #'     ## Download December 2017 Australian National Accounts, Table 1
@@ -108,7 +108,7 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
   ## Download ABS TSS/Data Cubes ..
   z <- lapply(sel_urls, abs_cat_download);
   z <- lapply(z,
-              function(x) 
+              function(x)
                 if (!grepl("\\.zip", x, ignore.case=TRUE)) {
                   x
                 } else {
@@ -150,12 +150,12 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #'     ## List latest available CPI Time Series Spreadsheet tables only
 #'     cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
 #'     cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
-#'   
+#'
 #'     ## List latest available ASGS Volume 3 Data Cubes
 #'     asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
 #'     asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest",
 #'                                            types="css", include_urls=TRUE);
-#'   
+#'
 #'     ## List latest available ASGS ANZSIC publications (PDF) files
 #'     anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
 #'   }
@@ -181,7 +181,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                         "tss" = "Time Series Spreadsheet",
                                         "css" = "Data Cubes",
                                         "pub" = "Publication"));
-  ## Create ABS URL and open session 
+  ## Create ABS URL and open session
   url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
   ## Check for HTTP errors
   raustats_check_url_available(url);
@@ -256,11 +256,11 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                   z <- trimws(gsub("\u00a0", "", x));      ## Remove non-breaking spaces
                                   z <- replace(z, z == "", NA_character_); ## Replace blank objects with NA
                                   ## Set entries not starting with 'https*' with 'NA_character_'
-                                  z[-1] <- replace(z[-1],                          
+                                  z[-1] <- replace(z[-1],
                                                    !grepl("^https*.+", z[-1], ignore.case=TRUE),
                                                    NA_character_);
                                   ## Set entries containing 'INotes' with 'NA_character_'
-                                  z <- replace(z,                          
+                                  z <- replace(z,
                                                grepl("INotes", z, ignore.case=TRUE),
                                                NA_character_);
                                   z <- z[!is.na(z)];                       ## Remove NA objects
@@ -272,6 +272,10 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                     grepl("\\.zip", z[-1], ignore.case=TRUE) ~ "path_zip",
                                     grepl("\\.pdf", z[-1], ignore.case=TRUE) ~ "path_pdf",
                                     TRUE ~ NA_character_)
+                                  ## Return NULL if no paths are found
+                                  if(all(is.na(names(z)[-1]))) {
+                                    return(NULL)
+                                  }
                                   z <- as.data.frame(t(cbind.data.frame(z, deparse.level=1)),
                                                      stringsAsFactors=FALSE);
                                   return(z);
@@ -322,7 +326,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 #'     ## List all available quarterly National Accounts tables
 #'     ana_releases <- abs_cat_releases("5206.0");
 #'     ana_release_urls <- abs_cat_releases("5206.0", include_urls=TRUE);
-#'   
+#'
 #'     ## List latest available CPI Time Series Spreadsheet tables only
 #'     cpi_releases <- abs_cat_releases("6401.0");
 #'     cpi_release_urls <- abs_cat_releases("6401.0", include_urls=TRUE);
@@ -338,7 +342,7 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
     stop("No cat_no supplied.");
   if (!is.logical(include_urls))
     stop("include_urls must be either TRUE or FALSE");
-  ## Create ABS URL and open session 
+  ## Create ABS URL and open session
   url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
   ## Check for HTTP errors
   raustats_check_url_available(url)
@@ -354,7 +358,7 @@ abs_cat_releases <- function(cat_no, include_urls=FALSE)
   .tables <- html_nodes(s, "table");
   .tables <- .tables[grepl("Past Releases", .tables, ignore.case=TRUE)];
   .paths <- html_nodes(.tables, "a");
-  ## Return results 
+  ## Return results
   if (!include_urls) {
     z <- data.frame(releases = html_text(.paths))
   } else {
@@ -388,7 +392,7 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
              this_filename <- abs_local_filename(url);
              ## Check if any data_urls are not ABS data URLs
              if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
-                        url, ignore.case=TRUE))	
+                        url, ignore.case=TRUE))
                stop(sprintf("Invalid ABS url: %s", url));
              ##
              ## -- Download files --
@@ -402,7 +406,7 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
              ## if (http_error(resp)) {
              ##   stop(
              ##     sprintf(
-             ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
+             ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s",
              ##       status_code(resp),
              ##       url
              ##     ),
@@ -418,7 +422,7 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
     ## local_filename <- abs_local_filename(data_url);
   ## ## Check if any data_urls are not ABS data URLs
   ## if (!grepl("^https*:\\/\\/www\\.abs\\.gov\\.au\\/ausstats.+",
-  ##            data_url, ignore.case=TRUE))	
+  ##            data_url, ignore.case=TRUE))
   ##   stop(sprintf("Invalid ABS url: %s", data_url));
   ## ##
   ## ## -- Download files --
@@ -430,7 +434,7 @@ abs_cat_download <- function(data_url, exdir=tempdir()) {
   ## if (http_error(resp)) {
   ##   stop(
   ##     sprintf(
-  ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s", 
+  ##       "ABS catalogue file request failed (Error code: %s)\nInvalid URL: %s",
   ##       status_code(resp),
   ##       data_url
   ##     ),
@@ -548,7 +552,7 @@ abs_read_tss <- function(files, type="tss", na.rm=TRUE) {
 abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   ## Avoid 'No visible binding for global variables' note
   { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
-  
+
   sheet_names <- tolower(excel_sheets(file));
   if (!all(c("index", "data1")  %in% sheet_names))
     stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
@@ -556,7 +560,7 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   .meta <- read_excel(file,
                       sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE),
                       .name_repair = "minimal");
-  ## Return pre-header information from ABS files 
+  ## Return pre-header information from ABS files
   header_row <- which(sapply(1:nrow(.meta),
                              function(i)
                                grepl("series\\s*id", paste(.meta[i,], collapse=" "),
@@ -566,8 +570,9 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                                   gsub("\\.", "",
                                        .meta[header_row,])));         ## Rename variables
   metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & empty columns
+  metadata <- metadata[, colSums(!is.na(metadata)) > 0, drop = FALSE]  ## Drop empty columns
   metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
-  metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid 
+  metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid
   metadata <- transform(metadata,
                         series_start     = excel2Date(as.integer(series_start)),
                         series_end       = excel2Date(as.integer(series_end)),
@@ -608,15 +613,15 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   data <- lapply(grep("data", excel_sheets(file), ignore.case=TRUE, value=TRUE),
                  function(sheet_name) {
                    z <- read_excel(file, sheet=sheet_name, .name_repair = "minimal");
-                   ## Return pre-header information from ABS files 
+                   ## Return pre-header information from ABS files
                    header_row <- which(sapply(1:nrow(z),
                                               function(i)
-                                                grepl("series\\s*id", paste(z[i,], collapse=" "), 
+                                                grepl("series\\s*id", paste(z[i,], collapse=" "),
                                                       ignore.case=TRUE)));
                    names(z) <- gsub("\\s","_",
                                     gsub("\\.","", z[header_row,]));      ## Rename variables
                    names(z) <- sub("series_id", "date", names(z),         ## Rename Series_ID field
-                                   ignore.case=TRUE); 
+                                   ignore.case=TRUE);
                    z <- z[-(1:header_row), !is.na(names(z))];             ## Drop empty columns
                    z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform data to key:value pairs
                    z <- transform(z,
