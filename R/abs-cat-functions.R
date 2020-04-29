@@ -570,6 +570,7 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                                   gsub("\\.", "",
                                        .meta[header_row,])));         ## Rename variables
   metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & empty columns
+  metadata <- metadata[, colSums(!is.na(metadata)) > 0, drop = FALSE]  ## Drop empty columns
   metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
   metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid
   metadata <- transform(metadata,
