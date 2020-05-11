@@ -15,6 +15,12 @@ Date object
 \description{
 Function to change the date of a Date object to the last day of the month
 }
+\examples{
+  \donttest{
+    date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
+    last_day(date)
+  }
+}
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>
 }

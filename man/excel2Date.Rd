@@ -15,4 +15,9 @@ Date object
 \description{
 Function to convert Excel numeric date to R Date object
 }
+\examples{
+  \donttest{
+    excel2Date(43445);
+  }
+}
 \keyword{internal}

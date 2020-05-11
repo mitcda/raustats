@@ -2,7 +2,9 @@
 output: github_document
 ---
 
-```{r setup, include = FALSE}
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -11,112 +13,48 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r build, include = FALSE}
-## Build README.md: rmarkdown::render("README.Rmd")
-```
+# raustats
 
+<!-- badges: start -->
+<!-- badges: end -->
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
-# raustats: An R package for accessing ABS and RBA statistics
-
-An R package for downloading Australian economic statistics from the Australian
-Bureau of Statistics (ABS) and Reserve Bank of Australia (RBA) websites.
-
+The goal of raustats is to ...
 
 ## Installation
 
-You can install the released version of `raustats` from [CRAN](https://CRAN.R-project.org) with:
+You can install the released version of raustats from [CRAN](https://CRAN.R-project.org) with:
 
-```{r eval=FALSE}
+``` r
 install.packages("raustats")
 ```
-or the latest development version from github with either:
 
-```{r, eval = FALSE}
-remotes::install_github("mitcda/raustats")
+And the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("mitcda/raustats")
 ```
-or, to include package vignettes (recommended):
+## Example
 
-```{r, eval = FALSE}
-remotes::install_github("mitcda/raustats", build_vignettes=TRUE)
-```
+This is a basic example which shows you how to solve a common problem:
 
-
-## How to use raustats
-
-To learn more about the raustats package, start with the vignettes:
-```{r, eval = FALSE}
-browseVignettes(package = "raustats")
+```{r example}
+library(raustats)
+## basic example code
 ```
 
+What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
 
-## Introduction
-
-The [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) is
-Australia’s national statistical agency, providing trusted official statistics
-on a wide range of economic, social, population and environmental matters of
-importance to Australia. Key ABS statistical collections include:
- 
-  * Australian National Accounts
-  * International Trade
-  * Consumer Price Index (CPI)
-  * Labour Force
-  * Population trends
-
-
-The [Reserve Bank of Australia (RBA)](https://www.rba.gov.au/) is Australia's
-central bank. In addition to its legislative responsibilities, it collects and
-publishes statistics on money, credit, the Australian banking systems and other
-relevant economic metrics. Key RBA statistics include:
-
-  * Banking system assets and liabilities
-  * Money and credit statistics
-  * Household and business finances
-  * Interest rates
-  * Exchange rates
-  * Inflation and inflation expectations.
-
-The ABS and RBA make their statistics primarily available through Excel and/or
-CSV spreadsheets. 
-
-This package provides functions to search and download data and statistics from
-the [Australian Bureau of Statistics (ABS)](http://www.abs.gov.au/) and [Reserve
-Bank of Australia (RBA)](https://www.rba.gov.au/) websites, as well as draft
-access to the [ABS.Stat](http://stat.data.abs.gov.au/) - Beta data catalogue
-API.
-
-
-## Examples
-
-### Downloading ABS Catalogue Statistics
-
-ABS catalogue statistics may be downloaded, by catalogue number, using the
-`abs_cat_stats()` function. The following example downloads all Consumer Price Index
-(CPI) data series (ABS Catalogue no. 6401.0).
-
-```{r eval=FALSE}
-cpi_all <- abs_cat_stats("6401.0")
+```{r cars}
+summary(cars)
 ```
 
-To download only the latest statistics reported in Table 1 (ABS groups Tables 1 and
-2), simply provide a regular expression to the `tables` argument:
+You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
 
-```{r eval=FALSE}
-cpi <- abs_cat_stats("6401.0", tables="Table.+1")
+You can also embed plots, for example:
+
+```{r pressure, echo = FALSE}
+plot(pressure)
 ```
 
-The package also provides functions to ABS statistics via the
-[ABS.Stat](http://stat.data.abs.gov.au/) Beta API. See the package help and
-vignettes for examples. 
-
-
-### Downloading RBA data
-
-RBA data series may be downloaded by table number, using the `rba_stats()`
-function. The following example downloads Table A1 - Liabilities and Assets of
-the RBA.
-
-```{r eval=FALSE}
-rba_bs <- rba_stats("A1")
-```
+In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!

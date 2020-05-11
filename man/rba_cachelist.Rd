@@ -4,13 +4,15 @@
 \name{rba_cachelist}
 \alias{rba_cachelist}
 \title{Cached list of statistical tables provided by the RBA}
-\format{A data frame containing three columns:
+\format{
+A data frame containing three columns:
 \itemize{
   \item \code{table_code} RBA table code.
   \item \code{table_name} RBA table name.
   \item \code{table_type} One of either current statistical tables, historical data or discontinued data
   \item \code{url} RBA URL 
-}}
+}
+}
 \usage{
 rba_cachelist
 }

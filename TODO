@@ -6,6 +6,60 @@
   `abs_cat_tables` and `abs_cat_stats`.
 
 
+* Hi Michelle, congratulations – you get an award for finding a feature limit
+  (shortcoming) in my package (I don’t know what the award could be). It’s
+  something I’ll have to address in my next update.
+
+  In the meantime try the following (non-trivial) work-around – it creates the
+  query filter you need, and breaks the filter set into several smaller filter
+  sets, and serially queries ABS.Stat to get around the API query length limit.
+
+  Note that the ABS.Stat ERP data for different region levels are included as
+  separate rows within the same dataset, so while you can download data for both
+  GCCSA’s and SA4 in one call, the geography (‘region’) and value will each be
+  listed in the same column – it’s how the ABS.Stat API delivers the data. To
+  have separate columns denoting the SA4 and GCCSA, you’ll need to subsequently
+  join the data to GCCSA-SA4 concordance table (the last code block attaches the
+  SA4 code to the table to make it easier for you.  Also note, the
+  abs_metadata() function is useful to scan the shape of the ABS.Stat table to
+  help in shaping your query (was of help to me in designing work-around, but
+  not much in getting round the query length limit)
+
+```r
+	set <- .Primitive("[[<-")
+	## Get metadata for ABS.Stat dataset
+	abs_meta <- abs_metadata('ABS_ANNUAL_ERP_ASGS2016')
+## Create filter
+ds_filter <- abs_search(pattern=c("Estimated Resident Population",
+                                  "Statistical Area Level 4",
+                                  ## "^\\d{1,3}$",
+                                  "Annual"),
+                        dataset='ABS_ANNUAL_ERP_ASGS2016', code_only=TRUE) %>%
+  `[[<-`("ASGS_2016",
+         grep("^\\d{3}$", abs_meta$CL_ABS_ANNUAL_ERP_ASGS2016_ASGS_2016$Code, value=TRUE)) %>%
+  map(~ .x %>% split(., ceiling(seq_along(.)/26))) %>%
+  cross;
+
+## Download Jun 2018 SA4 ERP
+SA4_raw <-
+  lapply(ds_filter,
+         function(i_filter)
+           abs_stats('ABS_ANNUAL_ERP_ASGS2016',
+                     start_date="2018", end_date="2018",
+                     filter=i_filter)
+         ) %>%
+  bind_rows;
+
+## Append SA4 region codes
+SA4_raw %<>%
+  left_join(abs_meta$CL_ABS_ANNUAL_ERP_ASGS2016_ASGS_2016,
+            by=c("region" = "Description")) %>%
+  rename(sa4_2016_code = Code)
+
+ 
+
+
+
 ## Completed functions
 
 * Add argument: `format = c("table", "raw")` argument to `abs_stats` function to

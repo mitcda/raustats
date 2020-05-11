@@ -20,6 +20,13 @@ This function returns a Date format object.
 \description{
 Function to convert dates formatted as year-quarter to date-format objects
 }
+\examples{
+  \donttest{
+    x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
+    quarter2Date(x);
+    quarter2Date(x, base.month="Jan");
+  }
+}
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>
 }

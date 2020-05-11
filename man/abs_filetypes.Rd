@@ -10,9 +10,9 @@ abs_filetypes()
 a vector containing a list of valid ABS file types.
 }
 \description{
-This function returns a vector of valid ABS file types for using list of URLs and data paths used to construct ABS Catalogue
-  data access calls. It is used in other functions in this package and need not be called
-  directly.
+This function returns a vector of valid ABS file types used in filtering ABS
+  Catalogue data access calls. It is used in other functions in this package and need not be
+  called directly.
 }
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>

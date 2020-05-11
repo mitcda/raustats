@@ -4,12 +4,14 @@
 \name{abs_cachelist}
 \alias{abs_cachelist}
 \title{Datasets available through the ABS API}
-\format{A data frame containing three columns:
+\format{
+A data frame containing three columns:
 \itemize{
 \item \code{id} ABS dataset identifier.
 \item \code{agencyID} Source agency identifier (ABS).
 \item \code{name} ABS dataset name.
-}}
+}
+}
 \usage{
 abs_cachelist
 }

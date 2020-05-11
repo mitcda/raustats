@@ -6,6 +6,8 @@
 * `abs_cat_tables` now lists all available publications and/or tables for some
   ABS Catalogue numbers for which the function previously failed.
 
+* `abs_cat_stats` now avoids download errors causes by presence of all-NA
+  columns in ABS data.
 
 
 # raustats 0.15.0

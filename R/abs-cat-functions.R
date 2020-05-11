@@ -161,17 +161,6 @@ abs_cat_stats <- function(cat_no, tables="All", releases="Latest", types="tss", 
 #'   }
 abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), include_urls=FALSE)
 {
-  ## if (FALSE) {
-  ##   -- DEBUGGING CODE --
-  ## cat_no <- "5206.0"; types <- "tss"; releases <- "Latest"; include_urls <- TRUE;
-  ## cat_no <- "6401.0"; types <- "tss"; releases <- "Latest"; include_urls <- TRUE;
-  ## cat_no <- "5209.0.55.001"; types <- "css"; releases <- "Latest"; include_urls <- TRUE;
-  ## cat_no <- "1270.0.55.001"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
-  ## cat_no <- "6202.0"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
-  ## cat_no <- "3105.0.65.001"; releases <- "Latest"; types <- "css"; include_urls <- TRUE;
-  ## cat_no <- "3401.0"; releases <- "Latest"; types <- "tss"; include_urls <- TRUE;
-  ## cat_no <- "3218.0"; releases <- "2005-06"; types <- c("tss","css"), include_urls <- TRUE;
-  ## }
   if (missing(cat_no))
     stop("No cat_no supplied.");
   if (any(!types %in% c("tss", "css", "pub")))
@@ -313,7 +302,7 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
 #' @name abs_cat_releases
 #' @title Return ABS catalogue table releases
 #' @description Return list of all releases available for specified ABS catalogue number.
-#' @importFrom rvest html_session html_table html_text html_nodes html_attr follow_link
+#' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom httr http_error
 #' @param cat_no ABS catalogue numbers.
 #' @param include_urls Include full path URL to specified ABS catalogue releases. Default (FALSE)
@@ -538,7 +527,8 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   names(metadata) <- tolower(gsub("\\s","_",
                                   gsub("\\.", "",
                                        .meta[header_row,])));         ## Rename variables
-  metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & empty columns
+  metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & unnamed columns
+  metadata <- Filter(function(x) !all(is.na(x)), metadata);           ## Drop all-NA columns
   metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
   metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid 
   metadata <- transform(metadata,
@@ -592,7 +582,8 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                                     gsub("\\.","", z[header_row,]));      ## Rename variables
                    names(z) <- sub("series_id", "date", names(z),         ## Rename Series_ID field
                                    ignore.case=TRUE); 
-                   z <- z[-(1:header_row), !is.na(names(z))];             ## Drop empty columns
+                   z <- z[-(1:header_row), !is.na(names(z))];             ## Drop header rows & unnamed columns
+                   z <- Filter(function(x) !all(is.na(x)), z);            ## Drop all-NA columns
                    z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform data to key:value pairs
                    z <- transform(z,
                                   date = excel2Date(as.integer(date)),
