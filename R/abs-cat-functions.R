@@ -222,8 +222,8 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                                      function(x) {
                                        if (grepl(paste(c("(^\\W{0,1}$)",
                                                          "(^publications\\W*$)",
-                                                         "(^time series spreadsheets\\W*$)",
-                                                         "(^data\\s*cubes\\W*$)"),
+                                                         "(^data\\s*cubes\\W*$)",
+                                                         "(^time\\s*series\\s*spreadsheets?\\W*$)"),
                                                        collapse="|"),
                                                  x[1], ignore.case=TRUE)) {
                                          NULL
@@ -237,12 +237,13 @@ abs_cat_tables <- function(cat_no, releases="Latest", types=c("tss", "css"), inc
                 data_nodes <- data_nodes[-which(sapply(data_nodes, is.null))];
                 ## Tidy and return data set names and urls
                 nodes <- data_nodes[unlist(lapply(data_nodes,
-                                                  function(x)
-                                                    any(grepl(sprintf("(%s)",
-                                                                      paste(types, collapse="|")),
-                                                              x, ignore.case=TRUE)) &
-                                                    any(grepl("ausstats", x, ignore.case=TRUE))
-                                                  ))];
+                                                  function(x) {
+                                                    any(
+                                                      grepl(sprintf("(%s)",
+                                                                    paste(types, collapse="|")),
+                                                            x, ignore.case=TRUE) &
+                                                      grepl("ausstats", x, ignore.case=TRUE))
+                                                  }))];
                 ## Remove non-breaking spaces (&nbsp;), and blank entries
                 nodes <- lapply(nodes,
                                 function(x) {
