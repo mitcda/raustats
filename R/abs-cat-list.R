@@ -15,7 +15,10 @@
 #'     abs_cat_list();
 #'   }
 abs_cat_list <- function() {
-  if (!exists("abs_stat_list", envir=raustats_env)) {
+  if (!exists("raustats_cache"))
+    raustats_cache <- new.env()
+  if (!exists("abs_stat_list", envir=raustats_cache, inherits=FALSE)) {
+    message("Scanning ABS statistics list (called on first use each session).")
     url <- file.path(abs_urls()$base_url,
                      abs_urls()$statistics_path);
     ## Check for HTTP errors
@@ -36,7 +39,8 @@ abs_cat_list <- function() {
                   html_text %>% trimws,
                 stat_view_path = x %>% html_attr("href")) %>%
         as.data.frame},
-      stat_coll_nodes, stat_group_names, SIMPLIFY=FALSE) %>%
+      stat_coll_nodes, stat_group_names,
+      SIMPLIFY=FALSE) %>%
       bind_rows;
     ## -- Data sets
     stat_topic_tbl <-
@@ -66,7 +70,7 @@ abs_cat_list <- function() {
            left_join(stat_coll_tbl,
                      by="stat_view_path") %>%
            select(stat_group, stat_view, stat_view_path, stat_topic, stat_topic_path),
-           envir=raustats_env);
+           envir=raustats_cache);
   }
 };
 

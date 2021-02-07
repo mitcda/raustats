@@ -35,9 +35,9 @@ abs_cat_select <- function(pattern, level = c('group', 'view', 'topic'),
     stop("include_urls must be either TRUE or FALSE");
   level <- match.arg(level);
   ## Get list of all ABS statistics
-  if (!exists("abs_stat_list", envir=raustats_env))
+  if (!exists("raustats_cache") || !exists("abs_stat_list", envir=raustats_cache, inherits=FALSE))
     abs_cat_list();
-  z <- get("abs_stat_list", envir=raustats_env);
+  z <- get("abs_stat_list", envir=raustats_cache, inherits=FALSE);
   ## Return list ABS publications
   y <- lapply(level,
               function(x)
@@ -48,9 +48,7 @@ abs_cat_select <- function(pattern, level = c('group', 'view', 'topic'),
   if (include_urls) {
     x <- z[i,]
   } else {
-    x <- z[i,c("stat_group", "stat_view", "stat_topic")] %>%
-      set_names(sub("stat_", "", names(.)))
+    x <- z[i,c("stat_group", "stat_view", "stat_topic")];
   }
-
-  return(x)
+  return(x %>% set_names(sub("stat_", "", names(.))))
 }

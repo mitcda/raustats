@@ -4,6 +4,7 @@
 #' @importFrom magrittr %>%
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom httr http_error
+#' @param title ABS publication title.
 #' @param cat_no ABS catalogue numbers.
 #' @param include_urls Include full path URL to specified ABS catalogue releases. Default (FALSE)
 #'   does not include release URLs.
@@ -20,20 +21,29 @@
 #'     cpi_releases <- abs_cat_releases("6401.0");
 #'     cpi_release_urls <- abs_cat_releases("6401.0", include_urls=TRUE);
 #'   }
-abs_cat_releases <- function(cat_no, include_urls=FALSE)
+abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
 {
+  ## -- DEBUGGING CODE --
   if (FALSE) {
-    ## -- DEBUGGING CODE --
-    cat_no <- "5206.0"
+    title <- "Wage Price Index, Australia"
+    cat_no <- "6345.0"
     include_urls <- FALSE
   }
-  if (missing(cat_no))
-    stop("No cat_no supplied.");
+  if (missing(title) && missing(cat_no))
+    stop("One of either title or cat_no needs to be supplied.");
   if (!is.logical(include_urls))
     stop("include_urls must be either TRUE or FALSE");
   ## Create ABS URL and open session
-  ## Austats URL
-  url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path, abs_urls()$mf_path, cat_no);
+  ## Get ABS publication url
+  if (!missing(title)) {
+    ## New-style ABS URL
+    topic_path <- abs_cat_select(pattern=title, level="topic", include_urls=TRUE)$topic_path
+    url <- file.path(abs_urls()$base_url, topic_path);
+  } else {
+    ## Old-style ABS URL
+    url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path,
+                     abs_urls()$mf_path, cat_no);
+  }
   ## Check for HTTP errors
   raustats_check_url_available(url)
   ## if (http_error(url))
