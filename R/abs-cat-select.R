@@ -4,6 +4,7 @@
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom dplyr bind_cols
 #' @importFrom magrittr set_names
+#' @importFrom vctrs vec_as_names
 #' @param pattern character string containing a regular expression to be matched in the given
 #'   character vector. See \code{\link[base]{grep}} for further details.
 #' @param level one or more of 'group', 'view' and/or 'topic'.
@@ -26,23 +27,25 @@ abs_cat_select <- function(pattern, level = c('group', 'view', 'topic'),
   if (FALSE) {
     ## -- DEBUGGING CODE --
     pattern <- "wage price index"
+    pattern <- "national.*income.*expenditure.*product"
     level <- 'topic'
     level <- c('group', 'view', 'topic')
+    xx <- abs_cat_select(pattern="national.*income.*expenditure.*product");
   }
   if (missing(pattern))
     stop("No pattern supplied.");
   if (!is.logical(include_urls))
     stop("include_urls must be either TRUE or FALSE");
-  level <- match.arg(level);
+  level <- match.arg(level, several.ok=TRUE);
   ## Get list of all ABS statistics
-  if (!exists("raustats_cache") || !exists("abs_stat_list", envir=raustats_cache, inherits=FALSE))
+  if (!exists("abs_cat_list", envir=.raustats_cache, inherits=FALSE))
     abs_cat_list();
-  z <- get("abs_stat_list", envir=raustats_cache, inherits=FALSE);
+  z <- get("abs_cat_list", envir=.raustats_cache, inherits=FALSE);
   ## Return list ABS publications
   y <- lapply(level,
               function(x)
-                w <- grepl(pattern, z[,sprintf("stat_%s", x)], ignore.case=ignore.case)) %>% ## , ...
-    bind_cols(.name_repair = ~ vctrs::vec_as_names(..., repair="unique", quiet=TRUE));
+                w <- grepl(pattern, z[,sprintf("stat_%s", x)], ignore.case=ignore.case)) %>%
+    bind_cols(.name_repair = ~ vec_as_names(..., repair="unique", quiet=TRUE));
   i <- sapply(1:nrow(y), function(i) any(unlist(y[i,])));
 
   if (include_urls) {

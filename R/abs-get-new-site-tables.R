@@ -12,37 +12,39 @@
 abs_get_new_site_tables <- function(url) {
   if (FALSE) {
     url <- "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/sep-2020"
+    url <- "https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-national-income-expenditure-and-product/latest-release"
+    xx <- abs_get_new_site_tables(url)
   }
   ## Check for HTTP errors
   raustats_check_url_available(url);
   ## Open html session
   suppressWarnings(s <- html_session(url));
   ## -- Statistical tables --
-  table_nodes <- s %>% html_nodes(xpath = ".//div[contains(@class, 'abs-data-download-content')]");
-  table_data <-
+  table_nodes <- s %>% html_nodes(xpath = ".//span[contains(@class, 'download_link')]");
+  abs_tables <-
     lapply(table_nodes,
            function(x) {
              z <- list(table_name = x %>%
-                         html_nodes(xpath = ".//div[contains(@class, 'abs-data-download-left')]") %>%
-                         html_nodes("h3") %>% html_text,
+                         html_nodes("a") %>% html_attr("aria-label") %>%
+                         sub("(\\s*xls|zip)", "", ., ignore.case=TRUE) %>%
+                         sub("(\\s\\d+\\.*\\d*\\s\\w{2})$", "", ., ignore.case=TRUE),
                        file_url = x %>%
-                         html_nodes(xpath = ".//div[contains(@class, 'abs-data-download-right')]") %>%
                          html_nodes("a") %>% html_attr("href"),
                        file_type = x %>%
-                         html_nodes(xpath = ".//div[contains(@class, 'abs-data-download-right')]") %>%
                          html_nodes("a") %>% html_attr("type") %>%
-                         sub("(^.+);\\s+length=\\d+", "\\1", .),
+                         sub("(.+);\\s*length=(.+)", "\\1", .),
                        file_size = x %>%
-                         html_nodes(xpath = ".//div[contains(@class, 'abs-data-download-right')]") %>%
-                         html_nodes(xpath = ".//span[contains(@class, 'size')]") %>%
-                         html_text %>%
-                         sub("\\[(.+)\\]", "\\1", .)
+                         html_nodes("a") %>% html_attr("type") %>%
+                         sub("(.+);\\s*length=(.+)", "\\2", .) %>%
+                         as.numeric %>% `/`(1024),
+                       file_name = x %>%
+                         html_nodes("a") %>% html_attr("title")
                        ) %>% as.data.frame
              return(z)
            }) %>%
     bind_rows;
   ## Return data frame
-  return(table_data);
+  return(abs_tables[,c("table_name","file_url","file_name","file_type","file_size")]);
 }
 
 ## ----------------------------------- EOF ---------------------------------- ##

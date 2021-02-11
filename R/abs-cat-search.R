@@ -87,7 +87,7 @@ abs_cat_search <- function(pattern,
                       { stri_replace_last_fixed(paste(., collapse=", "), ",", " and") }));
   }
   ## Check arguments: resource, sort_by, sort_order
-  resource <- match.arg(resource);
+  resource <- match.arg(resource, several.ok=TRUE);
   sort_by <- match.arg(tolower(sort_by),
                        choices=valid_sort_list);
   sort_by <- switch(sort_by,
