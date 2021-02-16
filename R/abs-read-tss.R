@@ -8,6 +8,7 @@
 #' @param na.rm logical. If \code{TRUE} (default), remove observations containing missing values.
 #' @return data frame in long format
 #' @export
+#' @family ABS catalogue functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \donttest{
@@ -41,6 +42,7 @@ abs_read_tss <- function(files, type="tss", na.rm=TRUE) {
 #' @param na.rm logical. If \code{TRUE} (default), remove observations containing missing values.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
+#' @family ABS catalogue helper functions
 abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   ## if (FALSE) {
   ##   library(tidyr); library(magrittr)
@@ -52,31 +54,38 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   ## }
   ## Avoid 'No visible binding for global variables' note
   { series_start <- series_end <- no_obs <- collection_month <- series_id <- value <- NULL }
-  
-  sheet_names <- tolower(excel_sheets(file));
   ## Check if 'file' is a valid ABS time series file
-  if (!all(c("index", "data1")  %in% sheet_names)) {
+  if (!is_abs_tss(file)) {
+    ##  warning(sprintf("File: %s is not a valid ABS time series file.", basename(file)))
+    ##  return(NULL)
     stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
+  }
+  ## sheet_names <- tolower(excel_sheets(file));
+  ## ## Check if 'file' is a valid ABS time series file
+  ## if (!all(c("index", "data1")  %in% sheet_names)) {
+  ##   stop(sprintf("File: %s is not a valid ABS time series file.", basename(file)));
   ## POSSIBLE ALTERNATIVE WAY OF HANDLING NON TIME SERIES FILES:
   ##  warning(sprintf("File: %s is not a valid ABS time series file.", basename(file)))
   ##  return(NULL)
   ## } else {
-    ## -- Read metadata --
-    .meta <- read_excel(file,
-                        sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE),
+  ## -- Read metadata --
+  .meta <- read_excel(file,
+                      sheet = grep("index", excel_sheets(file), ignore.case=TRUE, value=TRUE),
                         .name_repair = "minimal");
     ## Return pre-header information from ABS files 
-    header_row <- which(sapply(1:nrow(.meta),
+  header_row <- which(sapply(1:nrow(.meta),
                                function(i)
                                  grepl("series\\s*id", paste(.meta[i,], collapse=" "),
                                        ignore.case=TRUE)));
-    metadata <- .meta;
-    names(metadata) <- tolower(gsub("\\s","_",
-                                    gsub("\\.", "",
-                                         .meta[header_row,])));         ## Rename variables
-    metadata <- metadata[-(1:header_row), !is.na(names(metadata))];     ## Drop header rows & unnamed columns
-    metadata <- Filter(function(x) !all(is.na(x)), metadata);           ## Drop all-NA columns
-    metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
+  metadata <- .meta;
+  names(metadata) <- make.names(tolower(gsub("\\s","_",                 ## Rename columns
+                                             gsub("\\.", "",
+                                                  .meta[header_row,]))),
+                                unique=TRUE);
+  metadata <- metadata[-(1:header_row),                               ## Drop header rows & unnamed columns
+                       !(is.na(names(metadata)) | grepl("^X.*", names(metadata)))];     
+  metadata <- Filter(function(x) !all(is.na(x)), metadata);           ## Drop all-NA columns
+  metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
     metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid 
     metadata <- transform(metadata,
                           series_start     = excel2Date(as.integer(series_start)),
@@ -145,4 +154,4 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
     names(data) <- tolower(names(data));
     return(data);
   }
-}
+#}
