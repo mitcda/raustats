@@ -11,7 +11,8 @@
 #' @return Returns a data frame listing available ABS catalogue releases.
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
-#' @examples
+#' @family ABS catalogue functions
+#' #' @examples
 #'   \donttest{
 #'     ## List all available quarterly National Accounts tables
 #'     ana_releases <- abs_cat_releases("5206.0");
@@ -58,9 +59,10 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
   raustats_check_url_available(previous_urls)
   suppressWarnings(s <- html_session(previous_url));
   ## Alt option
-  all_releases <- s %>% html_nodes(xpath =
-                                     sprintf("//div[@class='%s']",
-                                             abs_expressions()$xpath_release_views_row)) %>%
+  all_releases <- s %>%
+    html_nodes(xpath =
+                 sprintf("//div[@class='%s']",
+                         abs_expressions()$xpath_release_views_row)) %>%
     .[!grepl("Release\\s*date", ., ignore.case=TRUE)]; # Remove future releases
   ## Links
   z <- list(
@@ -69,7 +71,8 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
       { ifelse(grepl(abs_expressions()$regex_release_type, ., ignore.case=TRUE),
                sub(abs_expressions()$regex_release_type, "\\1", ., ignore.case=TRUE),
                "Previous release") },
-    release = all_releases %>% html_text %>%
+    release = all_releases %>%
+      html_text %>%
       { sub(sprintf(".+(%s).*", 
                     paste(paste(c(month.name, month.abb), "\\d{4}", sep="\\s*"), collapse="|")),
             "\\1", ., ignore.case=TRUE) }
@@ -79,6 +82,12 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
   if (include_urls) {
     z <- transform(z,
                    url = all_releases %>% html_nodes("a") %>% html_attr("href"))
+    ## Prepend ABS base URL on Latest|Previous releases
+    idx_new_release <- grepl("^(Latest|Previous)", z$type, ignore.case=TRUE);
+    z[idx_new_release, "url"] <-
+      sprintf("%s%s", abs_urls()$base_url, z[idx_new_release, "url"]);
+    ## Replace all whitespace in ABS URLs
+    z$url <- gsub("\\s", "%20", z$url)
   }
   ## Return results
   row.names(z) <- seq_len(nrow(z));

@@ -6,11 +6,11 @@
 #' @return Returns a local file names (character vector) in which downloaded files will be saved.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
+#' @family ABS catalogue helper functions
 abs_local_filename <- function(url)
 {
-  gsub("\\s+", "_", basename(url));
-  ## sprintf("%s_%s.%s",
-  ##            sub("^.+&(.+)\\.(zip|xlsx*|pdf)&.+$", "\\1", z),
-  ##            sub("^.+(\\d{2}).(\\d{2}).(\\d{4}).+$", "\\3\\2\\1", z),
-  ##            sub("^.+&(.+)\\.(zip|xlsx*|pdf)&.+$", "\\2", z));
+   ## Regular expression notes
+   ## 1. Leading and trailing '&' (ampersand) demarcates filename from 'archive' ABS URLs
+   ## 2. Leading (escaped) slash '\\/' and zero or more trailing characters demarcates filename in 'current' ABS URLs
+   sub("^.+(&|\\/)(.+\\.(zip|xlsx*|pdf))&*.*$", "\\2", url)
 }

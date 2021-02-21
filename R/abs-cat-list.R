@@ -9,7 +9,8 @@
 #' @return NULL
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
-#' @keywords internal
+#' @family ABS catalogue functions
+#' #' @keywords internal
 #' @examples
 #'   \donttest{
 #'     abs_cat_list();

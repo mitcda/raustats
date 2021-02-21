@@ -26,6 +26,7 @@
 #'   results. Default is 5. (The maximum number of links the function will follow is 25.)
 #' @return data frame in long format
 #' @export
+#' @family ABS search functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @details The ABS search facility supports multiple search string fields encompassing either 'Any'
 #'   words, 'All' words, exact 'Phrase' and terms to exclude ('Not'). Advanced queries can be

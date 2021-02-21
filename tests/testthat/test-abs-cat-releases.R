@@ -1,3 +1,4 @@
+context("ABS Catalogue release functions")
 
 test_that("abs_cat_releases fails well",
 {
@@ -20,19 +21,22 @@ test_that("abs_cat_releases returns a valid data.frame",
   skip_on_appveyor()
 
   ## ABS Catalogue releases - 5206.0
-  abs_release_5206 <- abs_cat_releases("5206.0");
-  expect_s3_class(abs_release_5206, "data.frame");
+  series <- abs_cat_select(pattern="national.*income.*expenditure.*product",
+                          level="topic");
+  expect_s3_class(abs_cat_releases(title=series$topic), "data.frame");
+  expect_s3_class(abs_cat_releases(cat_no="5206.0"), "data.frame");
 
   ## ABS Catalogue releases - 5206.0, with URLs
-  abs_release_5206_url <- abs_cat_releases("5206.0", include_urls=TRUE);
-  expect_s3_class(abs_release_5206_url, "data.frame");
+  expect_s3_class(abs_cat_releases(title=series$topic, include_urls=TRUE), "data.frame");
+  expect_s3_class(abs_cat_releases(cat_no="5206.0", include_urls=TRUE), "data.frame");
 
   ## ABS Catalogue tables - 6401.0
-  abs_release_6401 <- abs_cat_releases("6401.0");
-  expect_s3_class(abs_release_6401, "data.frame");
+  series <- abs_cat_select(pattern="consumer.*price.*index.*australia", level="topic");
+  expect_s3_class(abs_cat_releases(title=series$topic[1]), "data.frame");
+  expect_s3_class(abs_cat_releases(cat_no="6401.0"), "data.frame");
 
   ## ABS Catalogue tables - 6401.0, with URLs
-  abs_release_6401_url <- abs_cat_releases("6401.0", include_urls=TRUE);
-  expect_s3_class(abs_release_6401_url, "data.frame");
+  expect_s3_class(abs_cat_releases(title=series$topic[1], include_urls=TRUE), "data.frame");
+  expect_s3_class(abs_cat_releases(cat_no="6401.0", include_urls=TRUE), "data.frame");
 })
 

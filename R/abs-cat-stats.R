@@ -18,6 +18,7 @@
 #' @param na.rm logical (default: \code{TRUE}) - remove observations containing missing values.
 #' @return data frame in long format
 #' @export
+#' @family ABS catalogue functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \donttest{
@@ -39,7 +40,7 @@ abs_cat_stats <- function(title, cat_no, tables="All", releases="Latest",
   ##   xx <- abs_cat_stats(title=title, tables=tables);
   ##   title <- abs_cat_select(pattern="national.*income.*expenditure.*product")$topic;
   ##   tables <- c("Table 1\\W+", "Table 2\\W+");
-  ##   cat_no <- "5206.0"; tables <- c("Table 1\\W+", "Table 2\\W+");
+  ##   cat_no <- "5206.0"; tables <- c("Table 1\\W+", "Table 2\\W+"); releases <- "Dec 2018";
   ##   releases <- "Latest"; types <- "tss"; include_urls <- FALSE; na.rm=TRUE;
   ##   xx <- abs_cat_stats(title, tables=tables);
   ## }
@@ -52,11 +53,11 @@ abs_cat_stats <- function(title, cat_no, tables="All", releases="Latest",
   if (!missing(title)) {
     ## Get available catalogue tables
     cat_tables <- abs_cat_tables(title=title, releases=releases,
-                                 types=types, include_urls=TRUE);
+                                 include_urls=TRUE); # types=types,
   } else {
     ## Old-style ABS URL
     cat_tables <- abs_cat_tables(cat_no=cat_no, releases=releases,
-                                 types=types, include_urls=TRUE);
+                                 include_urls=TRUE); # types=types,
   }
   # if (any(!types %in% c("tss","css")))
   #  stop("Allowable type arguments limited to one or both: 'tss' and 'css'.");
@@ -77,6 +78,8 @@ abs_cat_stats <- function(title, cat_no, tables="All", releases="Latest",
     ## Stop if regular expression does not return any tables
     if (nrow(sel_tables) == 0)
       stop(paste("Specified table regular expressions do not match any table names, re-specify."))
+    ## Select distinct tables
+    sel_tables <- sel_tables[!duplicated(sel_tables$table_name),];
   }
   ## Select only the user specified tables ('sel_tables')
   sel_urls <- sel_tables$file_url;

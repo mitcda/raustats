@@ -1,20 +1,20 @@
 .onAttach <- function(libname, pkgname) {
-    packageStartupMessage("Attaching package: 'raustats'");
+  packageStartupMessage("Attaching package: 'raustats'");
 }
 
-## .onLoad <- function(libname, pkgname)
-## {
+## .onLoad <- function(libname, pkgname) {
+##
 ## }
 
-## .onDetach <- function(libname, pkgname)
-## {
+## .onUnload <- function(libname, pkgname) {
+##
 ## }
 
-## .Last <- function()
-## {
+## .Last <- function() {
+##
 ## }
 
-## .First <- function()
-## {
+## .First <- function() {
+##
 ## }
 

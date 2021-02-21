@@ -10,6 +10,7 @@
 #' @return a string containg formatted ABS search date filter
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
+#' @family ABS search helper functions
 abs_search_date_filter <- function(filter) {
   ## DEBUGGING LINES
   if (FALSE) {

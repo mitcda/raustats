@@ -16,6 +16,7 @@
 #'   include data file URLs.
 #' @return Returns a data frame listing the data collection tables and URLs for Excel (column:
 #'   \code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
+#' @family ABS catalogue functions
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
@@ -45,10 +46,10 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
     cat_no <- "5206.0"
     releases <- "Latest";
     types <- "tss";
-    cat_tables <- abs_cat_tables(title="Wage Price Index, Australia", releases="Latest",
-                                 types=c("tss"), include_urls=FALSE);
+    cat_table <- abs_cat_tables(title="Wage Price Index, Australia", releases="Latest",
+                                types=c("tss"), include_urls=FALSE);
     ## Test results
-    cat_tables <-
+    cat_table <-
       abs_cat_tables(title="Australian National Accounts: National Income, Expenditure and Product",
                      releases="Latest", types="tss", include_urls=FALSE);
   }
@@ -70,11 +71,12 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
     abs_releases <- abs_cat_releases(title=title, include_urls=TRUE);
   } else {
     ## Old-style ABS URL
+    ## cat_no="6401.0"; tables="CPI.+All Groups"; releases="Dec 2017"; types="tss";
     abs_releases <- abs_cat_releases(cat_no=cat_no, include_urls=TRUE);
   }
   ## Get URLs for all specified releases
   release_urls <-
-    file.path(abs_urls()$base_url,
+    file.path(#abs_urls()$base_url,
               abs_releases[c(unlist(sapply(releases,
                                            function(x)
                                              grep(x, abs_releases$type, ignore.case=TRUE))),
@@ -106,10 +108,12 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
                                             TRUE ~ .x))),
                   w,
                   by=c("url"="release_url"));
+  z <- z[!duplicated(z$table_name),];
   ## Return results
   if (!include_urls)
     z <- z[,!grepl("url$", names(z), ignore.case=TRUE)]
   ## row.names(z) <- seq_len(nrow(z));
+  class(z) <- append(class(z), "cat_table");
   return(z)
 }
 

@@ -10,6 +10,7 @@
 #' @param level one or more of 'group', 'view' and/or 'topic'.
 #' @param ... other arguments to \code{grep}.
 #' @return Returns a data frame listing available ABS catalogue releases.
+#' @family ABS catalogue functions
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples

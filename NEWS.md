@@ -1,3 +1,25 @@
+# raustats 0.20.0
+---------------------------------------------------------------------
+
+* Major package revamp to handle changed ABS website schema and functionality
+
+
+## Changes:
+
+* `abs_cat_search` new function that enables users to query the ABS website
+  search facilities.
+
+
+## Bug fixes:
+
+* `abs_read_tss` fixed missing column names in `names(metadata)` assign
+   statement (which threw the following warning: The `value` argument of
+   `names<-()` can't be empty as of tibble 3.0.0.) and moved file type check to
+   new internal `is_abs_tss` function.
+
+
+
+
 # raustats 0.15.1
 ---------------------------------------------------------------------
 

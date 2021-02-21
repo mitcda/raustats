@@ -9,14 +9,17 @@
 #' @return Returns a data frame listing the data collection tables and URLs for Excel (column:
 #'   \code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
 #' @export
+#' @family ABS catalogue helper functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
 abs_get_old_site_tables <- function(url) {
   if (FALSE) {
     url <- "https://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/6345.0Main+Features1Jun 2019?OpenDocument="
   }
-  ## Replace all whitespace in URLs
+  ## -- DEPRECATED - INCLUDED IN abs_cat_releases() --
+  ## Replace all whitespace in URLs - 
   url <- gsub("\\s", "%20", url)
+  ## -- END DEPRECATED --
   ## Check for HTTP errors
   raustats_check_url_available(url);
   ## Open html session

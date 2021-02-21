@@ -7,6 +7,7 @@
 #' @return Returns a data frame listing the statistical collection tables, URLs, file type and file
 #'   size.
 #' @export
+#' @family ABS catalogue helper functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
 abs_get_new_site_tables <- function(url) {

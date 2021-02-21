@@ -33,3 +33,4 @@ raustats_check_url_available <- function(url) {
     stop(paste(errtext, collapse='\n'), call. = FALSE)
   }
 }
+

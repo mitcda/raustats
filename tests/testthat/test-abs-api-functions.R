@@ -136,15 +136,45 @@ test_that("abs_stats fails well",
                          start_date=2008, end_date=2006));
 })
 
-test_that("abs_stats returns valid URL",
+
+test_that("split_absstat_query splits ABS.Stat query string",
 {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
 
+  ## Create test URL
+  url <- paste0("http://stat.data.abs.gov.au/SDMX-JSON/data/ERP_QUARTERLY/",
+                paste(1:5, collapse="+"), ".",
+                paste(50, collapse="+"), ".",
+                paste(10001:10350, collapse="+"), ".",
+                paste(10, collapse="+"), ".",
+                paste("Q", collapse="+"),
+                "/",
+                "all",
+                "?detail=Full",
+                "&dimensionAtObservation=AllDimensions",
+                "&startPeriod=2017-Q2",
+                "&endPeriod=2017-Q2")
+  expect_type(split_absstat_query(url), "character");
+  expect_gt(length(split_absstat_query(url)), 1);
+})
+
+
+test_that("abs_stats returns valid URL",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+  
   expect_match(abs_stats("CPI", filter="all", return_url=TRUE),
                "^http:\\/\\/stat.data.abs.gov.au\\/SDMX-JSON\\/data\\/CPI");
+  expect_match(abs_stats(dataset="CPI",
+                         filter=list(MEASURE="all", REGION=50, INDEX=10001,
+                                     TSEST=10, FREQUENCY="Q"), return_url=TRUE),
+               "^http:\\/\\/stat.data.abs.gov.au\\/SDMX-JSON\\/data\\/CPI");
 })
+
 
 test_that("abs_stats returns raw JSON object",
 {
@@ -172,7 +202,7 @@ test_that("abs_stats returns valid data frame",
                                           SEX_ABS = 3,  ## Persons
                                           AGE = "TT")), ## All ages
                   "data.frame");
-  
+
   ## Test specific filter and start/end dates
   expect_s3_class(abs_stats("CPI",
                             filter=list(MEASURE=1, REGION=c(1:8,50),
