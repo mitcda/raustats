@@ -104,3 +104,5 @@ fin_year <- function(date, ending="Jun")
   z <- as.Date(paste(Year, month.abb[ending], "01", sep="-"), format="%Y-%b-%d");
   return(z);
 }
+
+## ----------------------------------- EOF ---------------------------------- ##

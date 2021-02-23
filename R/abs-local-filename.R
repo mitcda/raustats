@@ -14,3 +14,5 @@ abs_local_filename <- function(url)
    ## 2. Leading (escaped) slash '\\/' and zero or more trailing characters demarcates filename in 'current' ABS URLs
    sub("^.+(&|\\/)(.+\\.(zip|xlsx*|pdf))&*.*$", "\\2", url)
 }
+
+## ----------------------------------- EOF ---------------------------------- ##

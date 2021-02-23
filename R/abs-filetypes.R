@@ -14,3 +14,5 @@ abs_filetypes <- function()
     openxml_files = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     pdf_files = "application/pdf");
 }
+
+## ----------------------------------- EOF ---------------------------------- ##

@@ -58,3 +58,4 @@ abs_cat_download.default <- function(x, exdir=tempdir()) {
   return(local_filenames);
 }
 
+## ----------------------------------- EOF ---------------------------------- ##

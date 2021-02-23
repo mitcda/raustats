@@ -56,3 +56,5 @@ abs_cat_select <- function(pattern, level = c('group', 'view', 'topic'),
   }
   return(x %>% set_names(sub("stat_", "", names(.))))
 }
+
+## ----------------------------------- EOF ---------------------------------- ##

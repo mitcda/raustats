@@ -54,3 +54,5 @@ abs_parse_search <- function(s, resource = c("Statistical analysis and data", "A
   ## Return results
   return(z);
 }
+
+## ----------------------------------- EOF ---------------------------------- ##

@@ -45,3 +45,4 @@ abs_dimensions <- function(dataset) # , update_cache=FALSE
   return(z)
 }
 
+## ----------------------------------- EOF ---------------------------------- ##

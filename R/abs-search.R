@@ -73,3 +73,5 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
     return(filter)
   }
 }
+
+## ----------------------------------- EOF ---------------------------------- ##
