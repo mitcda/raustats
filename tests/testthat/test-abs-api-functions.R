@@ -12,17 +12,17 @@ test_that("abs_api_call creates proper url",
 })
 
 
-## test_that("abs_api_call returns error if url is invalid",
-## {
-##   skip_on_cran()
-##   skip_on_travis()
-##   skip_on_appveyor()
-
-##   expect_true(httr::http_error(sub("\\.au", "",
-##                                    abs_api_call(path=abs_api_urls()$datastr_path, args="all"))));
-##   expect_true(httr::http_error(sub("Structure", "",
-##                                    abs_api_call(path=abs_api_urls()$datastr_path, args="all"))));
-## })
+test_that("abs_api_call returns error if url is invalid",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+  
+  expect_error(abs_call_api(sub("\\.au", "",
+                                abs_api_call(path=abs_api_urls()$datastr_path, args="all"))));
+  expect_true(httr::http_error(sub("Structure", "",
+                                   abs_api_call(path=abs_api_urls()$datastr_path, args="all"))));
+})
 
 
 test_that("abs_call_api creates xml_document",
@@ -186,7 +186,7 @@ test_that("abs_stats returns raw JSON object",
   expect_type(abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
                                            INDEX=10001, TSEST=10, FREQUENCY="Q"),
                         start_date="2008-Q3", end_date="2018-Q2", return_json=TRUE),
-              "character");
+              "list");
 })
 
 

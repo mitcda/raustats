@@ -86,7 +86,13 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                       return_json=FALSE, return_url=FALSE,
                       enforce_api_limits=TRUE, requery_limit=20, update_cache=FALSE)
 {
-  ## Check dataset present and valid 
+  if (FALSE) {
+    dataset="CPI";
+    filter=list(MEASURE=1, REGION=c(1:8,50), INDEX=10001, TSEST=10, FREQUENCY="Q");
+    dimensionAtObservation =  "AllDimensions";
+    detail = "Full";
+  }
+  ## Check dataset present and valid
   if (missing(dataset))
     stop("No dataset supplied.");
   if (!dataset %in% abs_datasets()$id)
@@ -105,14 +111,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   if (!exists("abs_stat_list", envir=.raustats_cache, inherits=FALSE)) {
     message("Scanning all ABS.Stat catalogue (called on first use each session).")
     assign("abs_stat_list", abs_datasets(), envir=.raustats_cache);
-  } else {
-    cache <- get("abs_stat_list", envir=.raustats_cache);
   }
-  ## if (update_cache) {
-  ##   cache <- abs_datasets();
-  ## } else {
-  ##   cache <- raustats::abs_cachelist;
-  ## }
+  cache <- get("abs_stat_list", envir=.raustats_cache);
   ## Get list of Dimension name:
   metadata <- abs_metadata(dataset);
   metadata_names <- abs_dimensions(dataset);
@@ -255,8 +255,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                          for (name in tolower(sub("\\s+","_", x_str$name)))
                            y[,name] <- as.integer(as.character(y[,name])) + 1;
                          names_y <- setNames(lapply(seq_len(nrow(x_str)),
-                                                    function(j) unlist(x_str[j,"values"], recursive=FALSE)
-                                                    ),
+                                                    function(j) unlist(x_str[j,"values"],
+                                                                       recursive=FALSE)),
                                              tolower(sub("\\s+","_", x_str$name)));
                          ## Substitute dimension IDs for Names
                          for (name in names(names_y))
@@ -268,6 +268,7 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                          ## Re-index rows
                          row.names(y) <- seq_len(nrow(y));
                          ## cat("completed.\n");
+                         return(y);
                        });
       z <- do.call(rbind, x_json);
       ## Return data
