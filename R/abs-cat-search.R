@@ -1,7 +1,8 @@
 
 #' @name abs_cat_search
 #' @title Use ABS website search function
-#' @description `r lifecycle::badge("experimental")`
+#' @description
+#'   \Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}
 #'   This function submits a search string to the ABS website search facility and returns
 #'   the search results in a data frame.
 #' @importFrom magrittr %>%
