@@ -46,7 +46,7 @@ results. Default is 5. (The maximum number of links the function will follow is 
 data frame in long format
 }
 \description{
-`r lifecycle::badge("experimental")`
+\Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}
   This function submits a search string to the ABS website search facility and returns
   the search results in a data frame.
 }
