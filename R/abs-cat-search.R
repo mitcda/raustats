@@ -1,4 +1,4 @@
-#' \Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
+
 #' @name abs_cat_search
 #' @title Use ABS website search function
 #' @description This function submits a search string to the ABS website search facility and returns

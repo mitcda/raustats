@@ -1,5 +1,4 @@
 ### ABS Webiste search functions
-#' \Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
 #' @name abs_search_date_filter
 #' @title Create date filter for ABS search function
 #' @description This function creates a valid date range filter to insert into ABS search URL.

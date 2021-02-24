@@ -9,5 +9,4 @@
 #'
 #' @docType package
 #' @name raustats
-#' \lifecycle{maturing}
 NULL

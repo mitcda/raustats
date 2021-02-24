@@ -1,4 +1,4 @@
-### ABS Catalogue functions ' \Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
+### ABS Catalogue functions 
 #' @name abs_parse_search
 #' @title Parse ABS search function results
 #' @description This function parses the results of the ABS search results and returns as a data
