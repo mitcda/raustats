@@ -40,6 +40,7 @@ Return list of ABS statistical series matching selection condition
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
+\code{\link{abs_cat_list}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},

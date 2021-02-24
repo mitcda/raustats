@@ -15,6 +15,7 @@ This function returns a common set of expressions used in scraping the ABS websi
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
+\code{\link{abs_cat_list}()},
 \code{\link{abs_cat_select}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},

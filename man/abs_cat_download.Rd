@@ -29,6 +29,7 @@ Downloads specified ABS catalogue data files from the ABS website, using a valid
 }
 \seealso{
 Other ABS catalogue functions: 
+\code{\link{abs_cat_list}()},
 \code{\link{abs_cat_select}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},

@@ -17,6 +17,7 @@ This function returns a list of URLs and data paths used to construct ABS Catalo
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
+\code{\link{abs_cat_list}()},
 \code{\link{abs_cat_select}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},

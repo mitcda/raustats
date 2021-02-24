@@ -18,8 +18,18 @@ This function traverses the ABS website and get the name and location of the lat
     abs_cat_list();
   }
 }
+\seealso{
+Other ABS catalogue functions: 
+\code{\link{abs_cat_download}()},
+\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_stats}()},
+\code{\link{abs_cat_tables}()},
+\code{\link{abs_expressions}()},
+\code{\link{abs_read_tss}()},
+\code{\link{abs_urls}()}
+}
 \author{
 David Mitchell <david.pk.mitchell@gmail.com>
 }
-\concept{ABS catalogue functions
-#' @keywords internal}
+\concept{ABS catalogue functions}
+\keyword{internal}

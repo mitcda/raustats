@@ -57,6 +57,7 @@ Return list of data tables available for specified ABS data series.
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
+\code{\link{abs_cat_list}()},
 \code{\link{abs_cat_select}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_expressions}()},

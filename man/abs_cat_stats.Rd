@@ -53,6 +53,7 @@ This function downloads ABS catalogue series statistics, by ABS catalogue number
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
+\code{\link{abs_cat_list}()},
 \code{\link{abs_cat_select}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},
