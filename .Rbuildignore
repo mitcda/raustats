@@ -21,3 +21,4 @@ raustats_presentation.Rmd
 raustats_presentation.pptx
 cran-comments.md
 ^README\.Rmd$
+OLD-abs-cat-series.R

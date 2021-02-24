@@ -46,7 +46,8 @@ results. Default is 5. (The maximum number of links the function will follow is 
 data frame in long format
 }
 \description{
-This function submits a search string to the ABS website search facility and returns
+`r lifecycle::badge("experimental")`
+  This function submits a search string to the ABS website search facility and returns
   the search results in a data frame.
 }
 \details{
