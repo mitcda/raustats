@@ -5,7 +5,7 @@ Description: Functions for downloading Australian economic statistics
   from the Australian Bureau of Statistics (ABS) (see <https://www.abs.gov.au/>) and
   Reserve Bank of Australia (RBA) (see <https://www.rba.gov.au/>) websites.
 Version: 0.20.0.9001
-Date: 2019-09-30
+Date: 2021-02-24
 Authors@R: c(
   person("David", "Mitchell", email = "david.pk.mitchell@gmail.com", role = c("aut", "cre"))
   )
@@ -13,7 +13,7 @@ Maintainer: David Mitchell <david.pk.mitchell@gmail.com>
 URL: https://github.com/mitcda/raustats
 License: GPL-3
 Depends: R (>= 3.3.0), readxl
-Imports: stats, dplyr, httr, jsonlite, rvest, tidyr, xml2, lubridate
+Imports: stats, dplyr, httr, jsonlite, rvest, tidyr, xml2, lubridate, stringi
 Suggests: repo, knitr, rmarkdown, testthat, ggplot2
 LazyData: TRUE
 RoxygenNote: 7.1.1

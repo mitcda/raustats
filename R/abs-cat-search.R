@@ -16,9 +16,9 @@
 #'   'Past fortnight', 'Past month', 'Past 3 months', 'Past 6 months', 'Past year', or single
 #'   calendar year (e.g. '2021' or '2020'). Default is NULL. If either \code{start_date} or
 #'   \code{end_date} is specified, then this argument will be ignored.
-#' @param start_date Filter search results by start date. Specify as string '%Y-$m-%d', Default is
+#' @param start_date Filter search results by start date. Specify as string '\%Y-\%m-\%d', Default is
 #'   NULL.
-#' @param end_date Filter search results by end date. Specify as string '%Y-$m-%d', Default is NULL,
+#' @param end_date Filter search results by end date. Specify as string '\%Y-\%m-\%d', Default is NULL,
 #' @param sort_by Sort by either 'Relevance' (default), 'Newest', 'Oldest', 'A-Z' or 'Z-A' (is not
 #'   case senstive).
 #' @param n_results The number of results to return on each page. Default is 10.
