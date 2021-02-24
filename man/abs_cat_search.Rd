@@ -29,10 +29,10 @@ invoked an \emph{advanced} search. See \link{Details}.}
 calendar year (e.g. '2021' or '2020'). Default is NULL. If either \code{start_date} or
 \code{end_date} is specified, then this argument will be ignored.}
 
-\item{start_date}{Filter search results by start date. Specify as string '%Y-$m-%d', Default is
+\item{start_date}{Filter search results by start date. Specify as string '\%Y-\%m-\%d', Default is
 NULL.}
 
-\item{end_date}{Filter search results by end date. Specify as string '%Y-$m-%d', Default is NULL,}
+\item{end_date}{Filter search results by end date. Specify as string '\%Y-\%m-\%d', Default is NULL,}
 
 \item{sort_by}{Sort by either 'Relevance' (default), 'Newest', 'Oldest', 'A-Z' or 'Z-A' (is not
 case senstive).}
@@ -50,8 +50,6 @@ This function submits a search string to the ABS website search facility and ret
   the search results in a data frame.
 }
 \details{
-\Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
-
 The ABS search facility supports multiple search string fields encompassing either 'Any'
   words, 'All' words, exact 'Phrase' and terms to exclude ('Not'). Advanced queries can be
   specified by supplying a named list of strings to argument \code{pattern}. List names should be

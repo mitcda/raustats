@@ -17,9 +17,6 @@ a string containg formatted ABS search date filter
 \description{
 This function creates a valid date range filter to insert into ABS search URL.
 }
-\details{
-\Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
-}
 \seealso{
 Other ABS search helper functions: 
 \code{\link{abs_parse_search}()}
