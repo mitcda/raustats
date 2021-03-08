@@ -22,7 +22,7 @@ Other ABS search helper functions:
 \code{\link{abs_parse_search}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS search helper functions}
 \keyword{internal}

@@ -24,4 +24,4 @@ This function returns a list of all datasets available from ABS.Stat.
   }
 }
 \concept{ABS.Stat functions
-#' @author David Mitchell <david.pk.mitchell@gmail.com>}
+#' @author David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}}

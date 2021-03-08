@@ -11,9 +11,9 @@ list of RBA base URL and data paths
 }
 \description{
 This function returns a list of URLs and data paths used to construct RBA data
-  access calls. It is used in other functions in this package and need not be called directly.
+access calls. It is used in other functions in this package and need not be called directly.
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \keyword{internal}

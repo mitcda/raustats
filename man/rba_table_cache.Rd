@@ -18,5 +18,5 @@ Function to return an updated list of data tables available from the RBA website
   }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }

@@ -11,15 +11,15 @@ a vector containing a list of valid ABS file types.
 }
 \description{
 This function returns a vector of valid ABS file types used in filtering ABS
-  Catalogue data access calls. It is used in other functions in this package and need not be
-  called directly.
+Catalogue data access calls. It is used in other functions in this package and need not be
+called directly.
 }
 \seealso{
 Other ABS helper functions: 
 \code{\link{abs_cat_unzip}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS helper functions}
 \keyword{internal}

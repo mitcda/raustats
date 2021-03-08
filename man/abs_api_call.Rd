@@ -24,7 +24,7 @@ Other ABS.Stat API call functions:
 \code{\link{abs_call_api}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.Stat API call functions}
 \keyword{internal}

@@ -26,7 +26,8 @@ dataset.}
 \item{code_only}{If FALSE (default), all column/fields are returned. If TRUE, only the dataset
 identifier or indicator code are returned.}
 
-\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+\item{update_cache}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Logical expression, if FALSE (default), use the cached list of available
 ABS.Stat datasets, if TRUE, update the list of available datasets.}
 }
 \value{
@@ -34,23 +35,24 @@ A data frame with datasets and data items that match the search pattern.
 }
 \description{
 This function finds datasets or dimensions within a specific that match a specified
-  regular expresion and returns matching results.
+regular expresion and returns matching results.
 }
 \note{
 With acknowledgements to \code{wb_search} function.
 }
 \examples{
- ## ABS dataset search
- x <- abs_search(pattern = "consumer price index")
- x <- abs_search(pattern = "census")
- x <- abs_search(pattern = "labour force")
+  \donttest{
+    ## ABS dataset search
+    x <- abs_search(pattern = "consumer price index")
+    x <- abs_search(pattern = "census")
+    x <- abs_search(pattern = "labour force")
 
- ## ABS indicator search
- x <- abs_search(pattern = "all groups", dataset="CPI")
- x <- abs_search(pattern = c("all groups", "capital cities"), dataset="CPI")
-
+    ## ABS indicator search
+    x <- abs_search(pattern = "all groups", dataset="CPI")
+    x <- abs_search(pattern = c("all groups", "capital cities"), dataset="CPI")
+  }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.Stat API search functions}

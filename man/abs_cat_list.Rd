@@ -7,11 +7,9 @@
 abs_cat_list()
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This function traverses the ABS website and get the name and location of the latest
-  ABS statistical releases.
-}
-\details{
-\Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
+ABS statistical releases.
 }
 \examples{
   \donttest{
@@ -21,7 +19,8 @@ This function traverses the ABS website and get the name and location of the lat
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},
@@ -29,7 +28,7 @@ Other ABS catalogue functions:
 \code{\link{abs_urls}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}
 \keyword{internal}

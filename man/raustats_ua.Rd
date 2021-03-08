@@ -11,9 +11,9 @@ a list with a base url and a url section for formatting the JSON API calls
 }
 \description{
 This function specifies the package user agent, and is used inside
-  GET/POST function calls
+GET/POST function calls
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \keyword{internal}

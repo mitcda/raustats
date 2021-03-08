@@ -13,7 +13,8 @@ abs_cat_tables(
 )
 }
 \arguments{
-\item{title}{ABS publication title.}
+\item{title}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+ABS publication title.}
 
 \item{cat_no}{ABS catalogue numbers.}
 
@@ -21,7 +22,8 @@ abs_cat_tables(
 release to download. Default is "Latest", which downloads the latest available data. See
 examples for further details.}
 
-\item{types}{ABS publication types to return. Permissable options include one or more of: 'tss'
+\item{types}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+ABS publication types to return. Permissable options include one or more of: 'tss'
 -- ABS Time Series Spreadsheets, 'css' -- ABS Data Cubes and 'pub' -- ABS Publications. The
 default returns all Time Series Spreadsheets and Data Cubes.}
 
@@ -29,8 +31,7 @@ default returns all Time Series Spreadsheets and Data Cubes.}
 include data file URLs.}
 }
 \value{
-Returns a data frame listing the data collection tables and URLs for Excel (column:
-  \code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
+Returns a data frame listing the data collection tables and URLs.
 }
 \description{
 Return list of data tables available for specified ABS data series.
@@ -38,33 +39,34 @@ Return list of data tables available for specified ABS data series.
 \examples{
   \donttest{
     ## List latest available quarterly National Accounts tables
-    ana_tables <- abs_cat_tables(cat_no="5206.0", releases="Latest");
+    ana_tables <- abs_cat_tables(title="Australian National Accounts: National Income, Expenditure and Product", releases="Latest");
     ana_tables_url <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE);
 
     ## List latest available CPI Time Series Spreadsheet tables only
-    cpi_tables <- abs_cat_tables("6401.0", releases="Latest", types="tss");
-    cpi_tables_url <- abs_cat_tables("5206.0", releases="Latest", types="tss", include_urls=TRUE);
+    cpi_tables <- abs_cat_tables("Consumer Price Index, Australia", releases="Latest", include_urls=TRUE);
+    cpi_tables_url <- abs_cat_tables(cat_no="6401.0", releases="Latest");
   
     ## List latest available ASGS Volume 3 Data Cubes
-    asgs_vol3_tables <- abs_cat_tables("1270.0.55.003", releases="Latest", types="css");
-    asgs_vol3_tables_url <- abs_cat_tables("1270.0.55.003", releases="Latest",
+    asgs_vol3_tables <- abs_cat_tables(cat_no="1270.0.55.003", releases="Latest", types="css");
+    asgs_vol3_tables_url <- abs_cat_tables(cat_no="1270.0.55.003", releases="Latest",
                                            types="css", include_urls=TRUE);
   
     ## List latest available ASGS ANZSIC publications (PDF) files
-    anzsic_2006 <- abs_cat_tables("1292.0", releases="Latest", types="pub", include_urls=TRUE);
+    anzsic_2006 <- abs_cat_tables(cat_no="1292.0", releases="Latest", types="pub", include_urls=TRUE);
   }
 }
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
 \code{\link{abs_cat_list}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_expressions}()},
 \code{\link{abs_read_tss}()},
 \code{\link{abs_urls}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}

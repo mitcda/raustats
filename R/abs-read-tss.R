@@ -3,7 +3,9 @@
 #' @title Extract data from an ABS time series data file
 #' @description This function extracts time series data from ABS data files.
 #' @param files Names of one or more ABS data files
-#' @param type One of either 'tss' -- ABS Time Series Spreadsheet (the Default) or 'css' -- Data
+#' @param type
+#'   `r lifecycle::badge("deprecated")`
+#'   One of either 'tss' -- ABS Time Series Spreadsheet (the Default) or 'css' -- Data
 #'   Cube.R
 #' @param na.rm logical. If \code{TRUE} (default), remove observations containing missing values.
 #' @return data frame in long format

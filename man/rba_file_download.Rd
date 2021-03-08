@@ -17,12 +17,12 @@ RBA datasets, if TRUE, update the list of available datasets.}
 }
 \value{
 Downloads data from the ABS website and returns a character vector listing the location
-  where files are saved.
+where files are saved.
 }
 \description{
 This function downloads one or more RBA data files at the specified by URLs and
-  saves a local copy.
+saves a local copy.
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }

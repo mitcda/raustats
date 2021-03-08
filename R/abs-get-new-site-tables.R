@@ -10,13 +10,14 @@
 #' @family ABS catalogue helper functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
-abs_get_new_site_tables <- function(url) {
-  if (FALSE) {
-    url <- "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/sep-2020"
-    url <- "https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-national-income-expenditure-and-product/latest-release"
-    url <- "https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-national-income-expenditure-and-product/sep-2020"
-    xx <- abs_get_new_site_tables(url)
-  }
+abs_get_new_site_tables <- function(url)
+{
+  ## if (FALSE) {
+  ##   url <- "https://www.abs.gov.au/statistics/economy/price-indexes-and-inflation/wage-price-index-australia/sep-2020"
+  ##   url <- "https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-national-income-expenditure-and-product/latest-release"
+  ##   url <- "https://www.abs.gov.au/statistics/economy/national-accounts/australian-national-accounts-national-income-expenditure-and-product/sep-2020"
+  ##   xx <- abs_get_new_site_tables(url)
+  ## }
   ## Check for HTTP errors
   raustats_check_url_available(url);
   ## Open html session

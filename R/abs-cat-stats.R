@@ -3,7 +3,8 @@
 #' @description This function downloads ABS catalogue series statistics, by ABS catalogue number.
 #' @importFrom rvest html_session follow_link html_attr jump_to
 #' @importFrom xml2 read_xml read_html
-#' @param title Character vector specifying one or more ABS publication titles.
+#' @param title `r lifecycle::badge("experimental")`
+#'   Character vector specifying one or more ABS publication titles.
 #' @param cat_no Character vector specifying one or more ABS collections or catalogue numbers to
 #'   download.
 #' @param tables A character vector of regular expressions denoting tables to download. The default
@@ -12,7 +13,8 @@
 #' @param releases Date or character string object specifying the month and year denoting which
 #'   release to download. Default is "Latest", which downloads the latest available data. See
 #'   examples for further details.
-#' @param types \Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
+#' @param types
+#'   `r lifecycle::badge("deprecated")`
 #'   One of either 'tss' -- ABS time series spreadsheet (the default) or 'css' -- ABS
 #'   data cube (cross-section spreadsheet).
 #' @param na.rm logical (default: \code{TRUE}) - remove observations containing missing values.
@@ -23,7 +25,7 @@
 #' @examples
 #'   \donttest{
 #'     ## Download quarterly Australian National Accounts, Tables 1 & 2 
-#'     xx <- abs_cat_select(pattern="national.*income.*expenditure.*product");
+#'     xx <- abs_cat_series(pattern="national.*income.*expenditure.*product");
 #'     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
 #'     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\W+", "Table 2\\W+"));
 #'
@@ -38,7 +40,7 @@ abs_cat_stats <- function(title, cat_no, tables="All", releases="Latest",
   ##   cat_no <- "6345.0";
   ##   tables <- c("Table 1", "Table 2");
   ##   xx <- abs_cat_stats(title=title, tables=tables);
-  ##   title <- abs_cat_select(pattern="national.*income.*expenditure.*product")$topic;
+  ##   title <- abs_cat_series(pattern="national.*income.*expenditure.*product")$title;
   ##   tables <- c("Table 1\\W+", "Table 2\\W+");
   ##   cat_no <- "5206.0"; tables <- c("Table 1\\W+", "Table 2\\W+"); releases <- "Dec 2018";
   ##   releases <- "Latest"; types <- "tss"; include_urls <- FALSE; na.rm=TRUE;

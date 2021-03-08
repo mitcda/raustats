@@ -2,7 +2,8 @@
 
 release_questions <- function() {
   c(
-    "Have you updated static package data (data-raw/build-data.R)?"
+    "Have you updated static package data (data-raw/build-data.R)?",
+    "Have you updated the vignettes (vignette)?",
   )
 }
 

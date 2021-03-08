@@ -17,56 +17,6 @@ test_that("abs_ausstats_url returns valid URL",
 })
 
 
-test_that("abs_cat_search returns a data frame",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  ## Test ABS search function - character pattern
-  expect_s3_class(abs_cat_search(pattern="gross domestic product"), "data.frame");
-  ## Test ABS search function - list pattern
-  expect_s3_class(
-    abs_cat_search(pattern=list(any="gross domestic product",
-                                all="gross domestic", phrase=NULL, not=NULL)),
-    "data.frame");
-  ## Test ABS search function - other arguments
-  expect_s3_class(
-    abs_cat_search(pattern=list(any="gross domestic product", all="gross domestic",
-                                phrase=NULL, not=NULL),
-                   resource="Statistical analysis and data",
-                   sort_by="Newest", start_date='2001-10-15', end_date='2015-06-30',
-                   follow_links=5),
-    "data.frame");
-  ## Test ABS search function - refine date
-  expect_s3_class(
-    abs_cat_search("gross domestic product", refine_date="Past 3 months"),
-    "data.frame");
-  ## Test ABS search function - sort_by
-  expect_s3_class(
-    abs_cat_search(pattern=list(any="consumer price index"), sort_by='A-Z'),
-    "data.frame");
-})
-
-
-test_that("abs_cat_select returns a data frame",
-{
-  skip_on_cran()
-  skip_on_travis()
-  skip_on_appveyor()
-
-  ## Test ABS search function - character pattern
-  expect_s3_class(
-    abs_cat_select(pattern="wage price index"),
-    "data.frame");
-  ## Test ABS search function - list pattern
-  expect_s3_class(
-    abs_cat_select(pattern="national.*income.*expenditure.*product",
-                   level="topic"),
-    "data.frame");
-})
-
-
 test_that("abs_local_filename created valid file name",
 {
   skip_on_cran()
@@ -162,15 +112,15 @@ test_that("abs_cat_stats tss call returns valid data frame",
 
   ## -- National Accounts
   ## Import ABS statistics, by title
-  series <- abs_cat_select(pattern="national.*income.*expenditure.*product",
-                           level="topic");
-  expect_s3_class(abs_cat_stats(title=series$topic, tables="Table 1\\W+"), "data.frame");
+  series <- abs_cat_series(pattern="national.*income.*expenditure.*product",
+                           level="title");
+  expect_s3_class(abs_cat_stats(title=series$title, tables="Table 1\\W+"), "data.frame");
   ## Import ABS statistics, by catalogue no.
   expect_s3_class(abs_cat_stats(cat_no="5206.0", tables="Table 1\\W+"), "data.frame");
   expect_s3_class(abs_cat_stats(cat_no="5206.0", tables=c("Table 1\\W+", "Table 2\\W+")),
                   "data.frame");
   ## Import ABS Consumer Price Index, by title
-  series <- abs_cat_select(pattern="consumer.*price.*index", level="topic")[1, "topic"];
+  series <- abs_cat_series(pattern="consumer.*price.*index", level="title")[1, "title"];
   expect_s3_class(abs_cat_stats(title=series, tables="CPI.+All Groups"), "data.frame");
   ## Import ABS Consumer Price Index, by catalogue no.
   expect_s3_class(

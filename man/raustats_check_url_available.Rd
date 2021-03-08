@@ -14,7 +14,7 @@ raustats_check_url_available(url)
 }
 \description{
 Function to ensure URL calls fail gracefully with an informative message if the
-  resource is not available (and not give a check warning nor error).
+resource is not available (and not give a check warning nor error).
 }
 \note{
 Based on code in \code{opensensmapR} (\url{https://github.com/sensebox/opensensmapR/blob/f69cf62b2771d5b6ed605c04b7ddd618f5a272c2/R/api.R}{\code{api.R}}).

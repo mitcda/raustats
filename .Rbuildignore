@@ -17,8 +17,10 @@ abs-series-abbreviation.R
 z-debugging-code.R
 z-release-questions.R
 z-unused-functions.R
+raustats_introduction_v1.Rmd
 raustats_presentation.Rmd
 raustats_presentation.pptx
 cran-comments.md
 ^README\.Rmd$
 OLD-abs-cat-series.R
+test-code.R

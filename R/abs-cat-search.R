@@ -1,11 +1,7 @@
-
 #' @name abs_cat_search
 #' @title Use ABS website search function
-#' @description
-#'   \Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}
-#'   This function submits a search string to the ABS website search facility and returns
-#'   the search results in a data frame.
-#' @importFrom magrittr %>%
+#' @description `r lifecycle::badge("experimental")` This function submits a search string to the
+#'   ABS website search facility and returns the search results in a data frame.
 #' @importFrom dplyr bind_rows
 #' @importFrom rvest html_session
 #' @importFrom stringi stri_replace_last_fixed
@@ -14,13 +10,14 @@
 #'   invoked an \emph{advanced} search. See \link{Details}.
 #' @param resource One or more of \code{'Statistical analysis and data'} (the default) or
 #'   \code{'Article'}.
-#' @param refine_date Filter search results by named date range -- one of: 'Today', 'Past week',
+#' @param date_range Filter search results by recent date range -- one of: 'Today', 'Past week',
 #'   'Past fortnight', 'Past month', 'Past 3 months', 'Past 6 months', 'Past year', or single
 #'   calendar year (e.g. '2021' or '2020'). Default is NULL. If either \code{start_date} or
-#'   \code{end_date} is specified, then this argument will be ignored.
-#' @param start_date Filter search results by start date. Specify as string '\%Y-\%m-\%d', Default is
-#'   NULL.
-#' @param end_date Filter search results by end date. Specify as string '\%Y-\%m-\%d', Default is NULL,
+#'   \code{end_date} are specified, then this argument will be ignored.
+#' @param start_date Filter search results by start date. Specify as string '\%Y-\%m-\%d', Default
+#'   is NULL.
+#' @param end_date Filter search results by end date. Specify as string '\%Y-\%m-\%d', Default is
+#'   NULL,
 #' @param sort_by Sort by either 'Relevance' (default), 'Newest', 'Oldest', 'A-Z' or 'Z-A' (is not
 #'   case senstive).
 #' @param n_results The number of results to return on each page. Default is 10.
@@ -37,20 +34,20 @@
 #' @examples
 #'   \donttest{
 #'     ## Example ABS search queries 
-#'     abs_cat_search("gross domestic product", refine_date="Past 3 months");
+#'     abs_cat_search("gross domestic product", date_range="Past 3 months");
 #'     abs_cat_search(pattern=list(phrase="consumer price index"),
-#'                    refine_date="Past 3 months");
+#'                    date_range="Past 3 months");
 #'     abs_cat_search(pattern=list(phrase="consumer price index"),
-#'                    refine_date="Past 3 months", resource="Statistical analysis and data");
+#'                    date_range="Past 3 months", resource="Statistical analysis and data");
 #'     abs_cat_search(pattern=list(phrase="consumer price index"),
-#'                    refine_date="Past 3 months", resource="Statistical analysis and data");
+#'                    date_range="Past 3 months", resource="Statistical analysis and data");
 #'     abs_cat_search(pattern=list(any="consumer price index"),
 #'                    start_date='2001-10-15', end_date='2015-06-30');
 #'     abs_cat_search(pattern=list(any="consumer price index"), sort_by='A-Z');
 #'   }
 abs_cat_search <- function(pattern,
                            resource = c("Statistical analysis and data", "Article"),
-                           refine_date = NULL,
+                           date_range = NULL,
                            start_date = NULL, end_date = NULL,
                            sort_by = c('Relevance', 'Newest', 'Oldest', 'A-Z', 'Z-A'),
                            n_results = 10, follow_links = 5,
@@ -84,10 +81,13 @@ abs_cat_search <- function(pattern,
                                            ",", " or")));
     ## Warn of invalid pattern list names
     if (any(!names(pattern) %in% valid_pattern_names) )
-      warning(sprintf("Invalid pattern list names: '%s' ignored.",
-                      valid_pattern_names[which(!names(pattern) %in%
-                                                valid_pattern_names)] %>%
-                      { stri_replace_last_fixed(paste(., collapse=", "), ",", " and") }));
+      warning(
+        sprintf("Invalid pattern list names: '%s' ignored.",
+                stri_replace_last_fixed(
+                  paste(valid_pattern_names[which(!names(pattern) %in% valid_pattern_names)],
+                        collapse=", "),
+                  ",", " and")
+                ));
   }
   ## Check arguments: resource, sort_by, sort_order
   resource <- match.arg(resource, several.ok=TRUE);
@@ -100,14 +100,14 @@ abs_cat_search <- function(pattern,
                     `a-z` = 'title',
                     `z-a` = 'dtitle');
   ## Check start_date & end_date format
-  if (!is.null(start_date) & is.null(refine_date)) {
+  if (!is.null(start_date) & is.null(date_range)) {
     d_start_date <- try(as.Date(start_date, format="%Y-%m-%d"))
     ## Warn if d_start_date is not valid date class
     if ("try-error" %in% class(d_start_date) || is.na(d_start_date)) {
       stop("Incorrect start_date date format")
     }
   }
-  if (!is.null(end_date) & is.null(refine_date)) { 
+  if (!is.null(end_date) & is.null(date_range)) { 
     d_end_date <- try(as.Date(end_date, format="%Y-%m-%d"))
     ## Warn if d_end_date is not valid date class
     if ("try-error" %in% class(d_end_date) || is.na(d_end_date)) {
@@ -130,8 +130,8 @@ abs_cat_search <- function(pattern,
                   "form=simple",
                   "&collection=abs-search",
                   sprintf("&query=%s", gsub("\\s+", "+", pattern)),
-                  if(!is.null(refine_date)) {
-                    sprintf("&%s", abs_search_date_filter(refine_date))
+                  if(!is.null(date_range)) {
+                    sprintf("&%s", abs_search_date_filter(date_range))
                   } else {
                     ""
                   });
@@ -164,8 +164,8 @@ abs_cat_search <- function(pattern,
                           ifelse(is.null(end_date), "", format(d_end_date, "%b"))),
                   sprintf("&meta_d2day=%s",   ## End date: day
                           ifelse(is.null(end_date), "", format(d_end_date, "%d"))), 
-                  if(!is.null(refine_date)) {
-                    sprintf("&%s", abs_search_date_filter(refine_date))
+                  if(!is.null(date_range)) {
+                    sprintf("&%s", abs_search_date_filter(date_range))
                   } else {
                     ""
                   },

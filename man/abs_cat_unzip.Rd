@@ -24,6 +24,6 @@ Other ABS helper functions:
 \code{\link{abs_filetypes}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS helper functions}

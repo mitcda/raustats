@@ -38,7 +38,8 @@ This is the internal function that extracts time series data from ABS data files
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
 \code{\link{abs_cat_list}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},
@@ -52,9 +53,9 @@ Other ABS catalogue helper functions:
 \code{\link{is_abs_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}
 \concept{ABS catalogue helper functions}

@@ -1,7 +1,8 @@
-#' \Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}:
 #' @name abs_cat_list
 #' @title Returns a list of all ABS statistical releases
-#' @description This function traverses the ABS website and get the name and location of the latest
+#' @description
+#'   `r lifecycle::badge("experimental")`
+#'   This function traverses the ABS website and get the name and location of the latest
 #'   ABS statistical releases.
 #' @importFrom magrittr %>%
 #' @importFrom dplyr bind_rows left_join select
@@ -58,8 +59,8 @@ abs_cat_list <- function() {
                    NULL
                  } else {
                    data.frame(stat_view_path = x,
-                              stat_topic = stat_topic_names,
-                              stat_topic_path = stat_topic_paths)
+                              stat_title = stat_topic_names,
+                              stat_title_path = stat_topic_paths)
                  })
              }) %>%
       bind_rows;
@@ -68,7 +69,7 @@ abs_cat_list <- function() {
            stat_topic_tbl %>%
            left_join(stat_coll_tbl,
                      by="stat_view_path") %>%
-           select(stat_group, stat_view, stat_view_path, stat_topic, stat_topic_path),
+           select(stat_group, stat_view, stat_view_path, stat_title, stat_title_path),
            envir=.raustats_cache);
   }
 };

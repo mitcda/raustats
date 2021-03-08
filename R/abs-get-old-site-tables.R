@@ -12,11 +12,11 @@
 #' @family ABS catalogue helper functions
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal
-abs_get_old_site_tables <- function(url) {
-  if (FALSE) {
-    url <- "https://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/6345.0Main+Features1Jun 2019?OpenDocument="
-  }
-  ## -- DEPRECATED - INCLUDED IN abs_cat_releases() --
+abs_get_old_site_tables <- function(url)
+{
+  ## if (FALSE) {
+  ##   url <- "https://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/6345.0Main+Features1Jun 2019?OpenDocument="
+  ## }
   ## Replace all whitespace in URLs - 
   url <- gsub("\\s", "%20", url)
   ## -- END DEPRECATED --
@@ -87,25 +87,3 @@ abs_get_old_site_tables <- function(url) {
 }
 
 ## ----------------------------------- EOF ---------------------------------- ##
-
-## ## Remove ABS data download section heading from all_nodes
-## ##   Where ABS data download section titles that include links, are included
-## ##   in the node set, but are not conformant with publication information.
-## ##   The following code block, removes these entries.
-## data_nodes <- lapply(all_nodes,
-##                      function(x) {
-##                        if (grepl(paste(c("(^\\W{0,1}$)",
-##                                          "(^publications\\W*$)",
-##                                          "(^data\\s*cubes\\W*$)",
-##                                          "(^time\\s*series\\s*spreadsheets?\\W*$)"),
-##                                        collapse="|"),
-##                                  x[1], ignore.case=TRUE)) {
-##                          NULL
-##                          ## Also drop SuperTABLE (srd) format files
-##                        } else if (any(grepl("\\.srd", x, ignore.case=TRUE))) {
-##                          NULL
-##                        } else {
-##                          x
-##                        }
-##                      })
-##

@@ -44,9 +44,9 @@ test_that("abs_cat_tables returns a valid data.frame",
   skip_on_appveyor()
 
   ## ABS Catalogue tables, by title (92, 94, 96, 99, 105, 108, 142, 166, 185, 206)
-  series <- abs_cat_select(pattern="national.*income.*expenditure.*product",
-                          level="topic");
-  expect_s3_class(abs_cat_tables(title=series$topic), "cat_table");
+  series <- abs_cat_series(pattern="national.*income.*expenditure.*product",
+                          level="title");
+  expect_s3_class(abs_cat_tables(title=series$title), "cat_table");
   ## ABS Catalogue tables, by catalogue no. - 5206.0
   expect_s3_class(abs_cat_tables(cat_no="5206.0"), "cat_table");
   ## ABS Catalogue tables, by catalogue no. with URLs

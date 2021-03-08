@@ -35,6 +35,6 @@ Other ABS.Stat functions:
 \code{\link{abs_metadata}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.Stat functions}

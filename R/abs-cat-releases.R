@@ -4,7 +4,8 @@
 #' @importFrom magrittr %>%
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom httr http_error
-#' @param title ABS publication title.
+#' @param title `r lifecycle::badge("experimental")`
+#'   ABS publication title.
 #' @param cat_no ABS catalogue numbers.
 #' @param include_urls Include full path URL to specified ABS catalogue releases. Default (FALSE)
 #'   does not include release URLs.
@@ -12,24 +13,26 @@
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @family ABS catalogue functions
-#' #' @examples
+#' @examples
 #'   \donttest{
 #'     ## List all available quarterly National Accounts tables
-#'     ana_releases <- abs_cat_releases("5206.0");
-#'     ana_release_urls <- abs_cat_releases("5206.0", include_urls=TRUE);
-#'   
+#'     ana_releases <- abs_cat_releases("Australian National Accounts: National Income, Expenditure and Product")
+#'     ana_releases <- abs_cat_releases(cat_no="5206.0", include_urls=TRUE);
+#'     
 #'     ## List latest available CPI Time Series Spreadsheet tables only
-#'     cpi_releases <- abs_cat_releases("6401.0");
-#'     cpi_release_urls <- abs_cat_releases("6401.0", include_urls=TRUE);
+#'     cpi_releases <- abs_cat_releases("Consumer Price Index, Australia", include_urls=TRUE);
+#'     cpi_release_urls <- abs_cat_releases("6401.0");
 #'   }
 abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
 {
   ## -- DEBUGGING CODE --
-  if (FALSE) {
-    title <- "Wage Price Index, Australia"
-    cat_no <- "6345.0"
-    include_urls <- FALSE
-  }
+  ## if (FALSE) {
+  ##   title <- "Wage Price Index, Australia"
+  ##   cat_no <- "6345.0"
+  ##   include_urls <- FALSE
+  ##      cat_releases <- abs_cat_releases(cat_no="6291.0.55.001")
+  ##  cat_releases <- abs_cat_releases(cat_no="1270.0.55.001", include_urls=TRUE)
+  ## }
   if (missing(title) && missing(cat_no))
     stop("One of either title or cat_no needs to be supplied.");
   if (!is.logical(include_urls))
@@ -38,8 +41,8 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
   ## Get ABS publication url
   if (!missing(title)) {
     ## New-style ABS URL
-    topic_path <- abs_cat_select(pattern=title, level="topic", include_urls=TRUE)$topic_path
-    url <- file.path(abs_urls()$base_url, topic_path);
+    title_path <- abs_cat_series(pattern=title, level="title", include_urls=TRUE)$title_path
+    url <- file.path(abs_urls()$base_url, title_path);
   } else {
     ## Old-style ABS URL
     url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path,
@@ -71,7 +74,7 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
       { ifelse(grepl(abs_expressions()$regex_release_type, ., ignore.case=TRUE),
                sub(abs_expressions()$regex_release_type, "\\1", ., ignore.case=TRUE),
                "Previous release") },
-    release = all_releases %>%
+    reference_period = all_releases %>%
       html_text %>%
       { sub(sprintf(".+(%s).*", 
                     paste(paste(c(month.name, month.abb), "\\d{4}", sep="\\s*"), collapse="|")),

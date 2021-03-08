@@ -11,21 +11,22 @@ a list with a base url and a url section for formatting ABS Catalogue statistics
 }
 \description{
 This function returns a list of URLs and data paths used to construct ABS Catalogue
-  data access calls. It is used in other functions in this package and need not be called
-  directly.
+data access calls. It is used in other functions in this package and need not be called
+directly.
 }
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
 \code{\link{abs_cat_list}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},
 \code{\link{abs_read_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}
 \keyword{internal}

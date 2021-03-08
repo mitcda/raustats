@@ -24,6 +24,6 @@ Function to create a financial year date object
   }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \keyword{internal}

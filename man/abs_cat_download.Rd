@@ -21,16 +21,17 @@ created if it doesn't exist.}
 }
 \value{
 Downloads data from the ABS website and returns a character vector listing the location
-  of locally saved files.
+of locally saved files.
 }
 \description{
 Downloads specified ABS catalogue data files from the ABS website, using a valid ABS
-  data set URL.
+data set URL.
 }
 \seealso{
 Other ABS catalogue functions: 
 \code{\link{abs_cat_list}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},
@@ -38,6 +39,6 @@ Other ABS catalogue functions:
 \code{\link{abs_urls}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}

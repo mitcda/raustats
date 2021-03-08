@@ -1,9 +1,10 @@
 ### ABS website scraping function
 #' @name abs_next_page
 #' @title Parse ABS search function results
-#' @description This function parses the results of the ABS search results and returns as a data
+#' @description
+#'   `r lifecycle::badge("experimental")`
+#'   This function parses the results of the ABS search results and returns as a data
 #'   frame.
-#' \lifecycle{new}
 #' @importFrom magrittr %>%
 #' @importFrom rvest html_attr html_nodes is.session
 #' @param s a valid session object (see \link[rvest]{html_session}).

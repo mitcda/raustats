@@ -12,7 +12,7 @@ quarter2Date(x, base.month = "Mar", format = "\%Y-Q\%q")
 \item{base.month}{Specifies base month for first quarter. Can be a scalar: 1,2,3 or character
 object: Jan, Feb, Mar.}
 
-\item{format}{The input date format. Default is "\%Y-Q\%q".}
+\item{format}{The input date format. Default is "\\%Y-Q\\%q".}
 }
 \value{
 This function returns a Date format object.
@@ -28,6 +28,6 @@ Function to convert dates formatted as year-quarter to date-format objects
   }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \keyword{internal}

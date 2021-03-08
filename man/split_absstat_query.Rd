@@ -13,13 +13,14 @@ split_absstat_query(url)
 string or list
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This function checks if a draft ABS.Stat query call exceeds the string length limit
-  or would return more than one million cells and if so, splits the query into smaller chunks for
-  calling the ABS.Stat site. This function is called by the \link{\code{abs_stat}} function, it
-  need not be called directly.
+or would return more than one million cells and if so, splits the query into smaller chunks
+for calling the ABS.Stat site. This function is called by the \link{\code{abs_stat}} function,
+it need not be called directly.
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.Stat helper functions}
 \keyword{internal}

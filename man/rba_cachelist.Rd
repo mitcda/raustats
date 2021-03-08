@@ -7,10 +7,10 @@
 \format{
 A data frame containing three columns:
 \itemize{
-  \item \code{table_code} RBA table code.
-  \item \code{table_name} RBA table name.
-  \item \code{table_type} One of either current statistical tables, historical data or discontinued data
-  \item \code{url} RBA URL 
+\item \code{table_code} RBA table code.
+\item \code{table_name} RBA table name.
+\item \code{table_type} One of either current statistical tables, historical data or discontinued data
+\item \code{url} RBA URL
 }
 }
 \usage{
@@ -18,7 +18,7 @@ rba_cachelist
 }
 \description{
 This data is a cached result of the \code{\link{rba_table_cache}} function. By
-  default functions \code{\link{rba_search}} and \code{\link{rba_stats}} use this data if the
-  \code{update_cache} parameter is \code{TRUE}.
+default functions \code{\link{rba_search}} and \code{\link{rba_stats}} use this data if the
+\code{update_cache} parameter is \code{TRUE}.
 }
 \keyword{datasets}

@@ -1,38 +1,35 @@
-#' @name abs_cat_select
-#' @title Return list of ABS statistics series
-#' @description Return list of ABS statistical series matching selection condition
+#' @name abs_cat_series
+#' @title Return list of ABS statistics' series titles
+#' @description `r lifecycle::badge("experimental")` Return list of ABS statistical series matching
+#'   selection condition
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom dplyr bind_cols
 #' @importFrom magrittr set_names
 #' @importFrom vctrs vec_as_names
 #' @param pattern character string containing a regular expression to be matched in the given
 #'   character vector. See \code{\link[base]{grep}} for further details.
-#' @param level one or more of 'group', 'view' and/or 'topic'.
-#' @param ... other arguments to \code{grep}.
-#' @return Returns a data frame listing available ABS catalogue releases.
+#' @param level one or more of 'group', 'view' and/or 'title'.
+#' @param ignore.case if \code{TRUE} (default) pattern matching is not case sensitive and if
+#'   \code{FALSE}, matching is case sensitive.
+#' @param include_urls if \code{TRUE}, the function includes the ABS website URL for the returned
+#'   series in the results table, but not if \code{FALSE} (default)..
+#' @param ... other arguments to \code{\link[base]{grep}}.
+#' @return Returns a data frame listing available ABS statistical titles.
 #' @family ABS catalogue functions
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \donttest{
-#'     ## List all available quarterly National Accounts tables
-#'     ana_releases <- abs_cat_releases("5206.0");
-#'     ana_release_urls <- abs_cat_releases("5206.0", include_urls=TRUE);
-#'   
-#'     ## List latest available CPI Time Series Spreadsheet tables only
-#'     cpi_releases <- abs_cat_releases("6401.0");
-#'     cpi_release_urls <- abs_cat_releases("6401.0", include_urls=TRUE);
+#'     ## List ABS series matching regular expression: "national.*income.*expenditure.*product"
+#'     abs_series <- abs_cat_series(pattern="national.*income.*expenditure.*product",
+#'                                  level="topic");
+#' 
+#'     ## List ABS series matching regular expression: "consumer.*price.*index" and include URLs
+#'     abs_series <- abs_cat_series(pattern="consumer.*price.*index.*product",
+#'                                  include_urls=TRUE);
 #'   }
-abs_cat_select <- function(pattern, level = c('group', 'view', 'topic'),
+abs_cat_series <- function(pattern, level = c('group', 'view', 'title'),
                            ignore.case = TRUE, include_urls = FALSE, ...) {
-  if (FALSE) {
-    ## -- DEBUGGING CODE --
-    pattern <- "wage price index"
-    pattern <- "national.*income.*expenditure.*product"
-    level <- 'topic'
-    level <- c('group', 'view', 'topic')
-    xx <- abs_cat_select(pattern="national.*income.*expenditure.*product");
-  }
   if (missing(pattern))
     stop("No pattern supplied.");
   if (!is.logical(include_urls))
@@ -52,7 +49,7 @@ abs_cat_select <- function(pattern, level = c('group', 'view', 'topic'),
   if (include_urls) {
     x <- z[i,]
   } else {
-    x <- z[i,c("stat_group", "stat_view", "stat_topic")];
+    x <- z[i,c("stat_group", "stat_view", "stat_title")];
   }
   return(x %>% set_names(sub("stat_", "", names(.))))
 }

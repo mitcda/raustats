@@ -18,7 +18,7 @@ abs_urls <- function()
        statistics_path = "statistics",
        ## Old site regular expressions
        downloads_regex = "Downloads",
-       releases_regex = "Past.*Future.*Releases",
+       releases_regex = "Past.*(Future.*)*(Releases|Issues)",
        ## New site search paths
        search_url = "https://search.abs.gov.au",
        search_path = ""

@@ -18,7 +18,6 @@ abs_cat_download <- function(x, exdir=tempdir()) {
 
 
 #' @rdname abs_cat_download
-#' @method abs_cat_download cat_table
 #' @export
 abs_cat_download.cat_table <- function(x, exdir=tempdir()) { 
   if (!dir.exists(exdir)) dir.create(exdir);
@@ -38,7 +37,6 @@ abs_cat_download.cat_table <- function(x, exdir=tempdir()) {
 
 
 #' @rdname abs_cat_download
-#' @method abs_cat_download default
 #' @export
 abs_cat_download.default <- function(x, exdir=tempdir()) {
   if (!dir.exists(exdir)) dir.create(exdir);

@@ -7,7 +7,7 @@
 abs_cat_search(
   pattern,
   resource = c("Statistical analysis and data", "Article"),
-  refine_date = NULL,
+  date_range = NULL,
   start_date = NULL,
   end_date = NULL,
   sort_by = c("Relevance", "Newest", "Oldest", "A-Z", "Z-A"),
@@ -24,15 +24,16 @@ invoked an \emph{advanced} search. See \link{Details}.}
 \item{resource}{One or more of \code{'Statistical analysis and data'} (the default) or
 \code{'Article'}.}
 
-\item{refine_date}{Filter search results by named date range -- one of: 'Today', 'Past week',
+\item{date_range}{Filter search results by recent date range -- one of: 'Today', 'Past week',
 'Past fortnight', 'Past month', 'Past 3 months', 'Past 6 months', 'Past year', or single
 calendar year (e.g. '2021' or '2020'). Default is NULL. If either \code{start_date} or
-\code{end_date} is specified, then this argument will be ignored.}
+\code{end_date} are specified, then this argument will be ignored.}
 
-\item{start_date}{Filter search results by start date. Specify as string '\%Y-\%m-\%d', Default is
-NULL.}
+\item{start_date}{Filter search results by start date. Specify as string '\\%Y-\\%m-\\%d', Default
+is NULL.}
 
-\item{end_date}{Filter search results by end date. Specify as string '\%Y-\%m-\%d', Default is NULL,}
+\item{end_date}{Filter search results by end date. Specify as string '\\%Y-\\%m-\\%d', Default is
+NULL,}
 
 \item{sort_by}{Sort by either 'Relevance' (default), 'Newest', 'Oldest', 'A-Z' or 'Z-A' (is not
 case senstive).}
@@ -46,32 +47,31 @@ results. Default is 5. (The maximum number of links the function will follow is 
 data frame in long format
 }
 \description{
-\Sexpr[results=rd, stage=render]{lifecycle::badge("experimental")}
-  This function submits a search string to the ABS website search facility and returns
-  the search results in a data frame.
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} This function submits a search string to the
+ABS website search facility and returns the search results in a data frame.
 }
 \details{
 The ABS search facility supports multiple search string fields encompassing either 'Any'
-  words, 'All' words, exact 'Phrase' and terms to exclude ('Not'). Advanced queries can be
-  specified by supplying a named list of strings to argument \code{pattern}. List names should be
-  one or more of more of 'any', 'all', 'phrase' and/or 'not'.
+words, 'All' words, exact 'Phrase' and terms to exclude ('Not'). Advanced queries can be
+specified by supplying a named list of strings to argument \code{pattern}. List names should be
+one or more of more of 'any', 'all', 'phrase' and/or 'not'.
 }
 \examples{
   \donttest{
     ## Example ABS search queries 
-    abs_cat_search("gross domestic product", refine_date="Past 3 months");
+    abs_cat_search("gross domestic product", date_range="Past 3 months");
     abs_cat_search(pattern=list(phrase="consumer price index"),
-                   refine_date="Past 3 months");
+                   date_range="Past 3 months");
     abs_cat_search(pattern=list(phrase="consumer price index"),
-                   refine_date="Past 3 months", resource="Statistical analysis and data");
+                   date_range="Past 3 months", resource="Statistical analysis and data");
     abs_cat_search(pattern=list(phrase="consumer price index"),
-                   refine_date="Past 3 months", resource="Statistical analysis and data");
+                   date_range="Past 3 months", resource="Statistical analysis and data");
     abs_cat_search(pattern=list(any="consumer price index"),
                    start_date='2001-10-15', end_date='2015-06-30');
     abs_cat_search(pattern=list(any="consumer price index"), sort_by='A-Z');
   }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS search functions}

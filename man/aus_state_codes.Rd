@@ -7,9 +7,9 @@
 \format{
 A data frame containing three columns:
 \itemize{
-  \item \code{state_code} One-digit state code.
-  \item \code{state_abb} State/territory abbreviation.
-  \item \code{state_name} State/territory name.
+\item \code{state_code} One-digit state code.
+\item \code{state_abb} State/territory abbreviation.
+\item \code{state_name} State/territory name.
 }
 }
 \usage{

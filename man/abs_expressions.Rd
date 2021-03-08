@@ -16,14 +16,15 @@ This function returns a common set of expressions used in scraping the ABS websi
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
 \code{\link{abs_cat_list}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_stats}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_read_tss}()},
 \code{\link{abs_urls}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}
 \keyword{internal}

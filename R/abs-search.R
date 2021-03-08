@@ -11,7 +11,9 @@
 #' @param ignore.case Case senstive pattern match or not.
 #' @param code_only If FALSE (default), all column/fields are returned. If TRUE, only the dataset
 #'   identifier or indicator code are returned.
-#' @param update_cache Logical expression, if FALSE (default), use the cached list of available
+#' @param update_cache
+#'   `r lifecycle::badge("deprecated")` 
+#'   Logical expression, if FALSE (default), use the cached list of available
 #'   ABS.Stat datasets, if TRUE, update the list of available datasets.
 #' @return A data frame with datasets and data items that match the search pattern.
 #' @export
@@ -19,16 +21,18 @@
 #' @note With acknowledgements to \code{wb_search} function.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
-#'  ## ABS dataset search
-#'  x <- abs_search(pattern = "consumer price index")
-#'  x <- abs_search(pattern = "census")
-#'  x <- abs_search(pattern = "labour force")
+#'   \donttest{
+#'     ## ABS dataset search
+#'     x <- abs_search(pattern = "consumer price index")
+#'     x <- abs_search(pattern = "census")
+#'     x <- abs_search(pattern = "labour force")
 #'
-#'  ## ABS indicator search
-#'  x <- abs_search(pattern = "all groups", dataset="CPI")
-#'  x <- abs_search(pattern = c("all groups", "capital cities"), dataset="CPI")
-#' 
-abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE, update_cache=FALSE)
+#'     ## ABS indicator search
+#'     x <- abs_search(pattern = "all groups", dataset="CPI")
+#'     x <- abs_search(pattern = c("all groups", "capital cities"), dataset="CPI")
+#'   }
+abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE,
+                       code_only=FALSE, update_cache=FALSE)
 {
   if (missing(pattern))
     stop("No regular expression provided.")
@@ -62,8 +66,10 @@ abs_search <- function(pattern, dataset=NULL, ignore.case=TRUE, code_only=FALSE,
     ## Return list of all dataset dimensions with matching elements
     filter_index <- lapply(.cachelist,
                            function(x) {
-                             i <- grep(sprintf("(%s)", paste(pattern, collapse="|")),
-                                       x$Description, ignore.case=ignore.case);
+                             i <- unique(c(grep(sprintf("(%s)", paste(pattern, collapse="|")),
+                                                x$Description, ignore.case=ignore.case),
+                                           grep(sprintf("(%s)", paste(pattern, collapse="|")),
+                                                x$Code, ignore.case=ignore.case)));
                              z <- x[i,];
                              return(z);
                            });

@@ -11,7 +11,7 @@ abs_get_new_site_tables(url)
 }
 \value{
 Returns a data frame listing the statistical collection tables, URLs, file type and file
-  size.
+size.
 }
 \description{
 Return list of data tables available for specified ABS data series.
@@ -25,7 +25,7 @@ Other ABS catalogue helper functions:
 \code{\link{is_abs_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue helper functions}
 \keyword{internal}

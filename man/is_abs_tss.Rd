@@ -13,9 +13,9 @@ is_abs_tss(file)
 logical
 }
 \description{
-This function checks if the specified  returns a list of URLs and data paths used to construct ABS Catalogue
-  data access calls. It is used in other functions in this package and need not be called
-  directly.
+This function checks if the specified returns a list of URLs and data paths used to
+construct ABS Catalogue data access calls. It is used in other functions in this package and
+need not be called directly.
 }
 \seealso{
 Other ABS catalogue helper functions: 
@@ -26,7 +26,7 @@ Other ABS catalogue helper functions:
 \code{\link{abs_read_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue helper functions}
 \keyword{internal}

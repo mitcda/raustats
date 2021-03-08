@@ -13,11 +13,26 @@ Maintainer: David Mitchell <david.pk.mitchell@gmail.com>
 URL: https://github.com/mitcda/raustats
 License: GPL-3
 Depends: R (>= 3.3.0), readxl
-Imports: stats, dplyr, httr, jsonlite, rvest, tidyr, xml2, lubridate
-Suggests: repo, knitr, rmarkdown, testthat, ggplot2, lifecycle
+Imports: 
+    stats,
+    dplyr,
+    httr,
+    jsonlite,
+    rvest,
+    tidyr,
+    xml2,
+    lubridate,
+    lifecycle
+Suggests: 
+    repo,
+    knitr,
+    rmarkdown,
+    testthat,
+    ggplot2
 LazyData: TRUE
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
 NeedsCompilation: no
 Encoding: UTF-8
 RdMacros: lifecycle
+Roxygen: list(markdown = TRUE)

@@ -16,7 +16,7 @@ data frame in long format
 }
 \description{
 This function queries and returns all metadata associated with a specified dataset
-  from ABS.Stat.
+from ABS.Stat.
 }
 \examples{
   \donttest{
@@ -33,6 +33,6 @@ Other ABS.Stat functions:
 \code{\link{abs_dimensions}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.Stat functions}

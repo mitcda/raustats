@@ -13,9 +13,9 @@ abs_next_page(s)
 a url to linking to the next page returned by an ABS search results
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This function parses the results of the ABS search results and returns as a data
-  frame.
-\lifecycle{new}
+frame.
 }
 \seealso{
 Other ABS catalogue helper functions: 
@@ -26,7 +26,7 @@ Other ABS catalogue helper functions:
 \code{\link{is_abs_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue helper functions}
 \keyword{internal}

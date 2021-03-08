@@ -14,7 +14,8 @@ abs_cat_stats(
 )
 }
 \arguments{
-\item{title}{Character vector specifying one or more ABS publication titles.}
+\item{title}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+Character vector specifying one or more ABS publication titles.}
 
 \item{cat_no}{Character vector specifying one or more ABS collections or catalogue numbers to
 download.}
@@ -27,7 +28,7 @@ to specify different table sets for each specified ABS catalogue number.}
 release to download. Default is "Latest", which downloads the latest available data. See
 examples for further details.}
 
-\item{types}{\Sexpr[results=rd, stage=render]{lifecycle::badge("deprecated")}
+\item{types}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 One of either 'tss' -- ABS time series spreadsheet (the default) or 'css' -- ABS
 data cube (cross-section spreadsheet).}
 
@@ -42,7 +43,7 @@ This function downloads ABS catalogue series statistics, by ABS catalogue number
 \examples{
   \donttest{
     ## Download quarterly Australian National Accounts, Tables 1 & 2 
-    xx <- abs_cat_select(pattern="national.*income.*expenditure.*product");
+    xx <- abs_cat_series(pattern="national.*income.*expenditure.*product");
     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
     ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
 
@@ -54,13 +55,14 @@ This function downloads ABS catalogue series statistics, by ABS catalogue number
 Other ABS catalogue functions: 
 \code{\link{abs_cat_download}()},
 \code{\link{abs_cat_list}()},
-\code{\link{abs_cat_select}()},
+\code{\link{abs_cat_releases}()},
+\code{\link{abs_cat_series}()},
 \code{\link{abs_cat_tables}()},
 \code{\link{abs_expressions}()},
 \code{\link{abs_read_tss}()},
 \code{\link{abs_urls}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue functions}

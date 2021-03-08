@@ -7,7 +7,8 @@
 abs_cat_releases(title, cat_no, include_urls = FALSE)
 }
 \arguments{
-\item{title}{ABS publication title.}
+\item{title}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+ABS publication title.}
 
 \item{cat_no}{ABS catalogue numbers.}
 
@@ -20,17 +21,29 @@ Returns a data frame listing available ABS catalogue releases.
 \description{
 Return list of all releases available for specified ABS catalogue number.
 }
-\author{
-David Mitchell <david.pk.mitchell@gmail.com>
-}
-\concept{ABS catalogue functions
-#' @examples
+\examples{
   \donttest{
     ## List all available quarterly National Accounts tables
-    ana_releases <- abs_cat_releases("5206.0");
-    ana_release_urls <- abs_cat_releases("5206.0", include_urls=TRUE);
-  
+    ana_releases <- abs_cat_releases("Australian National Accounts: National Income, Expenditure and Product")
+    ana_releases <- abs_cat_releases(cat_no="5206.0", include_urls=TRUE);
+    
     ## List latest available CPI Time Series Spreadsheet tables only
-    cpi_releases <- abs_cat_releases("6401.0");
-    cpi_release_urls <- abs_cat_releases("6401.0", include_urls=TRUE);
-  }}
+    cpi_releases <- abs_cat_releases("Consumer Price Index, Australia", include_urls=TRUE);
+    cpi_release_urls <- abs_cat_releases("6401.0");
+  }
+}
+\seealso{
+Other ABS catalogue functions: 
+\code{\link{abs_cat_download}()},
+\code{\link{abs_cat_list}()},
+\code{\link{abs_cat_series}()},
+\code{\link{abs_cat_stats}()},
+\code{\link{abs_cat_tables}()},
+\code{\link{abs_expressions}()},
+\code{\link{abs_read_tss}()},
+\code{\link{abs_urls}()}
+}
+\author{
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
+}
+\concept{ABS catalogue functions}

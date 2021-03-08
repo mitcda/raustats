@@ -16,15 +16,16 @@ abs_parse_search(s, resource = c("Statistical analysis and data", "Article"))
 a data frame containg the ABS Search function results
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This function parses the results of the ABS search results and returns as a data
-  frame.
+frame.
 }
 \seealso{
 Other ABS search helper functions: 
 \code{\link{abs_search_date_filter}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS search helper functions}
 \keyword{internal}

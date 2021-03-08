@@ -29,7 +29,7 @@ to use in the API call. If NULL, no filter is set and the query tries to return 
 of the dataset. Valid dimensions to include in the list supplied to filter include: MEASURE,
 REGION, INDEX, TSEST and FREQUENCY.}
 
-\item{start_date}{Numeric or character. If numeric it must be in %Y form (i.e. four digit
+\item{start_date}{Numeric or character. If numeric it must be in \%Y form (i.e. four digit
 year). For data at the sub-annual granularity the API supports a format as follows: Monthly
 data -- '2016-M01', Quarterly data -- '2016-Q1', Semi-annual data -- '2016-B2', Financial year
 data -- '2016-17'.}
@@ -48,14 +48,14 @@ level. The default order is: 'AllDimensions', 'TimeDimension' and 'MeasureDimens
 AllDimensions results in a flat list of observations without any grouping.}
 
 \item{detail}{This argument specifies the desired amount of information to be returned. Possible
-  values are:
+values are:
 
-  \itemize{
-    \item Full: all data and documentation, including annotations (default)
-    \item DataOnly: attributes – and therefore groups – will be excluded
-    \item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
-    \item NoData: returns the groups and series, including attributes and annotations, without observations (all values = NA)
-  }}
+\itemize{
+\item Full: all data and documentation, including annotations (default)
+\item DataOnly: attributes – and therefore groups – will be excluded
+\item SeriesKeysOnly: only the series elements and the dimensions that make up the series keys
+\item NoData: returns the groups and series, including attributes and annotations, without observations (all values = NA)
+}}
 
 \item{return_json}{Logical. Default is \code{FALSE}. If \code{TRUE}, the function returns
 results in a list of raw sdmx-json.}
@@ -63,12 +63,12 @@ results in a list of raw sdmx-json.}
 \item{return_url}{Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
 request URL and does not submit the request.}
 
-\item{enforce_api_limits}{[DEPRECATED] If \code{TRUE} (the default), the function enforces the
+\item{enforce_api_limits}{\link{DEPRECATED} If \code{TRUE} (the default), the function enforces the
 ABS.Stat RESTful API limits and will not submit the query if the URL string length exceeds 1000
 characters or the query would return more than 1 million records. If \code{FALSE}, the function
 submits the API call regardless and attempts to return the results.}
 
-\item{requery_limit}{[NEW - EXPERIMENTAL] If query string exceeds 1000 characters in length, the
+\item{requery_limit}{\link{NEW - EXPERIMENTAL} If query string exceeds 1000 characters in length, the
 function automatically splits the query into multiple parts and submits the parts separately
 and meres the results. This argument limits the number of parts the function will submit by
 default, in order to avoid inadvertantly sending a large number of requests to the ABS.Stat
@@ -85,19 +85,19 @@ This function queries and returns data for a specified ABS dataset from the ABS 
 }
 \note{
 The data query submitted by this function uses the ABS RESTful API based on the SDMX-JSON
-  standard. It has a maximum allowable character limit of 1000 characters allowed in the data
-  URL.
+standard. It has a maximum allowable character limit of 1000 characters allowed in the data
+URL.
 
-  Further limitations known at this time include:
-  \itemize{
-    \item Only anonymous queries are supported, there is no authentication
-    \item Each response is limited to no more than 1 million observations
-    \item Errors are not returned in the JSON format but HTTP status codes and messages are
-      set according to the Web Services Guidelines
-    \item The lastNObservations parameter is not supported
-    \item Observations follow the time series (or import-specific) order even if
-      \code{dimensionAtObservation=AllDimensions} is used.
-  }
+Further limitations known at this time include:
+\itemize{
+\item Only anonymous queries are supported, there is no authentication
+\item Each response is limited to no more than 1 million observations
+\item Errors are not returned in the JSON format but HTTP status codes and messages are
+set according to the Web Services Guidelines
+\item The lastNObservations parameter is not supported
+\item Observations follow the time series (or import-specific) order even if
+\code{dimensionAtObservation=AllDimensions} is used.
+}
 }
 \examples{
   \donttest{
@@ -111,6 +111,6 @@ The data query submitted by this function uses the ABS RESTful API based on the 
  }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.State functions}

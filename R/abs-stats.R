@@ -40,16 +40,19 @@
 #'   results in a list of raw sdmx-json.
 #' @param return_url Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
 #'   request URL and does not submit the request.
-#' @param enforce_api_limits [DEPRECATED] If \code{TRUE} (the default), the function enforces the
+#' @param enforce_api_limits  `r lifecycle::badge("deprecated")`
+#'   If \code{TRUE} (the default), the function enforces the
 #'   ABS.Stat RESTful API limits and will not submit the query if the URL string length exceeds 1000
 #'   characters or the query would return more than 1 million records. If \code{FALSE}, the function
 #'   submits the API call regardless and attempts to return the results.
-#' @param requery_limit [NEW - EXPERIMENTAL] If query string exceeds 1000 characters in length, the
+#' @param requery_limit  `r lifecycle::badge("experimental")`
+#'   If query string exceeds 1000 characters in length, the
 #'   function automatically splits the query into multiple parts and submits the parts separately
 #'   and meres the results. This argument limits the number of parts the function will submit by
 #'   default, in order to avoid inadvertantly sending a large number of requests to the ABS.Stat
 #'   server. By default, the sequential query limit is 20, but this may be changed by the user.
-#' @param update_cache Logical expression, if FALSE (default), use the cached list of available
+#' @param update_cache   `r lifecycle::badge("deprecated")`
+#'   Logical expression, if FALSE (default), use the cached list of available
 #'   ABS.Stat datasets, if TRUE, update the list of available datasets.
 #' @return Returns a data frame of the selected series from the specified ABS dataset.
 #' @note The data query submitted by this function uses the ABS RESTful API based on the SDMX-JSON

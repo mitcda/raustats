@@ -11,7 +11,7 @@ abs_get_old_site_tables(url)
 }
 \value{
 Returns a data frame listing the data collection tables and URLs for Excel (column:
-  \code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
+\code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
 }
 \description{
 Return list of data tables available for specified ABS data series.
@@ -25,7 +25,7 @@ Other ABS catalogue helper functions:
 \code{\link{is_abs_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue helper functions}
 \keyword{internal}

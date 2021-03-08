@@ -24,7 +24,7 @@ Other ABS catalogue helper functions:
 \code{\link{is_abs_tss}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS catalogue helper functions}
 \keyword{internal}

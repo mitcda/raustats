@@ -11,7 +11,7 @@ a list with a base url and a url section for formatting the JSON API calls
 }
 \description{
 This function returns a list of URLs and data paths used to construction ABS.Stat
-  API call. It is used in other functions in this package and need not be called directly.
+API call. It is used in other functions in this package and need not be called directly.
 }
 \seealso{
 Other ABS.Stat API call functions: 
@@ -19,7 +19,7 @@ Other ABS.Stat API call functions:
 \code{\link{abs_call_api}()}
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
 \concept{ABS.Stat API call functions}
 \keyword{internal}

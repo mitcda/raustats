@@ -23,5 +23,5 @@ Functions to extract data from a specified RBA time series spreadsheet.
  }
 }
 \author{
-David Mitchell <david.pk.mitchell@gmail.com>
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
 }
