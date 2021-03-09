@@ -37,7 +37,7 @@ selection condition
   \donttest{
     ## List ABS series matching regular expression: "national.*income.*expenditure.*product"
     abs_series <- abs_cat_series(pattern="national.*income.*expenditure.*product",
-                                 level="topic");
+                                 level="title");
 
     ## List ABS series matching regular expression: "consumer.*price.*index" and include URLs
     abs_series <- abs_cat_series(pattern="consumer.*price.*index.*product",

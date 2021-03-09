@@ -17,43 +17,63 @@
 #' @family ABS search helper functions
 abs_parse_search <- function(s, resource = c("Statistical analysis and data", "Article"))
 {
+## abs_cat_search("gross domestic product", date_range="Past 3 months");
   if (!is.session(s))
     stop("s should be a valid session object")
   ## Return all 'search-results'
   search_results <- html_nodes(s, xpath = "//ul[@id='search-results']");
   ## Include only selected 'resource' nodes
-  stat_results <- search_results %>%
-    html_nodes(xpath = sapply(resource,
-                              function(x) sprintf(".//li[contains(.,%s)]", shQuote(x))) %>%
-                 paste(., collapse="|")); ## Return search list
-  .search_list = stat_results %>%
-    html_node(xpath = ".//*[contains(@href,'redirect')]");
+  stat_results <- #paste(
+    html_nodes(search_results,
+               xpath = sapply(resource,
+                              function(x) sprintf(".//li[contains(.,%s)]", shQuote(x))))
+#, collapse="|"); ## Return search list
+  .search_list <- html_node(stat_results, xpath = ".//*[contains(@href,'redirect')]");
   ## Return data frame of search results
-  z <- list(
+  z <- data.frame(
     ## Return release dates (Note: xpath expression './/*' returns from current root node)
-    release_date = stat_results %>%
-      html_nodes(xpath = ".//*[starts-with(., 'Released:')]") %>%
-      html_text %>% sub("^Released:\\s*(.+)$", "\\1", ., ignore.case=TRUE) %>% trimws,
+    release_date = 
+      trimws(
+        sub("^Released:\\s*(.+)$", "\\1",
+            html_text(
+              html_nodes(stat_results, xpath = ".//*[starts-with(., 'Released:')]")),
+            ignore.case=TRUE)),
     ## Return redirect address
-    redirect_addr = .search_list %>%
-      html_attr("href") %>% sprintf("%s%s", abs_urls()$search_url, .),
+    redirect_addr = sprintf("%s%s", abs_urls()$search_url, 
+                            html_attr(.search_list, "href")),
     ## Return series name
-    title = .search_list %>% html_text %>% trimws,
+    title = trimws(html_text(.search_list)),
     ## Return url path
-    url = .search_list %>% html_attr("title"),
+    url = html_attr(.search_list, "title"),
     ## Reference period
-    reference_period = stat_results %>%
-      lapply(. %>% html_nodes(xpath = ".//*[starts-with(., 'Reference period:')]") %>%
-             html_text %>%
-             ifelse(identical(., character(0)), NA, .)) %>% unlist %>%
-      sub("^Reference period:\\s*(.+)\\s*$", "\\1", ., ignore.case=TRUE),
+    reference_period =
+      sub("^Reference period:\\s*(.+)\\s*$", "\\1",
+          unlist(
+            lapply(stat_results,
+                   function(x) {
+                     z <- html_text(html_nodes(x, xpath = ".//*[starts-with(., 'Reference period:')]"))
+                     z <- ifelse(identical(z, character(0)), NA, z)
+                     return(z)
+                   })),
+          ignore.case=TRUE),
+    ## -- pipe-based method --
+    ## reference_period = stat_results %>%
+    ##   lapply(. %>% html_nodes(xpath = ".//*[starts-with(., 'Reference period:')]") %>%
+    ##          html_text %>%
+    ##          ifelse(identical(., character(0)), NA, .)) %>%
+    ##   unlist %>%
+    ##   sub("^Reference period:\\s*(.+)\\s*$", "\\1", ., ignore.case=TRUE),
+    ## -- END pipe-based method --
     ## Resource type
-    resource = stat_results %>%
-      html_nodes(xpath = sapply(resource,
-                                function(x) sprintf(".//*[starts-with(., %s)]", shQuote(x))) %>%
-                   paste(., collapse="|")) %>%
-      html_text) %>%
-    as.data.frame;
+    resource =
+      html_text(
+        ## paste(
+          html_nodes(stat_results,
+                     xpath = sapply(resource,
+                                    function(x) sprintf(".//*[starts-with(., %s)]", shQuote(x))))
+        ## , collapse="|")));
+      )
+    );
   ## Return results
   return(z[,c("title","reference_period","release_date","url","resource")]); # "redirect_addr"
 }

@@ -15,8 +15,8 @@
 #' @examples
 #'   \donttest{
 #'     ## Read specified ABS Excel time series files
-#'     tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE);
-#'     downloaded_tables <- abs_cat_download(tables$path_zip, exdir=tempdir())
+#'     tables <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE);
+#'     downloaded_tables <- abs_cat_download(tables$file_url, exdir=tempdir())
 #'     extracted_files <- abs_cat_unzip(downloaded_tables)
 #'     x <- abs_read_tss(extracted_files);
 #'   }
@@ -48,7 +48,7 @@ abs_read_tss <- function(files, type="tss", na.rm=TRUE) {
 abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   ## if (FALSE) {
   ##   library(tidyr); library(magrittr)
-  ##   tables <- abs_cat_tables("5206.0", include_urls=TRUE);
+  ##   tables <- abs_cat_tables(cat_no="5206.0", include_urls=TRUE);
   ##   tables <- tables[grepl("^Table 1\\W", tables$item_name, ignore.case=TRUE),];
   ##   url <- tables$path_xls
   ##   files <- abs_cat_download(url)

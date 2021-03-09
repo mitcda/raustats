@@ -7,7 +7,7 @@
 abs_next_page(s)
 }
 \arguments{
-\item{s}{a valid session object (see \link[rvest]{html_session}).}
+\item{s}{a valid session object (see \code{\link[rvest]{html_session}}).}
 }
 \value{
 a url to linking to the next page returned by an ABS search results

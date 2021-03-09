@@ -10,8 +10,7 @@ abs_get_old_site_tables(url)
 \item{url}{ABS statistical release URL.}
 }
 \value{
-Returns a data frame listing the data collection tables and URLs for Excel (column:
-\code{path_xls}) and, if available, Zip (column: \code{path_zip}) files.
+Returns a data frame listing the data collection tables and URLs.
 }
 \description{
 Return list of data tables available for specified ABS data series.

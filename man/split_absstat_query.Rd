@@ -16,7 +16,7 @@ string or list
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
 This function checks if a draft ABS.Stat query call exceeds the string length limit
 or would return more than one million cells and if so, splits the query into smaller chunks
-for calling the ABS.Stat site. This function is called by the \link{\code{abs_stat}} function,
+for calling the ABS.Stat site. This function is called by the \code{\link{abs_stats}} function,
 it need not be called directly.
 }
 \author{

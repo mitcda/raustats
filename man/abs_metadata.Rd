@@ -30,6 +30,7 @@ from ABS.Stat.
 }
 \seealso{
 Other ABS.Stat functions: 
+\code{\link{abs_datasets}()},
 \code{\link{abs_dimensions}()}
 }
 \author{

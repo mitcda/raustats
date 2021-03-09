@@ -24,12 +24,13 @@ Return list of all releases available for specified ABS catalogue number.
 \examples{
   \donttest{
     ## List all available quarterly National Accounts tables
-    ana_releases <- abs_cat_releases("Australian National Accounts: National Income, Expenditure and Product")
+    ana_releases <-
+      abs_cat_releases("Australian National Accounts: National Income, Expenditure and Product")
     ana_releases <- abs_cat_releases(cat_no="5206.0", include_urls=TRUE);
     
     ## List latest available CPI Time Series Spreadsheet tables only
     cpi_releases <- abs_cat_releases("Consumer Price Index, Australia", include_urls=TRUE);
-    cpi_release_urls <- abs_cat_releases("6401.0");
+    cpi_release_urls <- abs_cat_releases(cat_no="6401.0");
   }
 }
 \seealso{

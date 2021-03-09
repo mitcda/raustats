@@ -7,7 +7,7 @@
 #' @importFrom stringi stri_replace_last_fixed
 #' @param pattern A character string or named list specifying one or more search strings. If
 #'   character string, the function invokes a \emph{simple} search. If named list, \code{abs_search}
-#'   invoked an \emph{advanced} search. See \link{Details}.
+#'   invokes an \emph{advanced} search. (See Details below.)
 #' @param resource One or more of \code{'Statistical analysis and data'} (the default) or
 #'   \code{'Article'}.
 #' @param date_range Filter search results by recent date range -- one of: 'Today', 'Past week',
@@ -23,6 +23,8 @@
 #' @param n_results The number of results to return on each page. Default is 10.
 #' @param follow_links Specify integer number of sequential links to include in search
 #'   results. Default is 5. (The maximum number of links the function will follow is 25.)
+#' @param return_url If \code{TRUE}, the function returns the search URL and does not submit the
+#'   request. Default is \code{FALSE}.
 #' @return data frame in long format
 #' @export
 #' @family ABS search functions

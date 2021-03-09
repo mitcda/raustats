@@ -1,7 +1,6 @@
 #' @name abs_cat_releases
 #' @title Return ABS catalogue table releases
 #' @description Return list of all releases available for specified ABS catalogue number.
-#' @importFrom magrittr %>%
 #' @importFrom rvest html_session html_text html_nodes html_attr follow_link
 #' @importFrom httr http_error
 #' @param title `r lifecycle::badge("experimental")`
@@ -16,12 +15,13 @@
 #' @examples
 #'   \donttest{
 #'     ## List all available quarterly National Accounts tables
-#'     ana_releases <- abs_cat_releases("Australian National Accounts: National Income, Expenditure and Product")
+#'     ana_releases <-
+#'       abs_cat_releases("Australian National Accounts: National Income, Expenditure and Product")
 #'     ana_releases <- abs_cat_releases(cat_no="5206.0", include_urls=TRUE);
 #'     
 #'     ## List latest available CPI Time Series Spreadsheet tables only
 #'     cpi_releases <- abs_cat_releases("Consumer Price Index, Australia", include_urls=TRUE);
-#'     cpi_release_urls <- abs_cat_releases("6401.0");
+#'     cpi_release_urls <- abs_cat_releases(cat_no="6401.0");
 #'   }
 abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
 {
@@ -54,37 +54,35 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
   ##   stop(sprintf("File cannot be downloaded. Check URL: %s", url))
   suppressWarnings(s <- html_session(url));
   ## Get path to 'Previous Releases' page
-  previous_url <- s %>%
-    html_nodes(xpath = sprintf("//a[@class='%s']",
-                               abs_expressions()$xpath_release_links_class)) %>%
-    html_attr("href") %>% unique;
-  ## Check previous_urls exists
-  raustats_check_url_available(previous_urls)
+  previous_url <- unique(
+    html_attr(html_nodes(s, xpath = sprintf("//a[@class='%s']",
+                                            abs_expressions()$xpath_release_links_class)),
+              "href"));
+  ## Check previous_url exists
+  raustats_check_url_available(previous_url)
   suppressWarnings(s <- html_session(previous_url));
   ## Alt option
-  all_releases <- s %>%
-    html_nodes(xpath =
-                 sprintf("//div[@class='%s']",
-                         abs_expressions()$xpath_release_views_row)) %>%
-    .[!grepl("Release\\s*date", ., ignore.case=TRUE)]; # Remove future releases
+  all_releases <- 
+    html_nodes(s, xpath =
+                    sprintf("//div[@class='%s']",
+                            abs_expressions()$xpath_release_views_row))
+   all_releases <- all_releases[!grepl("Release\\s*date", all_releases, ignore.case=TRUE)]; # Remove future releases
   ## Links
-  z <- list(
-    title = all_releases %>% html_text,
-    type = all_releases %>% html_text %>%
-      { ifelse(grepl(abs_expressions()$regex_release_type, ., ignore.case=TRUE),
-               sub(abs_expressions()$regex_release_type, "\\1", ., ignore.case=TRUE),
-               "Previous release") },
-    reference_period = all_releases %>%
-      html_text %>%
-      { sub(sprintf(".+(%s).*", 
-                    paste(paste(c(month.name, month.abb), "\\d{4}", sep="\\s*"), collapse="|")),
-            "\\1", ., ignore.case=TRUE) }
-  ) %>%
-    as.data.frame;
+  z <- data.frame(
+    title = html_text(all_releases),
+    type = ifelse(grepl(abs_expressions()$regex_release_type, html_text(all_releases), ignore.case=TRUE),
+                  sub(abs_expressions()$regex_release_type, "\\1", html_text(all_releases), ignore.case=TRUE),
+                  "Previous release"),
+    reference_period = sub(sprintf(".+(%s).*", 
+                                   paste(paste(c(month.name, month.abb), "\\d{4}", sep="\\s*"),
+                                         collapse="|")),
+                           "\\1",
+                           html_text(all_releases),
+                           ignore.case=TRUE));
   ## Add URLs
   if (include_urls) {
     z <- transform(z,
-                   url = all_releases %>% html_nodes("a") %>% html_attr("href"))
+                   url =  html_attr(html_nodes(all_releases, "a"), "href"))
     ## Prepend ABS base URL on Latest|Previous releases
     idx_new_release <- grepl("^(Latest|Previous)", z$type, ignore.case=TRUE);
     z[idx_new_release, "url"] <-

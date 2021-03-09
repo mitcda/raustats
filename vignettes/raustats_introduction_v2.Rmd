@@ -4,13 +4,14 @@ author: "David Mitchell"
 date:   "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
+  %\VignetteEngine{knitr::knitr}
   %\VignetteIndexEntry{01_-_Using_the_raustats_package}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, echo=FALSE}
 knitr::opts_chunk$set(collapse=TRUE, comment="#>")
+library(dplyr);
 ```
 
 
@@ -168,7 +169,6 @@ A more detailed explanation of `rba_stats` and other RBA data access functions
 is provided [below](#rba-stats-functions).
 
 
-
 # ABS data access functions
 
 ##  ABS Catalogue statistics functions {#abs-cat-stats-functions}
@@ -206,14 +206,14 @@ A typical workflow might involve calling each of the core functions in turn.
    The first term 
 ```{r eval=FALSE}
 sel_search <- abs_cat_search(pattern="national.*accounts", sort_by='Newest') %>%
-  dplyr::filter(grepl("National.+Income.+Expenditure", title, ignore.case=TRUE)) %>%
-  dplyr::slice_head(n=1);
+  filter(grepl("National.+Income.+Expenditure", title, ignore.case=TRUE)) %>%
+  slice_head(n=1);
 ```
 
 ```{r eval=FALSE}
 sel_title <- abs_cat_series(pattern="national.*accounts") %>%
   filter(grepl("National.+Income.+Expenditure", title, ignore.case=TRUE)) %>%
-  dplyr::slice_head(n=1);
+  slice_head(n=1);
 ```
 
 2. The `abs_cat_releases()` function can then be used to return the set of
@@ -347,7 +347,7 @@ ana_releases <- abs_cat_releases(cat_no="5206.0", include_urls=TRUE);
 ```
 
 ```{r echo=FALSE}
-knitr::kable(ana_releases %>% dplyr::slice_head(n=10))
+knitr::kable(ana_releases %>% slice_head(n=10))
 ```
 
 ```{r message=FALSE}
@@ -359,7 +359,7 @@ cpi_releases <- abs_cat_releases(cat_no="6401.0", include_urls=TRUE)
 ```
 
 ```{r echo=FALSE}
-knitr::kable(cpi_releases %>% dplyr::slice_head(n=10))
+knitr::kable(cpi_releases %>% slice_head(n=10))
 ```
 
 
@@ -520,7 +520,7 @@ status and Sex*:
 ```{r eval=FALSE}
 lf_age <- abs_cat_tables(cat_no="6291.0.55.001", include_urls=TRUE) %>%
   unclass %>% as.data.frame %>%
-  dplyr::filter(grepl("LM1.+", table_name)) %>%
+  filter(grepl("LM1.+", table_name)) %>%
   .$file_url %>%
   abs_cat_download %>%
   read_excel(sheet="Data 1", skip=3)
@@ -546,8 +546,8 @@ to download one or more ABS Catalogue table files. It is most usefully used in
 conjunction with the `abs_cat_tables` function, as follows:
 
 ```{r message=FALSE, results=FALSE}
-tables <- abs_cat_tables("5206.0", releases="Latest", include_urls=TRUE)
-downloaded_tables <- abs_cat_download(tables$path_xls, exdir=tempdir())
+tables <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE)
+downloaded_tables <- abs_cat_download(tables$file_url, exdir=tempdir())
 print(downloaded_tables)
 ```
 
@@ -1005,21 +1005,24 @@ Statistics returned by the `raustats` package functions are generally in long
 `ggplot2`, `tidyr` and `dplyr`. The following example illustrates how data
 downloaded using the `raustats` can be easily transformed and plotted. This
 example uses data from ABS' *Private New Capital Expenditure and Expected
-Expenditure* (ABS Catalogue no. 5265.0).
+Expenditure, Australia* (ABS Catalogue no. 5265.0).
 
-First download selected tables from catalogue no. 5265.0.
+First download selected tables (1, 6 and 11-16):
 ```{r message=FALSE, results=FALSE}
 capex_q <-
-  abs_cat_stats("5625.0",
-                tables=c("Actual Expenditure by Type of Asset and Industry - Current Prices",
-                         "Actual Expenditure, By Type of Industry - Chain Volume Measures",
-                         "Actual and Expected Capital Expenditure by Industry.+:Current Prices"))
+  abs_cat_stats("Private New Capital Expenditure and Expected Expenditure, Australia",
+                tables=c(
+                  ## Table 1 - Actual Expenditure, by Type of Asset and Industry, Original - Current Prices
+                  "01_current_prices_original",
+                  ## Table 6 - Actual Expenditure, By Type of Industry, Original - Chain Volume Measures
+                  "06_volume_measures_original",
+                  ## Tables 11-16 Actual and Expected Capital Expenditure by Industry, State, Current Prices"
+                  sprintf("1(%s)_current_prices.+_capex", paste(1:6, collapse="|"))));
 ```
 
-Then add a new variable denoting Australian state/territory.
+Then add a variable identifying Australian state/territory.
 
 ```{r results=FALSE, message=FALSE}
-library(dplyr)
 ## Add state/territory variable
 capex_q <- capex_q %>%
   mutate(state = sub(sprintf(".*(%s).*",
@@ -1027,7 +1030,10 @@ capex_q <- capex_q %>%
                                      "Western Australia","Tasmania","Northern Territory",
                                      "Australian Capital Territory","Total \\(State\\)"),
                                    collapse="|")),
-                     "\\1", data_item_description, ignore.case=TRUE))
+                     "\\1", data_item_description, ignore.case=TRUE) %>%
+           factor(levels=c("New South Wales", "Victoria", "Queensland",
+                           "South Australia", "Western Australia",
+                           "Tasmania", "Total (State)")))
 ```
 
 Finally, plot quarterly time series mining sector capital expenditure (at
@@ -1038,6 +1044,7 @@ library(ggplot2)
 ## Filter mining capital expenditure
 capex_q_min <- capex_q %>%
   filter(grepl("mining", data_item_description, ignore.case=TRUE)) %>%
+  filter(!grepl("non-mining", data_item_description, ignore.case=TRUE)) %>%
   filter(grepl("actual", data_item_description, ignore.case=TRUE)) %>%
   filter(grepl("current price", data_item_description, ignore.case=TRUE)) %>%
   filter(grepl("Total \\(Type of Asset.+\\)", data_item_description, ignore.case=TRUE))

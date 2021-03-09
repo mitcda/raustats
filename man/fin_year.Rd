@@ -20,7 +20,7 @@ Function to create a financial year date object
 \examples{
   \donttest{
     x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-    fin_year(x)
+    raustats:::fin_year(x)
   }
 }
 \author{

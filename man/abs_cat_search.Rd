@@ -19,7 +19,7 @@ abs_cat_search(
 \arguments{
 \item{pattern}{A character string or named list specifying one or more search strings. If
 character string, the function invokes a \emph{simple} search. If named list, \code{abs_search}
-invoked an \emph{advanced} search. See \link{Details}.}
+invokes an \emph{advanced} search. (See Details below.)}
 
 \item{resource}{One or more of \code{'Statistical analysis and data'} (the default) or
 \code{'Article'}.}
@@ -42,6 +42,9 @@ case senstive).}
 
 \item{follow_links}{Specify integer number of sequential links to include in search
 results. Default is 5. (The maximum number of links the function will follow is 25.)}
+
+\item{return_url}{If \code{TRUE}, the function returns the search URL and does not submit the
+request. Default is \code{FALSE}.}
 }
 \value{
 data frame in long format

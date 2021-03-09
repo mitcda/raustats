@@ -7,7 +7,7 @@
 #' @return data frame in long format
 #' @export
 #' @family ABS.Stat functions
-#' #' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @examples
 #'   \donttest{
 #'     datasets <- abs_datasets()

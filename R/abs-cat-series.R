@@ -22,7 +22,7 @@
 #'   \donttest{
 #'     ## List ABS series matching regular expression: "national.*income.*expenditure.*product"
 #'     abs_series <- abs_cat_series(pattern="national.*income.*expenditure.*product",
-#'                                  level="topic");
+#'                                  level="title");
 #' 
 #'     ## List ABS series matching regular expression: "consumer.*price.*index" and include URLs
 #'     abs_series <- abs_cat_series(pattern="consumer.*price.*index.*product",
@@ -42,8 +42,8 @@ abs_cat_series <- function(pattern, level = c('group', 'view', 'title'),
   ## Return list ABS publications
   y <- lapply(level,
               function(x)
-                w <- grepl(pattern, z[,sprintf("stat_%s", x)], ignore.case=ignore.case)) %>%
-    bind_cols(.name_repair = ~ vec_as_names(..., repair="unique", quiet=TRUE));
+                w <- grepl(pattern, z[,sprintf("stat_%s", x)], ignore.case=ignore.case));
+  y <- bind_cols(y, .name_repair = ~ vec_as_names(..., repair="unique", quiet=TRUE));
   i <- sapply(1:nrow(y), function(i) any(unlist(y[i,])));
 
   if (include_urls) {
@@ -51,7 +51,8 @@ abs_cat_series <- function(pattern, level = c('group', 'view', 'title'),
   } else {
     x <- z[i,c("stat_group", "stat_view", "stat_title")];
   }
-  return(x %>% set_names(sub("stat_", "", names(.))))
+  names(x) <- sub("stat_", "", names(x));
+  return(x)
 }
 
 ## ----------------------------------- EOF ---------------------------------- ##

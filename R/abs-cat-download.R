@@ -4,7 +4,7 @@
 #'   data set URL.
 #' @importFrom httr GET http_type http_error progress status_code write_disk
 #' @param x Either a character vector specifying one or more a valid ABS data URLs or a data frame
-#'   returned by \link{\code{abs_cat_tables}} function.
+#'   returned by \code{\link{abs_cat_tables}} function.
 #' @param exdir Target directory for downloaded files (defaults to \code{tempdir()}). Directory is
 #'   created if it doesn't exist.
 #' @return Downloads data from the ABS website and returns a character vector listing the location

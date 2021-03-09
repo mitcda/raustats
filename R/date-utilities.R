@@ -6,30 +6,30 @@
 #' @return Date object
 #' @examples
 #'   \donttest{
-#'     excel2Date(43445);
+#'     raustats:::excel2Date(43445);
 #'   }
 #' @keywords internal
 excel2Date <- function(x) {
   as.Date(x, origin="1899-12-30");
 }
 
-### Function: quarter2Date
+
 #' @name quarter2Date
 #' @title Convert dates formatted as year-quarter to dates objects
 #' @description Function to convert dates formatted as year-quarter to date-format objects
 #' @param x Year-quarter date format
 #' @param base.month Specifies base month for first quarter. Can be a scalar: 1,2,3 or character
 #'   object: Jan, Feb, Mar.
-#' @param format The input date format. Default is "\%Y-Q\%q".
+#' @param format The input date format. Default is "\\%Y-Q\\%q".
 #' @return This function returns a Date format object.
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 #' @examples
 #'   \donttest{
 #'     x <- c("1960-Q1","1960-Q2","1960-Q3","1960-Q4","1961-Q1","1961-Q2");
-#'     quarter2Date(x);
-#'     quarter2Date(x, base.month="Jan");
+#'     raustats:::quarter2Date(x);
+#'     raustats:::quarter2Date(x, base.month="Jan");
 #'   }
-#' @keywords internal
 quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 {
   ## Check format
@@ -37,20 +37,20 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
     stop("Format should contain year (%Y) and quarter (%q) regular expressions.")
   format  <- sub("(%q)", "(\\\\d)",
                  sub("(%Y)", "(\\\\d{4})", format));
-  Year <- as.integer(sub(format,"\\1", x));
-  Qtr <- as.integer(sub(format,"\\2", x));
+  year <- as.integer(sub(format,"\\1", x));
+  qtr <- as.integer(sub(format,"\\2", x));
   ## Re-encode month
-  Mth <- if (base.month == 1 | base.month == "Jan") {
-           Qtr * 3 - 2;
+  mth <- if (base.month == 1 | base.month == "Jan") {
+           qtr * 3 - 2;
          } else if (base.month == 2 | base.month == "Feb") {
-           Qtr * 3 - 1;
+           qtr * 3 - 1;
          } else if (base.month == 3 | base.month == "Mar") {
-           Qtr * 3;
+           qtr * 3;
          } else {
            stop(paste("base.month should be either a scalar = 1,2 or 3",
                       "or a character object = \"Jan\", \"Feb\" or \"Mar\"."));
          }
-  z <- as.Date(paste(Year, month.abb[Mth], "01", sep="-"), format="%Y-%b-%d");
+  z <- as.Date(paste(year, month.abb[mth], "01", sep="-"), format="%Y-%b-%d");
   return(z);
 }
 
@@ -63,12 +63,12 @@ quarter2Date <- function(x, base.month="Mar", format="%Y-Q%q")
 #' @param date date object
 #' @return Date object
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 #' @examples
 #'   \donttest{
 #'     date <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-#'     last_day(date)
+#'     raustats:::last_day(date)
 #'   }
-#' @keywords internal
 last_day <- function(date)
   ceiling_date(date, "month") - days(1);
 
@@ -81,12 +81,12 @@ last_day <- function(date)
 #' @param ending character string abbreviation or number denoting ending month of the financial year
 #' @return Date object 
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
+#' @keywords internal
 #' @examples
 #'   \donttest{
 #'     x <- seq.Date(as.Date("2005-06-01"), length=36, by="month");
-#'     fin_year(x)
+#'     raustats:::fin_year(x)
 #'   }
-#' @keywords internal
 fin_year <- function(date, ending="Jun")
 {
   if (is.character(ending)) {

@@ -43,12 +43,13 @@ This function downloads ABS catalogue series statistics, by ABS catalogue number
 \examples{
   \donttest{
     ## Download quarterly Australian National Accounts, Tables 1 & 2 
-    xx <- abs_cat_series(pattern="national.*income.*expenditure.*product");
-    ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
-    ana_q <- abs_cat_stats("5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
+    ana_q <- abs_cat_stats("Australian National Accounts: National Income, Expenditure and Product",
+                           tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
+    ## or
+    ana_q <- abs_cat_stats(cat_no="5206.0", tables=c("Table 1\\\\W+", "Table 2\\\\W+"));
 
     ## Download December 2017 Australian National Accounts, Table 1
-    ana_q_2017q4 <- abs_cat_stats("5206.0", tables="Table 1\\\\W+", release="Dec 2017");
+    ana_q_2017q4 <- abs_cat_stats(cat_no="5206.0", tables="Table 1\\\\W+", release="Dec 2017");
   }
 }
 \seealso{

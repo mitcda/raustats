@@ -23,5 +23,12 @@ This function returns a list of all datasets available from ABS.Stat.
     datasets <- abs_datasets(include_notes=TRUE)
   }
 }
-\concept{ABS.Stat functions
-#' @author David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}}
+\seealso{
+Other ABS.Stat functions: 
+\code{\link{abs_dimensions}()},
+\code{\link{abs_metadata}()}
+}
+\author{
+David Mitchell \href{mailto:david.pk.mitchell@gmail.com}{david.pk.mitchell@gmail.com}
+}
+\concept{ABS.Stat functions}

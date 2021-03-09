@@ -63,18 +63,21 @@ results in a list of raw sdmx-json.}
 \item{return_url}{Default is \code{FALSE}. If \code{TRUE}, the function returns the generated
 request URL and does not submit the request.}
 
-\item{enforce_api_limits}{\link{DEPRECATED} If \code{TRUE} (the default), the function enforces the
+\item{enforce_api_limits}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+If \code{TRUE} (the default), the function enforces the
 ABS.Stat RESTful API limits and will not submit the query if the URL string length exceeds 1000
 characters or the query would return more than 1 million records. If \code{FALSE}, the function
 submits the API call regardless and attempts to return the results.}
 
-\item{requery_limit}{\link{NEW - EXPERIMENTAL} If query string exceeds 1000 characters in length, the
+\item{requery_limit}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+If query string exceeds 1000 characters in length, the
 function automatically splits the query into multiple parts and submits the parts separately
 and meres the results. This argument limits the number of parts the function will submit by
 default, in order to avoid inadvertantly sending a large number of requests to the ABS.Stat
 server. By default, the sequential query limit is 20, but this may be changed by the user.}
 
-\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
+\item{update_cache}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+Logical expression, if FALSE (default), use the cached list of available
 ABS.Stat datasets, if TRUE, update the list of available datasets.}
 }
 \value{

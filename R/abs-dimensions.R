@@ -4,8 +4,6 @@
 #' @param dataset Character vector of dataset codes. These codes correspond to the
 #'   \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 #'   \code{abs_cachelist}, or the result of \code{abs_indicators}.
-#' @param update_cache Logical expression, if FALSE (default), use the cached list of available
-#'   ABS.Stat datasets, if TRUE, update the list of available datasets.
 #' @return a data frame with available dataset dimensions.
 #' @family ABS.Stat functions
 #' @export
@@ -19,7 +17,7 @@
 #'     x <- abs_dimensions("LF");
 #'     str(x)
 #'   }
-abs_dimensions <- function(dataset) # , update_cache=FALSE
+abs_dimensions <- function(dataset)
 {
   ## Check dataset present and valid 
   if (missing(dataset))

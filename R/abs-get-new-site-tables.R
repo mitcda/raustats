@@ -23,29 +23,25 @@ abs_get_new_site_tables <- function(url)
   ## Open html session
   suppressWarnings(s <- html_session(url));
   ## -- Statistical tables --
-  table_nodes <- s %>% html_nodes(xpath = ".//span[contains(@class, 'download-link')]");
+  table_nodes <- html_nodes(s, xpath = ".//span[contains(@class, 'download-link')]");
   abs_tables <-
     lapply(table_nodes,
            function(x) {
-             z <- list(table_name = x %>%
-                         html_nodes("a") %>% html_attr("aria-label") %>%
-                         sub("(\\s*xls|zip)", "", ., ignore.case=TRUE) %>%
-                         sub("(\\s\\d+\\.*\\d*\\s\\w{2})$", "", ., ignore.case=TRUE),
-                       file_url = x %>%
-                         html_nodes("a") %>% html_attr("href"),
-                       file_type = x %>%
-                         html_nodes("a") %>% html_attr("type") %>%
-                         sub("(.+);\\s*length=(.+)", "\\1", .),
-                       file_size = x %>%
-                         html_nodes("a") %>% html_attr("type") %>%
-                         sub("(.+);\\s*length=(.+)", "\\2", .) %>%
-                         as.numeric %>% `/`(1024),
-                       file_name = x %>%
-                         html_nodes("a") %>% html_attr("title")
-                       ) %>% as.data.frame
+             z <- data.frame(table_name = sub("(\\s\\d+\\.*\\d*\\s\\w{2})$", "",
+                                              sub("(\\s*xls|zip)", "",
+                                                  html_attr(html_nodes(x, "a"), "aria-label"),
+                                                  ignore.case=TRUE),
+                                              ignore.case=TRUE),
+                             file_url = html_attr(html_nodes(x, "a"), "href"),
+                             file_type = sub("(.+);\\s*length=(.+)", "\\1",
+                                             html_attr(html_nodes(x, "a"), "type")),
+                             file_size = as.numeric(
+                               sub("(.+);\\s*length=(.+)", "\\2",
+                                   html_attr(html_nodes(x, "a"), "type")))/1024,
+                             file_name = html_attr(html_nodes(x, "a"), "title"))
              return(z)
-           }) %>%
-    bind_rows;
+           });
+    abs_tables <- do.call(rbind, abs_tables);
   ## Return data frame
   return(abs_tables[,c("table_name","file_url","file_name","file_type","file_size")]);
 }

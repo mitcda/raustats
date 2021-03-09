@@ -23,20 +23,24 @@
 #' @examples
 #'   \donttest{
 #'     ## List latest available quarterly National Accounts tables
-#'     ana_tables <- abs_cat_tables(title="Australian National Accounts: National Income, Expenditure and Product", releases="Latest");
+#'     ana_tables <-
+#'       abs_cat_tables("Australian National Accounts: National Income, Expenditure and Product",
+#'                      releases="Latest");
 #'     ana_tables_url <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE);
 #'
 #'     ## List latest available CPI Time Series Spreadsheet tables only
-#'     cpi_tables <- abs_cat_tables("Consumer Price Index, Australia", releases="Latest", include_urls=TRUE);
+#'     cpi_tables <- abs_cat_tables(title="Consumer Price Index, Australia",
+#'                                  releases="Latest", include_urls=TRUE);
 #'     cpi_tables_url <- abs_cat_tables(cat_no="6401.0", releases="Latest");
 #'   
 #'     ## List latest available ASGS Volume 3 Data Cubes
-#'     asgs_vol3_tables <- abs_cat_tables(cat_no="1270.0.55.003", releases="Latest", types="css");
-#'     asgs_vol3_tables_url <- abs_cat_tables(cat_no="1270.0.55.003", releases="Latest",
-#'                                            types="css", include_urls=TRUE);
+#'     ## asgs_vol3_tables <- abs_cat_tables(cat_no="1270.0.55.003", releases="Latest", types="css");
+#'     ## asgs_vol3_tables_url <- abs_cat_tables(cat_no="1270.0.55.003", releases="Latest",
+#'     ##                                        types="css", include_urls=TRUE);
 #'   
-#'     ## List latest available ASGS ANZSIC publications (PDF) files
-#'     anzsic_2006 <- abs_cat_tables(cat_no="1292.0", releases="Latest", types="pub", include_urls=TRUE);
+## #'     ## List latest available ASGS ANZSIC publications (PDF) files
+## #'     anzsic_2006 <- abs_cat_tables(cat_no="1292.0", releases="Latest",
+## #'                                   types="pub", include_urls=TRUE);
 #'   }
 abs_cat_tables <- function(title, cat_no, releases="Latest",
                            types=c("tss", "css"), include_urls=FALSE)
@@ -55,7 +59,7 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
   ##                    releases="Latest", types="tss", include_urls=FALSE);
   ##   cat_no <- "6291.0.55.001"
   ##   cat_table <- abs_cat_tables(cat_no="6291.0.55.001")
-  ##   asgs_files <- abs_cat_tables(cat_no="1270.0.55.001", include_urls=TRUE);
+  ##   # asgs_files <- abs_cat_tables(cat_no="1270.0.55.001", include_urls=TRUE);
   ## }
   if (missing(title) && missing(cat_no))
     stop("One of either title or cat_no needs to be supplied.");

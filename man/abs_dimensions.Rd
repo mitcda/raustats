@@ -10,9 +10,6 @@ abs_dimensions(dataset)
 \item{dataset}{Character vector of dataset codes. These codes correspond to the
 \code{indicatorID} column from the indicator data frame of \code{abs_cache} or
 \code{abs_cachelist}, or the result of \code{abs_indicators}.}
-
-\item{update_cache}{Logical expression, if FALSE (default), use the cached list of available
-ABS.Stat datasets, if TRUE, update the list of available datasets.}
 }
 \value{
 a data frame with available dataset dimensions.
@@ -32,6 +29,7 @@ This function returns the available dimeninsions for a specified ABS API dataset
 }
 \seealso{
 Other ABS.Stat functions: 
+\code{\link{abs_datasets}()},
 \code{\link{abs_metadata}()}
 }
 \author{
