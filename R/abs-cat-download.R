@@ -16,26 +16,6 @@ abs_cat_download <- function(x, exdir=tempdir()) {
   UseMethod("abs_cat_download", x)
 }
 
-
-#' @rdname abs_cat_download
-#' @export
-abs_cat_download.cat_table <- function(x, exdir=tempdir()) { 
-  if (!dir.exists(exdir)) dir.create(exdir);
-  local_filenames <-
-    sapply(1:nrow(x),
-           function(i) {
-             ## Check for errors
-             raustats_check_url_available(x$file_url[i])
-             cat(sprintf("Downloading file: %s", x$file_name[i]));
-             resp <- GET(x$file_url[i],
-                         write_disk(file.path(exdir, x$file_name[i]), overwrite=TRUE),
-                         raustats_ua(), progress());
-             return(file.path(exdir, x$file_name[i]));
-           })
-  return(local_filenames);
-}
-
-
 #' @rdname abs_cat_download
 #' @export
 abs_cat_download.default <- function(x, exdir=tempdir()) {
@@ -55,5 +35,26 @@ abs_cat_download.default <- function(x, exdir=tempdir()) {
   ## Return results
   return(local_filenames);
 }
+
+
+#' @rdname abs_cat_download
+#' @export
+abs_cat_download.cat_table <- function(x, exdir=tempdir()) { 
+  if (!dir.exists(exdir)) dir.create(exdir);
+  local_filenames <-
+    sapply(1:nrow(x),
+           function(i) {
+             ## Check for errors
+             raustats_check_url_available(x$file_url[i])
+             cat(sprintf("Downloading file: %s", x$file_name[i]));
+             resp <- GET(x$file_url[i],
+                         write_disk(file.path(exdir, x$file_name[i]), overwrite=TRUE),
+                         raustats_ua(), progress());
+             return(file.path(exdir, x$file_name[i]));
+           })
+  NextMethod("abs_cat_download", x)
+  return(local_filenames);
+}
+
 
 ## ----------------------------------- EOF ---------------------------------- ##
