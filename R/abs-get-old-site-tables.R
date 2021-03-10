@@ -101,7 +101,7 @@ abs_get_old_site_tables <- function(url)
                            x <- sapply(x, '[', seq(max(sapply(x, length))));
                            return(x)
                          });
-             z <- suppressWarnings(as.data.frame(z, optional=TRUE));
+             z <- suppressWarnings(as.data.frame(z, optional=TRUE), stringsAsFactors=FALSE);
              return(z);
            });
   abs_tables <- do.call(rbind, abs_tables);

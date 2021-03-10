@@ -49,7 +49,8 @@ rba_table_cache <- function()
                                    table = html_text(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)]),
                                    url = paste0(sub("/$", "", rba_urls()$base_url),
                                                  html_attr(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)],
-                                                           "href")));
+                                                           "href")),
+                                   stringsAsFactors=FALSE);
   ## Include only Excel spreadsheet tables
   statistical_tables <- statistical_tables[grepl("\\.xls(x*)$", statistical_tables$url, ignore.case=TRUE),];
   ##
@@ -60,7 +61,8 @@ rba_table_cache <- function()
                                   table = html_text(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)]),
                                   url = paste0(sub("/$", "", rba_urls()$base_url),
                                                 html_attr(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)],
-                                                          "href")));
+                                                          "href")),
+                                  stringsAsFactors=FALSE);
   ## Exclude: i) Occasional Paper 10
   historical_tables <- historical_tables[!grepl("Occasional Paper.+10", historical_tables$table,
                                                 ignore.case=TRUE),];
@@ -75,7 +77,8 @@ rba_table_cache <- function()
                                     table = html_text(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)]),
                                     url = paste0(sub("/$", "", rba_urls()$base_url),
                                                   html_attr(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)],
-                                                            "href")));
+                                                            "href")),
+                                    stringsAsFactors=FALSE);
   z <- rbind(statistical_tables,
              historical_tables,
              discontinued_tables);

@@ -72,8 +72,8 @@ abs_parse_search <- function(s, resource = c("Statistical analysis and data", "A
                      xpath = sapply(resource,
                                     function(x) sprintf(".//*[starts-with(., %s)]", shQuote(x))))
         ## , collapse="|")));
-      )
-    );
+      ),
+    stringsAsFactors=FALSE);
   ## Return results
   return(z[,c("title","reference_period","release_date","url","resource")]); # "redirect_addr"
 }

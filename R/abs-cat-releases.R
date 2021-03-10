@@ -78,7 +78,8 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
                                          collapse="|")),
                            "\\1",
                            html_text(all_releases),
-                           ignore.case=TRUE));
+                           ignore.case=TRUE),
+    stringsAsFactors=FALSE);
   ## Add URLs
   if (include_urls) {
     z <- transform(z,

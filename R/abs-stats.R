@@ -240,7 +240,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                          ## Convert JSON format to long (tidy) data frame
                          x_obs <- x_json$dataSets$observation;
                          x_str <- x_json$structure$dimensions$observation;
-                         y <- data.frame(do.call(rbind, unlist(x_obs, recursive=FALSE)));
+                         y <- data.frame(do.call(rbind, unlist(x_obs, recursive=FALSE)),
+                                         stringsAsFactors=FALSE);
                          ## Set names of returned records
                          y <- if (detail == "Full") {
                                 setNames(y, c("values","obs_status","unknown"))
@@ -251,7 +252,8 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
                               } else { ## if (detail == NoData) {
                                 setNames(y, c("values","obs_status","unknown"))
                               }
-                         y <- cbind(setNames(data.frame(do.call(rbind, strsplit(row.names(y), ":"))),
+                         y <- cbind(setNames(data.frame(do.call(rbind, strsplit(row.names(y), ":")),
+                                                        stringsAsFactors=FALSE),
                                              tolower(sub("\\s+","_", x_str$name))),
                                     y);
                          ## Re-index dimension IDs from 0-based to 1-based

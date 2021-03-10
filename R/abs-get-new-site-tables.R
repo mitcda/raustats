@@ -38,7 +38,8 @@ abs_get_new_site_tables <- function(url)
                              file_size = as.numeric(
                                sub("(.+);\\s*length=(.+)", "\\2",
                                    html_attr(html_nodes(x, "a"), "type")))/1024,
-                             file_name = html_attr(html_nodes(x, "a"), "title"))
+                             file_name = html_attr(html_nodes(x, "a"), "title"),
+                             stringsAsFactors=FALSE)
              return(z)
            });
     abs_tables <- do.call(rbind, abs_tables);

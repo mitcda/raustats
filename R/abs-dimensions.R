@@ -39,7 +39,8 @@ abs_dimensions <- function(dataset)
   metadata <- abs_metadata(dataset)
   ## Return data frame of dataset dimensions:
   z <- data.frame(name = attr(metadata, "concept"),
-                  type = attr(metadata, "type"));
+                  type = attr(metadata, "type"),
+                  stringsAsFactors=FALSE);
   return(z)
 }
 

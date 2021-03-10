@@ -121,6 +121,7 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
   if (!include_urls)
     z <- z[,!grepl("url$", names(z), ignore.case=TRUE)]
   ## row.names(z) <- seq_len(nrow(z));
+  ## Add 'cat_table' class name
   class(z) <- append(class(z), "cat_table");
   return(z)
 }
