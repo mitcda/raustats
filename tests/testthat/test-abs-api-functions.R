@@ -219,7 +219,7 @@ test_that("abs_stats returns valid data frame",
   ## Test function returns character string
   expect_message(abs_stats("CPI", filter=partial_flt,
                            start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE));
-  expect_type(suppressWarnings(abs_stats("CPI", filter=partial_flt,
-                                         start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE)),
+  expect_type(abs_stats("CPI", filter=partial_flt,
+                        start_date="2008-Q3", end_date="2018-Q2", return_url=TRUE),
               "character");
 })

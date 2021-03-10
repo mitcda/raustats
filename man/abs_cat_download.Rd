@@ -2,15 +2,18 @@
 % Please edit documentation in R/abs-cat-download.R
 \name{abs_cat_download}
 \alias{abs_cat_download}
-\alias{abs_cat_download.cat_table}
 \alias{abs_cat_download.default}
+\alias{abs_cat_download.cat_table}
+\alias{abs_cat_download.character}
 \title{Function to download files from the ABS website and store locally}
 \usage{
 abs_cat_download(x, exdir = tempdir())
 
+\method{abs_cat_download}{default}(x, exdir = tempdir())
+
 \method{abs_cat_download}{cat_table}(x, exdir = tempdir())
 
-\method{abs_cat_download}{default}(x, exdir = tempdir())
+\method{abs_cat_download}{character}(x, exdir = tempdir())
 }
 \arguments{
 \item{x}{Either a character vector specifying one or more a valid ABS data URLs or a data frame

@@ -16,6 +16,7 @@ abs_cat_download <- function(x, exdir=tempdir()) {
   UseMethod("abs_cat_download", x)
 }
 
+
 #' @rdname abs_cat_download
 #' @export
 abs_cat_download.default <- function(x, exdir=tempdir()) {
@@ -32,6 +33,7 @@ abs_cat_download.default <- function(x, exdir=tempdir()) {
                          raustats_ua(), progress());
              return(file.path(exdir, local_filename));
            })
+  NextMethod()
   ## Return results
   return(local_filenames);
 }
@@ -52,9 +54,29 @@ abs_cat_download.cat_table <- function(x, exdir=tempdir()) {
                          raustats_ua(), progress());
              return(file.path(exdir, x$file_name[i]));
            })
-  NextMethod("abs_cat_download", x)
   return(local_filenames);
 }
+
+
+#' @rdname abs_cat_download
+#' @export
+abs_cat_download.character <- function(x, exdir=tempdir()) { 
+  if (!dir.exists(exdir)) dir.create(exdir);
+  local_filenames <-
+    sapply(x,
+           function(r) {
+             ## Check for errors
+             raustats_check_url_available(r)
+             cat(sprintf("Downloading URL: %s", r));
+             r_name <- abs_local_filename(r);
+             resp <- GET(r,
+                         write_disk(file.path(exdir, r_name), overwrite=TRUE),
+                         raustats_ua(), progress());
+             return(file.path(exdir, r_name));
+           })
+  return(local_filenames);
+}
+
 
 
 ## ----------------------------------- EOF ---------------------------------- ##

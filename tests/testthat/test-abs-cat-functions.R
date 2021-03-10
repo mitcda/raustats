@@ -73,7 +73,7 @@ test_that("abs_cat_unzip extracts from valid filenames",
   skip_on_travis()
   skip_on_appveyor()
 
-  abs_tables_5206_url <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE);
+  abs_tables_5206_url <- abs_cat_tables(cat_no="5206.0", releases="Dec 2018", include_urls=TRUE);
   downloaded_tables <-
     abs_cat_download(abs_tables_5206_url[grep("all.*time.*series",
                                               abs_tables_5206_url$file_name, ignore.case=TRUE),
@@ -92,15 +92,12 @@ test_that("abs_read_tss returns valid data.frame",
   skip_on_travis()
   skip_on_appveyor()
 
-  abs_tables_5206_url <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE);
-  downloaded_tables <-
-    abs_cat_download(abs_tables_5206_url[grep("all.*time.*series",
-                                              abs_tables_5206_url$file_name, ignore.case=TRUE),
-                                         "file_url"],
-                     exdir=tempdir());
-  extracted_files <- abs_cat_unzip(downloaded_tables);
-  expect_s3_class(abs_read_tss(extracted_files[1,]), "data.frame"); ## Extract one file
-  expect_s3_class(abs_read_tss(extracted_files[1:2]), "data.frame");    ## Extract multiple files
+  abs_tables_5206 <- abs_cat_tables(cat_no="5206.0", releases="Latest", include_urls=TRUE);
+  downloaded_tables <- abs_cat_download(abs_tables_5206[1:2,]);
+  expect_s3_class(abs_read_tss(downloaded_tables[1]), "data.frame"); ## Extract one file
+  expect_s3_class(do.call(rbind,
+                          lapply(downloaded_tables[1:2],
+                                 abs_read_tss)), "data.frame");      ## Extract multiple files
 })
 
 

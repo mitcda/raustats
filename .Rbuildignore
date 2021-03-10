@@ -5,6 +5,7 @@
 ^.Rhistory$
 ^Meta$
 ^doc$
+build.R
 data-raw
 TODO-NEW-ABS-WEBSITE
 ^EXTRA-CODE$

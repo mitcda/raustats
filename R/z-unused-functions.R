@@ -101,7 +101,7 @@ abs_cachelist2table <- function(cache)
                               names(x) <- attr(x, "concept");
                               y <- setNames(
                                 data.frame(attr(x, "dataset"),
-                                           attr(x, "dataset_desc")##,
+                                           attr(x, "dataset_desc"),
                                            ## if(is.null(x$MEASURE$Code)) "" else x$MEASURE$Code,
                                            ## if(is.null(x$MEASURE$Description)) "" else x$MEASURE$Description,
                                            ## if(is.null(x$INDEX$Code)) "" else x$INDEX$Code,
