@@ -1,11 +1,12 @@
 context("ABS Catalogue URL functions")
 
-test_that("abs_urls returns valid URLs",
+test_that("abs_urls returns valid types",
 {
   skip_on_cran()
   skip_on_travis()
   skip_on_appveyor()
 
+  expect_type(abs_urls(), "list");
   expect_type(abs_urls()$base_url, "character");
   expect_type(abs_urls()$ausstats_path, "character");
   expect_type(abs_urls()$downloads_regex, "character");
@@ -27,3 +28,11 @@ test_that("abs_expressions return valid strings",
 })
 
 
+test_that("abs base url returns valid session",
+{
+  skip_on_cran()
+  skip_on_travis()
+  skip_on_appveyor()
+
+  expect_s3_class(rvest::html_session(abs_urls()$base_url), "rvest_session");
+})

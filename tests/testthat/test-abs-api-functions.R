@@ -9,6 +9,8 @@ test_that("abs_api_call creates proper url",
   expect_match(abs_api_call(path=abs_api_urls()$datastr_path, args="all"),
                "http:\\/\\/stat\\.data\\.abs\\.gov\\.au\\/.+\\/all");
   expect_false(httr::http_error(abs_api_call(path=abs_api_urls()$datastr_path, args="all")));
+  expect_s3_class(rvest::html_session(abs_api_call(path=abs_api_urls()$datastr_path, args="all")),
+                  "rvest_session");
 })
 
 

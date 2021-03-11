@@ -7,7 +7,7 @@ test_that("rba_stats_url returns valid URL",
   skip_on_appveyor()
 
   expect_type(rba_urls(), "list");
-  expect_s3_class(rvest::html_session(rba_urls()$base_url), "session");
+  expect_s3_class(rvest::html_session(rba_urls()$base_url), "rvest_session");
 })
 
 
