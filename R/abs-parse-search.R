@@ -73,7 +73,7 @@ abs_parse_search <- function(s, resource = c("Statistical analysis and data", "A
                                     function(x) sprintf(".//*[starts-with(., %s)]", shQuote(x))))
         ## , collapse="|")));
       ),
-    stringsAsFactors=FALSE);
+    stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Return results
   return(z[,c("title","reference_period","release_date","url","resource")]); # "redirect_addr"
 }

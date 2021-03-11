@@ -106,7 +106,7 @@ abs_cachelist2table <- function(cache)
                                            ## if(is.null(x$MEASURE$Description)) "" else x$MEASURE$Description,
                                            ## if(is.null(x$INDEX$Code)) "" else x$INDEX$Code,
                                            ## if(is.null(x$INDEX$Description)) "" else x$INDEX$Description
-                                           stringsAsFactors=FALSE),
+                                           stringsAsFactors=FALSE), # <= Required for R (< 4.0.0)
                                 c("dataset","dataset_description"##,
                                   ## "measure","measure_description",
                                   ## "index","index_description"

@@ -35,7 +35,7 @@ abs_metadata <- function(id, lang="en")
                    function(i)
                      xml_attrs(xml_child(xml_child(x, 2),i))
                    )),
-    stringsAsFactors = FALSE);
+    stringsAsFactors = FALSE); # <= Required for R (< 4.0.0)
   ## Codelist content
   codelists <- lapply(seq_len(n_codelists),
                       function(i) {
@@ -46,7 +46,7 @@ abs_metadata <- function(id, lang="en")
                           Description = xml_text(xml_find_all(y,
                                                               sprintf(".//Code//Description[@xml:lang='%s']",
                                                                       lang))),
-                          stringsAsFactors=FALSE);
+                          stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
                       });
   ## Return components
   i_keyfamilies <- grep("keyfamilies", xml_name(xml_children(x)), ignore.case=TRUE);
@@ -55,14 +55,14 @@ abs_metadata <- function(id, lang="en")
   components <- data.frame(codes = xml_text(xml_find_all(z, ".//@codelist")),
                            conceptRef = xml_text(xml_find_all(z, ".//@conceptRef")),
                            type = xml_name(z),
-                           stringsAsFactors=FALSE);
+                           stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Return concepts
   i_concepts <- grep("concepts", xml_name(xml_children(x)), ignore.case=TRUE);
   w <- xml_children(xml_child(x, i_concepts));
   concepts <- data.frame(concept = xml_attr(xml_find_all(w, "."), "id"),
                          agencyID = xml_attr(xml_find_all(w, "."), "agencyID"),
                          conceptRef=xml_text(xml_find_all(w, sprintf(".//Name[@xml:lang='%s']", lang))),
-                         stringsAsFactors=FALSE);
+                         stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Set names/attributes
   names(codelists) <- components$codes;
   ## Add dataset and dataset_desc attributes

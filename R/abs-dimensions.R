@@ -40,7 +40,7 @@ abs_dimensions <- function(dataset)
   ## Return data frame of dataset dimensions:
   z <- data.frame(name = attr(metadata, "concept"),
                   type = attr(metadata, "type"),
-                  stringsAsFactors=FALSE);
+                  stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   return(z)
 }
 

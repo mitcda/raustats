@@ -50,7 +50,7 @@ rba_table_cache <- function()
                                    url = paste0(sub("/$", "", rba_urls()$base_url),
                                                  html_attr(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)],
                                                            "href")),
-                                   stringsAsFactors=FALSE);
+                                   stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Include only Excel spreadsheet tables
   statistical_tables <- statistical_tables[grepl("\\.xls(x*)$", statistical_tables$url, ignore.case=TRUE),];
   ##
@@ -62,7 +62,7 @@ rba_table_cache <- function()
                                   url = paste0(sub("/$", "", rba_urls()$base_url),
                                                 html_attr(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)],
                                                           "href")),
-                                  stringsAsFactors=FALSE);
+                                  stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Exclude: i) Occasional Paper 10
   historical_tables <- historical_tables[!grepl("Occasional Paper.+10", historical_tables$table,
                                                 ignore.case=TRUE),];
@@ -78,16 +78,18 @@ rba_table_cache <- function()
                                     url = paste0(sub("/$", "", rba_urls()$base_url),
                                                   html_attr(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)],
                                                             "href")),
-                                    stringsAsFactors=FALSE);
+                                    stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   z <- rbind(statistical_tables,
              historical_tables,
              discontinued_tables);
   z <- transform(z,
                  table_name = sub("(.+)\\s(-|\u2013|\u2014)\\s(\\w\\d+(\\.\\d+)*)$", "\\1", table),
-                 table_no = sub("(.+)\\s(-|\u2013|\u2014)\\s(\\w\\d+(\\.\\d+)*)$", "\\3", table));
+                 table_no = sub("(.+)\\s(-|\u2013|\u2014)\\s(\\w\\d+(\\.\\d+)*)$", "\\3", table),
+                 stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Replace en-dash/em-dash with hyphen (Regular expressions: en-dash - \u2013, and em-dash - \u2014
   z <- transform(z,
-                 table_name = gsub("\\s+"," ", gsub("(\u2013|\u2014)","-", table_name)));
+                 table_name = gsub("\\s+"," ", gsub("(\u2013|\u2014)","-", table_name)),
+                 stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Re-order columns and return
   z <- z[,c("table_no", "table_name", "table_type", "url")];
   return(z);
@@ -351,7 +353,7 @@ rba_read_tss_ <- function(file)
       ## Extract metadata
       metadata <- .data[1:header_row,];
       metadata <- metadata[complete.cases(metadata),];            ## Drop NA rows
-      metadata <- as.data.frame(t(metadata), stringsAsFactors=FALSE);
+      metadata <- as.data.frame(t(metadata), stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
       rownames(metadata) <- seq_len(nrow(metadata));
       names(metadata) <- tolower(gsub("\\s","_",
                                       gsub("\\.", "",
@@ -361,7 +363,8 @@ rba_read_tss_ <- function(file)
       ## Append to metadata table
       metadata <- transform(metadata,
                             table_no = table_no,
-                            table_name = table_name);
+                            table_name = table_name,
+                            stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
       
       z <- .data[-(1:header_row),];
       ## Rename variables, including renaming `Series ID`
@@ -369,7 +372,8 @@ rba_read_tss_ <- function(file)
       z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform to key:value pairs
       z <- transform(z,
                      date = excel2Date(as.integer(date)),
-                     value = as.numeric(value));
+                     value = as.numeric(value),
+                     stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
       
       data <- left_join(z, metadata, by="series_id");
       data <- data[complete.cases(data),];

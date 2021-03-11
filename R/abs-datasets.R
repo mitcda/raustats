@@ -44,7 +44,7 @@ abs_datasets <- function(lang="en", include_notes=FALSE)
                          }),
                      notes = paste(unlist(m$Annotations), collapse=": "))
                   );
-  z <- as.data.frame(do.call(rbind, z), stringsAsFactors=FALSE);
+  z <- as.data.frame(do.call(rbind, z), stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   z <- z[, c("id","agencyID","name","notes")];
   if (!include_notes)
     z <- z[, c("id","agencyID","name")];

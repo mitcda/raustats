@@ -39,7 +39,7 @@ abs_get_new_site_tables <- function(url)
                                sub("(.+);\\s*length=(.+)", "\\2",
                                    html_attr(html_nodes(x, "a"), "type")))/1024,
                              file_name = html_attr(html_nodes(x, "a"), "title"),
-                             stringsAsFactors=FALSE)
+                             stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
              return(z)
            });
     abs_tables <- do.call(rbind, abs_tables);

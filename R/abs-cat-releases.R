@@ -79,11 +79,12 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
                            "\\1",
                            html_text(all_releases),
                            ignore.case=TRUE),
-    stringsAsFactors=FALSE);
+    stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
   ## Add URLs
   if (include_urls) {
     z <- transform(z,
-                   url =  html_attr(html_nodes(all_releases, "a"), "href"))
+                   url =  html_attr(html_nodes(all_releases, "a"), "href"),
+                   stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
     ## Prepend ABS base URL on Latest|Previous releases
     idx_new_release <- grepl("^(Latest|Previous)", z$type, ignore.case=TRUE);
     z[idx_new_release, "url"] <-

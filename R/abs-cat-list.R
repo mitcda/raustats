@@ -36,7 +36,7 @@ abs_cat_list <- function() {
       z <- data.frame(stat_group = y,
                       stat_view = trimws(html_text(html_nodes(x,"h3"))),
                       stat_view_path = html_attr(x, "href"),
-                      stringsAsFactors=FALSE);
+                      stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
       return(z)},
       stat_coll_nodes, stat_group_names,
       SIMPLIFY=FALSE);
@@ -59,7 +59,7 @@ abs_cat_list <- function() {
                    data.frame(stat_view_path = x,
                               stat_title = stat_topic_names,
                               stat_title_path = stat_topic_paths,
-                              stringsAsFactors=FALSE)
+                              stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
                  })
              });
     stat_topic_tbl <- do.call(rbind, stat_topic_tbl[!sapply(stat_topic_tbl, is.null)]);

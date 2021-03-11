@@ -94,7 +94,7 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                           series_end       = excel2Date(as.integer(series_end)),
                           no_obs           = as.integer(no_obs),
                           collection_month = as.integer(collection_month),
-                          stringsAsFactors=FALSE);
+                          stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
     ##
     ## Get publication details
     ## -- Catalogue number & name --
@@ -126,7 +126,7 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                            publication_title = catno_name[2],
                            table_no          = tableno_name[1],
                            table_title       = tableno_name[2],
-                           stringsAsFactors=FALSE);
+                           stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
     ## Extract data
     data <- lapply(grep("data", excel_sheets(file), ignore.case=TRUE, value=TRUE),
                    function(sheet_name) {
@@ -145,7 +145,8 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                      z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform data to key:value pairs
                      z <- transform(z,
                                     date = excel2Date(as.integer(date)),
-                                    value = as.numeric(value));
+                                    value = as.numeric(value),
+                                    stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
                      names(z) <- tolower(names(z));
                      return(z);
                    });
