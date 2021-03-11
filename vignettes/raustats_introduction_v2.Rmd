@@ -220,7 +220,7 @@ sel_title <- abs_cat_series(pattern="national.*accounts") %>%
    available releases.
    
 ```{r eval=FALSE}
-sel_releases <- abs_cat_releases(sel_title$topic[1]) %>%
+sel_releases <- abs_cat_releases(sel_title$title[1]) %>%
   filter(grepl("National.+Income.+Expenditure", title, ignore.case=TRUE))
 ```
    
@@ -228,14 +228,14 @@ sel_releases <- abs_cat_releases(sel_title$topic[1]) %>%
    specified releases.
 
 ```{r eval=FALSE}
-sel_tables <- abs_cat_tables(sel_title$topic, releases="Latest");
+sel_tables <- abs_cat_tables(sel_title$title, releases="Latest");
 ```
 
 4. Finally, `abs_cat_stats()` function is used to download selected tables --
    the following example downloads Tables 1 and 2.
 
 ```{r eval=FALSE}
-sel_data <- abs_cat_stats(sel_title$topic, releases="Latest", tables="Table\\s*(1|2)\\.");
+sel_data <- abs_cat_stats(sel_title$title, releases="Latest", tables="Table\\s*(1|2)\\.");
 ```
 
 Further examples of use of the core functions are provided next.
