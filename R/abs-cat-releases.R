@@ -42,11 +42,11 @@ abs_cat_releases <- function(title, cat_no, include_urls=FALSE)
   if (!missing(title)) {
     ## New-style ABS URL
     title_path <- abs_cat_series(pattern=title, level="title", include_urls=TRUE)$title_path
-    url <- file.path(abs_urls()$base_url, title_path);
+    url <- valid_url(file.path(abs_urls()$base_url, title_path));
   } else {
     ## Old-style ABS URL
-    url <- file.path(abs_urls()$base_url, abs_urls()$ausstats_path,
-                     abs_urls()$mf_path, cat_no);
+    url <- valid_url(file.path(abs_urls()$base_url, abs_urls()$ausstats_path,
+                               abs_urls()$mf_path, cat_no));
   }
   ## Check for HTTP errors
   raustats_check_url_available(url)

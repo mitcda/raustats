@@ -87,10 +87,11 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
     file.path(
       abs_releases[c(unlist(sapply(releases,
                                    function(x)
-                                     grep(x, abs_releases$type, ignore.case=TRUE))),
+                                       grep(x, abs_releases$type, ignore.case=TRUE))),
                      unlist(sapply(releases,
                                    function(x)
-                                     grep(x, abs_releases$reference_period, ignore.case=TRUE)))),
+                                       grep(x, abs_releases$reference_period,
+                                            ignore.case=TRUE)))),
                    "url"]);
   release_urls <- unique(release_urls);
   ## Get list of tables for all releases specified
@@ -110,10 +111,10 @@ abs_cat_tables <- function(title, cat_no, releases="Latest",
     bind_rows;
   ## Combine ABS releases and release table data frames
   z <- right_join(abs_releases %>%
-                  mutate(across(url,
-                                ~ case_when(!grepl("^https.+", .x, ignore.case=TRUE)
-                                            ~ file.path(abs_urls()$base_url, .x),
-                                            TRUE ~ .x))),
+                    mutate(across(url,
+                                  ~ case_when(!grepl("^https.+", .x, ignore.case=TRUE) ~
+                                                  file.path(abs_urls()$base_url, .x),
+                                              TRUE ~ .x))),
                   w,
                   by=c("url")); # ="release_url"
   z <- z[!duplicated(z$table_name),];

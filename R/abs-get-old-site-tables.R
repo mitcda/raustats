@@ -17,7 +17,8 @@ abs_get_old_site_tables <- function(url)
   ##   url <- "https://www.abs.gov.au/AUSSTATS/abs@.nsf/Lookup/6345.0Main+Features1Jun 2019?OpenDocument="
   ## }
   ## Replace all whitespace in URLs - 
-  url <- gsub("\\s", "%20", url)
+    ## url <- gsub("\\s", "%20", url)
+  url <- valid_url(url)
   ## -- END DEPRECATED --
   ## Check for HTTP errors
   raustats_check_url_available(url);

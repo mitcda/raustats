@@ -148,12 +148,12 @@ abs_stats <- function(dataset, filter, start_date, end_date, lang=c("en","fr"),
   }
   n_filter <- prod(lengths(filter));
   ## Create ABS URL and open session 
-  url <- file.path(abs_api_urls()$base_url, abs_api_urls()$sdmx_json_path,
-                   dataset,
-                   paste(lapply(filter,
-                                function(x) paste(x, collapse="+")),
-                         collapse="."),
-                   "all");
+  url <- valid_url(file.path(abs_api_urls()$base_url, abs_api_urls()$sdmx_json_path,
+                             dataset,
+                             paste(lapply(filter,
+                                          function(x) paste(x, collapse="+")),
+                                   collapse="."),
+                             "all"));
   ## dimensionAtObservation
   dimensionAtObservation <- match.arg(dimensionAtObservation);
   if (!dimensionAtObservation %in% c("AllDimensions","TimeDimension","MeasureDimension"))

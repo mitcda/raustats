@@ -109,7 +109,10 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
     ##
     ## -- Table number & name --
     ## Note use of 'word' character    \/here               \/here for 13a, 6b, etc.
-    regex_table_name <- "^.*Tables*\\s+(\\w+(\\s+\\w+\\s+\\w+)*)(\\.|:)*\\s+(.+)$";
+    ## ORIGINAL
+    ## regex_table_name <- "^.*Tables*\\s+(\\w+(,*\\s+\\w+\\s+\\w+)*)(\\.|:)*\\s+(.+)$"; ## \\4 below
+    regex_table_name <- "^.*Tables*\\s+(\\w+((,|and)*\\s+\\w+)*)(\\.|:)*\\s+(.+)$"; ## \\5 below
+    ## Note inclusion of comma separator:    ^here
     ## Note use of alternative separators: .|:                      ^here
     tableno_name <- sapply(1:header_row,
                            function(i)
@@ -117,7 +120,8 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
                                   paste(.meta[i,], collapse=" "),
                                   ignore.case=TRUE, value=TRUE));
     tableno_name <- gsub("(\\s*NA)+", "",
-                         sub(regex_table_name, "\\1|\\4", unlist(tableno_name), ignore.case=TRUE));
+                         sub(regex_table_name, "\\1|\\5", unlist(tableno_name),
+                             ignore.case=TRUE));
     tableno_name <- trimws(unlist(strsplit(tableno_name, split="\\|")));
     ##
     ## Add publication details to metadata table

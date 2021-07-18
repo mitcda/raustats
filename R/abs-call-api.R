@@ -32,7 +32,7 @@ abs_api_call <- function(path, args)
     if (missing(args))
       stop("Argument path missing.")
 
-    url <- file.path(abs_api_urls()$base_url, path, args)
+    url <- valid_url(file.path(abs_api_urls()$base_url, path, args));
 
     return(url);
 }

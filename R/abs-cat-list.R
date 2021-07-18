@@ -18,8 +18,8 @@
 abs_cat_list <- function() {
   if (!exists("abs_cat_list", envir=.raustats_cache, inherits=FALSE)) {
     message("Scanning all ABS statistical collections (called on first use each session).")
-    url <- file.path(abs_urls()$base_url,
-                     abs_urls()$statistics_path);
+    url <- valid_url(file.path(abs_urls()$base_url,
+                               abs_urls()$statistics_path));
     ## Check for HTTP errors
     raustats_check_url_available(url);
     ## Open html session
@@ -45,7 +45,7 @@ abs_cat_list <- function() {
     stat_topic_tbl <-
       lapply(stat_coll_tbl$stat_view_path,
              function(x) {
-               url <- file.path(abs_urls()$base_url, x)
+               url <- valid_url(file.path(abs_urls()$base_url, x));
                raustats_check_url_available(url);
                stat_topic_nodes <-
                  html_nodes(html_session(url),
@@ -53,14 +53,14 @@ abs_cat_list <- function() {
                stat_topic_names <- trimws(html_text(html_nodes(stat_topic_nodes, "h2")));
                stat_topic_paths <- html_attr(html_nodes(stat_topic_nodes, "a"), "href");
                return(
-                 if (length(stat_topic_nodes) == 0) {
-                   NULL
-                 } else {
-                   data.frame(stat_view_path = x,
-                              stat_title = stat_topic_names,
-                              stat_title_path = stat_topic_paths,
-                              stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
-                 })
+                   if (length(stat_topic_nodes) == 0) {
+                     NULL
+                   } else {
+                     data.frame(stat_view_path = x,
+                                stat_title = stat_topic_names,
+                                stat_title_path = stat_topic_paths,
+                                stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
+                   })
              });
     stat_topic_tbl <- do.call(rbind, stat_topic_tbl[!sapply(stat_topic_tbl, is.null)]);
     ## Combine group, collection and topic names and path in one table, and return

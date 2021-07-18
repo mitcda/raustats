@@ -12,6 +12,24 @@ raustats_ua <- function()
 
 
 ## Check if the specified ABS/RBA URL is available
+#' @name valid_url
+#' @title Ensure valid URLs
+#' @description Function to ensure URLs are well formed.
+#' @importFrom httr parse_url build_url
+#' @param url Input URL
+#' @return valid URL.
+#' @keywords internal
+valid_url <- function(url) {
+  url <- sapply(url,
+                function(x) {
+                  z <- gsub("\\s", "%20", url)  ## Replace all whitespace in URLs
+                  z <- build_url(parse_url(z))  ## Return well-formed URL
+                });
+  return(url);
+}
+
+
+## Check if the specified ABS/RBA URL is available
 #' @name raustats_check_url_available
 #' @title Check specified ABS/RBA URL available
 #' @description Function to ensure URL calls fail gracefully with an informative message if the

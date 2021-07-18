@@ -176,7 +176,7 @@ abs_cat_search <- function(pattern,
                   );
   }
   if (return_url) {
-    return(url)
+    return(valid_url(url))
   } else {
     ## Check for HTTP errors
     raustats_check_url_available(url);

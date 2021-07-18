@@ -29,7 +29,7 @@ rba_table_cache <- function()
   ## Avoid 'No visible binding for global variables' note
   { table_name <- NULL }
   ## Create RBA URL and open session 
-  url <- file.path(rba_urls()$base_url, rba_urls()$stats_path);
+  url <- valid_url(file.path(rba_urls()$base_url, rba_urls()$stats_path));
   ## Check url available
   raustats_check_url_available(url);
   s <- html_session(url);
