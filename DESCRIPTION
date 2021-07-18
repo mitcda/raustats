@@ -4,8 +4,8 @@ Title: Access Data and Statistics from the ABS and RBA Websites
 Description: Functions for downloading Australian economic statistics
   from the Australian Bureau of Statistics (ABS) (see <https://www.abs.gov.au/>) and
   Reserve Bank of Australia (RBA) (see <https://www.rba.gov.au/>) websites.
-Version: 0.20.0.9030
-Date: 2021-03-08
+Version: 0.20.0.9031
+Date: 2021-07-19
 Authors@R: c(
   person("David", "Mitchell", email = "david.pk.mitchell@gmail.com", role = c("aut", "cre"))
   )

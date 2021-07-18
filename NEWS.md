@@ -6,6 +6,8 @@
 * `abs_read_tss` modified function to fix errors in downloading ABS
    International Trade Price Indexes data sets.
 
+* `rba_read_tss` now checks to include only named columns.
+
 ## Changes:
 
 * `valid_url` added new internal function to ensure functions call only valid

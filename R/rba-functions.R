@@ -281,7 +281,7 @@ rba_file_download <- function(data_url, exdir=tempdir(), update_cache=TRUE)
 #' @description Functions to extract data from a specified RBA time series spreadsheet.
 #' @importFrom readxl read_excel excel_sheets
 #' @importFrom dplyr left_join
-#' @importFrom tidyr gather
+#' @importFrom tidyr pivot_longer
 #' @importFrom stats complete.cases
 #' @param files Names of one or more ABS data file
 #' @return data frame in long format
@@ -374,7 +374,7 @@ rba_read_tss_ <- function(file)
       z <- .data[-(1:header_row),idx_cols];                       ## Select column dimensions
       ## Rename variables, including renaming `Series ID`
       names(z) <- sub("series.*id", "date", .data[header_row,idx_cols], ignore.case=TRUE);
-      z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform to key:value pairs
+      z <- pivot_longer(z, cols=-date, names_to="series_id"); ## Transform to key:value pairs
       z <- transform(z,
                      date = excel2Date(as.integer(date)),
                      value = as.numeric(value),
