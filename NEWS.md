@@ -1,3 +1,19 @@
+# raustats 0.20.1
+---------------------------------------------------------------------
+
+## Bug fixes:
+
+* `abs_read_tss` modified function to fix errors in downloading ABS
+   International Trade Price Indexes data sets.
+
+## Changes:
+
+* `valid_url` added new internal function to ensure functions call only valid
+  URLs.
+
+
+
+
 # raustats 0.20.0
 ---------------------------------------------------------------------
 

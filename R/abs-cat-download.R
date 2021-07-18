@@ -18,7 +18,7 @@ abs_cat_download <- function(x, exdir=tempdir()) {
 
 
 #' @rdname abs_cat_download
-#' @export
+## @export
 abs_cat_download.default <- function(x, exdir=tempdir()) {
   if (!dir.exists(exdir)) dir.create(exdir);
   local_filenames <-
@@ -40,7 +40,7 @@ abs_cat_download.default <- function(x, exdir=tempdir()) {
 
 
 #' @rdname abs_cat_download
-#' @export
+## @export
 abs_cat_download.cat_table <- function(x, exdir=tempdir()) { 
   if (!dir.exists(exdir)) dir.create(exdir);
   local_filenames <-
@@ -59,7 +59,7 @@ abs_cat_download.cat_table <- function(x, exdir=tempdir()) {
 
 
 #' @rdname abs_cat_download
-#' @export
+## @export
 abs_cat_download.character <- function(x, exdir=tempdir()) { 
   if (!dir.exists(exdir)) dir.create(exdir);
   local_filenames <-
@@ -78,5 +78,4 @@ abs_cat_download.character <- function(x, exdir=tempdir()) {
 }
 
 
-
-## ----------------------------------- EOF ---------------------------------- ##
+## ---------------------------------- EOF ----------------------------------- ##

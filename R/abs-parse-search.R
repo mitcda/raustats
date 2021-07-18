@@ -1,16 +1,14 @@
-### ABS Catalogue functions 
+### ABS Catalogue functions
 #' @name abs_parse_search
 #' @title Parse ABS search function results
-#' @description
-#'  `r lifecycle::badge("experimental")`
-#'   This function parses the results of the ABS search results and returns as a data
-#'   frame.
+#' @description `r lifecycle::badge("experimental")` This function parses the
+#'     results of the ABS search results and returns as a data frame.
 #' @importFrom magrittr %>%
-#' @importFrom rvest follow_link html_attr html_nodes html_node html_session html_text is.session
-#'   jump_to
+#' @importFrom rvest follow_link html_attr html_nodes html_node html_session
+#'     html_text is.session
 #' @param s a session object
-#' @param resource One or more of \code{'Statistical analysis and data'} (the default) or
-#'   \code{'Article'}.
+#' @param resource One or more of \code{'Statistical analysis and data'} (the
+#'     default) or \code{'Article'}.
 #' @return a data frame containg the ABS Search function results
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
 #' @keywords internal

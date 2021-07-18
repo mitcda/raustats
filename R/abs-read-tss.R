@@ -87,14 +87,14 @@ abs_read_tss_ <- function(file, type="tss", na.rm=na.rm) {
   metadata <- metadata[-(1:header_row),                               ## Drop header rows & unnamed columns
                        !(is.na(names(metadata)) | grepl("^X.*", names(metadata)))];     
   metadata <- Filter(function(x) !all(is.na(x)), metadata);           ## Drop all-NA columns
-  metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows
-    metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid 
-    metadata <- transform(metadata,
-                          series_start     = excel2Date(as.integer(series_start)),
-                          series_end       = excel2Date(as.integer(series_end)),
-                          no_obs           = as.integer(no_obs),
-                          collection_month = as.integer(collection_month),
-                          stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
+  metadata <- metadata[complete.cases(metadata),];                    ## Drop NA rows [CONSIDER REMOVING]
+  metadata <- metadata[grepl("\\w\\d{4,7}\\w", metadata$series_id),]; ## Drop if Series ID invalid 
+  metadata <- transform(metadata,
+                        series_start     = excel2Date(as.integer(series_start)),
+                        series_end       = excel2Date(as.integer(series_end)),
+                        no_obs           = as.integer(no_obs),
+                        collection_month = as.integer(collection_month),
+                        stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
     ##
     ## Get publication details
     ## -- Catalogue number & name --

@@ -16,7 +16,7 @@ rba_urls <- function()
 #' @name rba_table_cache
 #' @title Return list of RBA tables
 #' @description Function to return an updated list of data tables available from the RBA website.
-#' @importFrom rvest html_session jump_to html_attr html_text html_nodes
+#' @importFrom rvest html_session session_jump_to html_attr html_text html_nodes
 #' @return data frame in long format
 #' @export
 #' @author David Mitchell <david.pk.mitchell@@gmail.com>
@@ -43,7 +43,7 @@ rba_table_cache <- function()
                                                                    html_text(.paths), ignore.case=TRUE)]);
   ##
   ## Get list of current data tables
-  rs <- jump_to(s, path_statistical_data);
+  rs <- session_jump_to(s, path_statistical_data);
   .paths <- html_nodes(rs, "a");
   statistical_tables <- data.frame(table_type = "statistical tables",
                                    table = html_text(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)]),
@@ -55,7 +55,7 @@ rba_table_cache <- function()
   statistical_tables <- statistical_tables[grepl("\\.xls(x*)$", statistical_tables$url, ignore.case=TRUE),];
   ##
   ## Get list of historical data tables
-  rs <- jump_to(s, path_historical_data);
+  rs <- session_jump_to(s, path_historical_data);
   .paths <- html_nodes(rs, "a");
   historical_tables <- data.frame(table_type = "historical data",
                                   table = html_text(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)]),
@@ -71,7 +71,7 @@ rba_table_cache <- function()
                                                 ignore.case=TRUE),];
   ##
   ## Get list of discontinued data tables
-  rs <- jump_to(s, path_discontinued_data);
+  rs <- session_jump_to(s, path_discontinued_data);
   .paths <- html_nodes(rs, "a");
   discontinued_tables <- data.frame(table_type = "discontinued data",
                                     table = html_text(.paths[grepl("xls(x*)", .paths, ignore.case=TRUE)]),
@@ -314,6 +314,8 @@ rba_read_tss_ <- function(file)
     urls <- as.character(rba_cache$url[which(table_no == rba_cache$table_no)]);
     file <- lapply(urls, rba_file_download)[[1]]; 
       sheet_names <- excel_sheets(file)[grepl("data|series breaks", excel_sheets(file), ignore.case=TRUE)];
+    file = "/tmp/RtmpHbYTxD/f11hist.xls";
+    file= "/tmp/RtmpHbYTxD/f11hist-1969-2009.xls";
   }
   
   ## Avoid 'No visible binding for global variables' note
@@ -352,8 +354,9 @@ rba_read_tss_ <- function(file)
                                paste(replace(.data[1,], is.na(.data[1,]), ""), collapse="")));
       ## Extract metadata
       metadata <- .data[1:header_row,];
-      metadata <- metadata[complete.cases(metadata),];            ## Drop NA rows
-      metadata <- as.data.frame(t(metadata), stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
+      ## metadata <- metadata[complete.cases(metadata),];         ## [REMOVE] Drop all NA rows
+      metadata <- metadata[!is.na(unlist(metadata[,1])),];        ## Drop unnamed metadata rows
+      metadata <- as.data.frame(t(metadata), stringsAsFactors=FALSE); # stringsAsFactors required for R (< 4.0.0)
       rownames(metadata) <- seq_len(nrow(metadata));
       names(metadata) <- tolower(gsub("\\s","_",
                                       gsub("\\.", "",
@@ -365,21 +368,25 @@ rba_read_tss_ <- function(file)
                             table_no = table_no,
                             table_name = table_name,
                             stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
-      
-      z <- .data[-(1:header_row),];
+      metadata <- metadata[!is.na(metadata$series_id),];          ## Drop NA Series IDs
+      ## Data
+      idx_cols <- seq_len(length(metadata$series_id)+1);          ## Column dimension selection
+      z <- .data[-(1:header_row),idx_cols];                       ## Select column dimensions
       ## Rename variables, including renaming `Series ID`
-      names(z) <- sub("series.*id", "date", .data[header_row,], ignore.case=TRUE);
+      names(z) <- sub("series.*id", "date", .data[header_row,idx_cols], ignore.case=TRUE);
       z <- gather(z, series_id, value, -date, convert=TRUE); ## Transform to key:value pairs
       z <- transform(z,
                      date = excel2Date(as.integer(date)),
                      value = as.numeric(value),
                      stringsAsFactors=FALSE); # <= Required for R (< 4.0.0)
-      
+      ## Data
       data <- left_join(z, metadata, by="series_id");
-      data <- data[complete.cases(data),];
+      ## data <- dim(data[complete.cases(data),])    
       names(data) <- tolower(names(data));
       return(data)
     });
   data <- do.call(rbind, data);
   return(data);
 }
+
+## ---------------------------------- EOF ----------------------------------- ##

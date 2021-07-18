@@ -1,7 +1,7 @@
 #' @name abs_cat_stats
 #' @title Get ABS catalogue series data
 #' @description This function downloads ABS catalogue series statistics, by ABS catalogue number.
-#' @importFrom rvest html_session follow_link html_attr jump_to
+#' @importFrom rvest html_session follow_link html_attr
 #' @importFrom xml2 read_xml read_html
 #' @param title `r lifecycle::badge("experimental")`
 #'   Character vector specifying one or more ABS publication titles.

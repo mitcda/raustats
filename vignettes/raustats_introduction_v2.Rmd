@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, warning=FALSE}
 knitr::opts_chunk$set(collapse=TRUE, comment="#>")
 library(dplyr);
 ```
@@ -143,6 +143,9 @@ The `abs_stats` function downloads ABS statistics from
 [ABS.Stat](http://stat.data.abs.gov.au/). For example, to download the latest
 CPI data series for 'All Groups' change in prices across Australia and each of
 the eight capital cities:
+
+<!-- UP TO HERE - Error on following function call: 'Entity nbsp' not defined -->
+<!-- Check currency of ABS API - Try: https://api.data.abs.gov.au/dataflow -->
 
 ```{r eval=FALSE}
 cpi_api <- abs_stats("CPI", filter=list(MEASURE=1, REGION=c(1:8,50),
